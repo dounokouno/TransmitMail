@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="content-script-type" content="text/javascript" />
+<title>入力内容の確認 | TransmitMail サンプル</title>
+<!--<meta name="keywords" content="" />
+<meta name="description" content="" />-->
+<meta name="copyright" content="Copyright (c) dounokouno. All rights reserved." />
+<link rel="stylesheet" type="text/css" href="http://etc.dounokouno.com/ttXHTMLTemplate/css/screen.css" media="screen,print" />
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-1187565-2']);
+_gaq.push(['_setDomainName', '.dounokouno.com']);
+_gaq.push(['_trackPageview']);
+(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+</head>
+<body class="home">
+<div id="header">
+	<div class="container">
+		<h1>TransferMail サンプル</h1>
+	</div>
+</div>
+<div id="content">
+	<div class="container">
+		<!-- mailform -->
+		<div class="section">
+			<h2>入力内容の確認</h2>
+			<p>以下の内容でよろしければ、ページ下部の送信ボタンを押してください。<br />
+				誤りがある場合は、前画面に戻って再度ご入力ください。</p>
+			<table width="100%" class="alpha">
+				<tr>
+					<th width="300">{$GET値取得サンプル.key}&nbsp;</th>
+					<td>{$GET値取得サンプル.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th width="300">{$会社名.key}&nbsp;</th>
+					<td>{$会社名.value}&nbsp;}</td>
+				</tr>
+				<tr>
+					<th>{$お名前・ご担当者名.key}&nbsp;</th>
+					<td>{$お名前・ご担当者名.value}&nbsp;}</td>
+				</tr>
+				<tr>
+					<th>{$お名前・ご担当者名ふりがな.key}&nbsp;</th>
+					<td>{$お名前・ご担当者名ふりがな.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$お名前・ご担当者名フリガナ.key}&nbsp;</th>
+					<td>{$お名前・ご担当者名フリガナ.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$ニックネーム.key}&nbsp;</th>
+					<td>{$ニックネーム.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$メールアドレス.key}&nbsp;</th>
+					<td>{$メールアドレス.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$メールアドレス確認.key}&nbsp;</th>
+					<td>{$メールアドレス確認.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$郵便番号.key}&nbsp;</th>
+					<td>{$郵便番号.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$市区町村.key}&nbsp;</th>
+					<td>{$市区町村.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$番地・アパート名.key}&nbsp;</th>
+					<td>{$番地・アパート名.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$電話番号.key}&nbsp;</th>
+					<td>{$電話番号.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$FAX番号.key}&nbsp;</th>
+					<td>{$FAX番号.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$性別.key}&nbsp;</th>
+					<td>{$性別.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$年齢.key}&nbsp;</th>
+					<td>{$年齢.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$3文字以上チェック.key}&nbsp;</th>
+					<td>{$3文字以上チェック.value}&nbsp;}</td>
+				</tr>
+				<tr>
+					<th>{$3文字以下チェック.key}&nbsp;</th>
+					<td>{$3文字以下チェック.value}&nbsp;}</td>
+				</tr>
+				<tr>
+					<th>{$6文字以上8以下チェック.key}&nbsp;</th>
+					<td>{$6文字以上8以下チェック.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$お問い合わせ種別.key}&nbsp;</th>
+					<td>{$お問い合わせ種別.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$お返事方法.key}&nbsp;</th>
+					<td>{$お返事方法.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$マルチプルセレクトメニュー.key}</th>
+					<td>{$マルチプルセレクトメニュー.value}&nbsp;</td>
+				</tr>
+				<tr>
+					<th>{$お問い合わせ内容.key}&nbsp;</th>
+					<td>{$お問い合わせ内容.value.nl2br}&nbsp;</td>
+				</tr>
+			</table>
+			<div class="center">
+				<form method="post" action="index.php" class="inline">
+					{$hiddens}
+					<input type="hidden" name="page" value="input" />
+					<input type="submit" value="入力画面に戻る" />
+				</form>
+				&nbsp;
+				<form method="post" action="index.php" class="inline">
+					{$hiddens}
+					<input type="hidden" name="page" value="finish" />
+					<input type="submit" value="送信する" />
+				</form>
+			</div>
+		</div>
+		<!-- /mailform -->
+	</div>
+</div>
+</body>
+</html>
