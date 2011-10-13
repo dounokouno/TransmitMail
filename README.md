@@ -30,7 +30,9 @@ MIT license
 ##Special Thanks
 
 下記テンプレートエンジンを改変して利用させていただきました。
-firegoby » tinyTemplate
+
+[firegoby » tinyTemplate](http://firegoby.theta.ne.jp/download/tinytemplate)
 
 ##Copyright
+
 Copyright (c) 2011 TAGAWA Takao, dounokouno@gmail.com
