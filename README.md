@@ -14,7 +14,9 @@ MIT license
 
 ##使い方
 
-同梱のマニュアル（manual.html）をご参照ください。
+Wikiにマニュアルをまとめました。
+
+<https://github.com/dounokouno/TransmitMail/wiki>
 
 ##お問い合わせ
 
