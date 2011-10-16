@@ -47,7 +47,7 @@ define('DENY_HOST', '');
 // ----------------------------------------------------------------
 
 // エラー表示（On=>表示, Off=>非表示）
-ini_set('display_errors', 'On');
+ini_set('display_errors', 'Off');
 
 // ログファイル出力ディレクトリ
 define('DIR_LOGS', './logs');
