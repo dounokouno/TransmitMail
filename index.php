@@ -4,8 +4,8 @@
  * Description : メール送信システム本体
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
- * Since : 2011-11-19
- * Modified : 2012-10-12
+ * Since : 2010-11-19
+ * Modified : 2011-10-16
 */
 
 // --------------------------------------------------------------
@@ -20,7 +20,7 @@ $tmpl = new tinyTemplate();
 // --------------------------------------------------------------
 // 言語環境など
 // --------------------------------------------------------------
-mb_language('ja');
+mb_language('uni');
 mb_internal_encoding(CHARASET);
 mb_regex_encoding(CHARASET);
 ini_set('error_log', DIR_LOGS . '/error.log');
@@ -102,7 +102,52 @@ if (isset($_POST['required'])) {
 		}
 	}
 }
-	
+
+// 半角文字チェック
+if (isset($_POST['hankaku'])) {
+	foreach ($_POST['hankaku'] as $v) {
+		$tmpl->set("hankaku.$v", false);
+		if (!empty($_POST[$v])) {
+			$_POST[$v] = mb_convert_kana($_POST[$v], 'a');
+			if (!check_hankaku($_POST[$v])) {
+				$tmpl->set("hankaku.$v", h($v . ERROR_HANKAKU));
+				$global_error[] = h($v . ERROR_HANKAKU);
+				$global_error_flag = true;
+			}
+		}
+	}
+}
+
+// 半角英数字チェック
+if (isset($_POST['hankaku_eisu'])) {
+	foreach ($_POST['hankaku_eisu'] as $v) {
+		$tmpl->set("hankaku_eisu.$v", false);
+		if (!empty($_POST[$v])) {
+			$_POST[$v] = mb_convert_kana($_POST[$v], 'a');
+			if (!check_hankaku_eisu($_POST[$v])) {
+				$tmpl->set("hankaku_eisu.$v", h($v . ERROR_HANKAKU_EISU));
+				$global_error[] = h($v . ERROR_HANKAKU_EISU);
+				$global_error_flag = true;
+			}
+		}
+	}
+}
+
+// 半角英字チェック
+if (isset($_POST['hankaku_eiji'])) {
+	foreach ($_POST['hankaku_eiji'] as $v) {
+		$tmpl->set("hankaku_eiji.$v", false);
+		if (!empty($_POST[$v])) {
+			$_POST[$v] = mb_convert_kana($_POST[$v], 'r');
+			if (!check_hankaku_eiji($_POST[$v])) {
+				$tmpl->set("hankaku_eiji.$v", h($v . ERROR_HANKAKU_EIJI));
+				$global_error[] = h($v . ERROR_HANKAKU_EIJI);
+				$global_error_flag = true;
+			}
+		}
+	}
+}
+
 // 数値チェック
 if (isset($_POST['num'])) {
 	foreach ($_POST['num'] as $v) {
@@ -223,7 +268,7 @@ if (isset($_POST['email'])) {
 		}
 	}
 }
-	
+
 // 一致チェック
 if (isset($_POST['match'])) {
 	foreach ($_POST['match'] as $v) {

@@ -4,8 +4,8 @@
  * Description : 設定ファイル
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
- * Since : 2011-11-19
- * Modified : 2012-10-04
+ * Since : 2010-11-19
+ * Modified : 2011-10-16
 */
 
 // ----------------------------------------------------------------
@@ -47,7 +47,7 @@ define('DENY_HOST', '');
 // ----------------------------------------------------------------
 
 // エラー表示（On=>表示, Off=>非表示）
-ini_set('display_errors', 'Off');
+ini_set('display_errors', 'On');
 
 // ログファイル出力ディレクトリ
 define('DIR_LOGS', './logs');
@@ -63,17 +63,20 @@ define('MAILFORM_PROGRAM', 'index.php');
 define('DIR_MAILFORM', str_replace(MAILFORM_PROGRAM, '', $_SERVER['PHP_SELF']));
 
 // テンプレートファイル
-define('TMPL_INPUT', 'input.html');			// 入力画面
+define('TMPL_INPUT', 'input.html');		// 入力画面
 define('TMPL_CONFIRM', 'confirm.html');	// 確認画面
 define('TMPL_FINISH', 'finish.html');		// 完了画面
-define('TMPL_ERROR', 'error.html');			// エラー画面
+define('TMPL_ERROR', 'error.html');		// エラー画面
 
 // 送信メール文章テンプレート
-define('MAIL_BODY', './conf/mail_body.txt');											// 送信メール
+define('MAIL_BODY', './conf/mail_body.txt');							// 送信メール
 define('MAIL_AUTO_REPLY_BODY', './conf/mail_autoreply_body.txt');	// 自動返信メール
 
 // エラーメッセージ
 define('ERROR_REQUIRED', 'は入力必須です');
+define('ERROR_HANKAKU', 'は半角文字で入力してください');
+define('ERROR_HANKAKU_EISU', 'は半角英数字で入力してください');
+define('ERROR_HANKAKU_EIJI', 'は半角英字で入力してください');
 define('ERROR_NUM', 'は数字で入力してください');
 define('ERROR_NUM_HYPHEN', 'は数字とハイフンで入力してください');
 define('ERROR_HIRAGANA', 'はひらがなで入力してください');

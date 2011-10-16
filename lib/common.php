@@ -5,18 +5,18 @@
  * Description : 関数群
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
- * Since : 2011-11-19
- * Modified : 2012-10-12
+ * Since : 2010-11-19
+ * Modified : 2011-10-16
 */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.0');
+define('VERSION', '1.0.1');
 
 // 入力情報として除外する項目
-define('EXCLUSION_ITEM', 'page|required|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|email|len|match');
+define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len');
 
 
 // ----------------------------------------------------------------
@@ -166,15 +166,31 @@ function output_checkmode() {
 
 
 // ----------------------------------------------------------------
-// メールアドレスの書式チェック
+// 半角文字チェック
 // ----------------------------------------------------------------
-function check_mail_address($s) {
-	return preg_match('/^([a-z0-9_]|\-|\.|\+)+@(([a-z0-9_]|\-)+\.)+[a-z]{2,6}$/i', $s);
+function check_hankaku($s) {
+	return preg_match('/^[!-~]*$/', $s);
 }
 
 
 // ----------------------------------------------------------------
-// 半角数値チェック
+// 半角英数字チェック
+// ----------------------------------------------------------------
+function check_hankaku_eisu($s) {
+	return preg_match('/^[a-zA-Z0-9]*$/', $s);
+}
+
+
+// ----------------------------------------------------------------
+// 半角英字チェック
+// ----------------------------------------------------------------
+function check_hankaku_eiji($s) {
+	return preg_match('/^[a-zA-Z]*$/', $s);
+}
+
+
+// ----------------------------------------------------------------
+// 数字チェック
 // ----------------------------------------------------------------
 function check_num($s) {
 	return preg_match('/^[0-9]*$/', $s);
@@ -182,7 +198,7 @@ function check_num($s) {
 
 
 // ----------------------------------------------------------------
-// 数値とハイフンチェック
+// 数字とハイフンチェック
 // ----------------------------------------------------------------
 function check_num_hyphen($s) {
 	return preg_match('/^[0-9-]*$/', $s);
@@ -226,6 +242,14 @@ function check_zenkaku($s) {
 // ----------------------------------------------------------------
 function check_zenkaku_all($s) {
 	return preg_match('/^[^ -~｡-ﾟ]*$/' . REG_OPTION, $s);
+}
+
+
+// ----------------------------------------------------------------
+// メールアドレスの書式チェック
+// ----------------------------------------------------------------
+function check_mail_address($s) {
+	return preg_match('/^([a-z0-9_]|\-|\.|\+)+@(([a-z0-9_]|\-)+\.)+[a-z]{2,6}$/i', $s);
 }
 
 
@@ -278,7 +302,7 @@ function send_mail($to_email, $subject, $body, $from_email, $from_name = '') {
 	if (empty($from_name)) {
 		$from = $from_email;
 	} else {
-		$from = mb_encode_mimeheader(mb_convert_encoding($from_name, 'ISO-2022-JP', 'AUTO')) . ' <' . $from_email . '>';
+		$from = mb_encode_mimeheader(mb_convert_encoding($from_name, 'UTF-8', 'AUTO')) . ' <' . $from_email . '>';
 	}
 	
 	// headers
@@ -380,7 +404,7 @@ function safe_strip_slashes($s) {
 // ----------------------------------------------------------------
 function delete_blank($s) {
 	if (is_array($s)) {
-		return array_map('blank', $s);
+		return array_map('delete_blank', $s);
 	}
 	return preg_replace('/\s|　/', '', $s);
 }
