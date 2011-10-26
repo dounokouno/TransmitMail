@@ -6,17 +6,20 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2011-10-16
+ * Modified : 2011-10-26
 */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.0.1');
+define('VERSION', '1.0.2');
 
 // 入力情報として除外する項目
 define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len');
+
+// タイムゾーン
+date_default_timezone_set('Asia/Tokyo');
 
 
 // ----------------------------------------------------------------
