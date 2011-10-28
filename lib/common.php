@@ -48,7 +48,8 @@ function output_checkmode() {
 	// sendmail
 	$a[] = '<h2>sendmail</h2>';
 	$a[] = '<ul>';
-	$sendmail = shell_exec('which sendmail');
+	$ini = ini_get_all();
+	$sendmail = $ini['sendmail_path']['global_value'];
 	if ($sendmail != '') {
 		$a[] = '<li>' . $sendmail . '</li>';
 	} else {
