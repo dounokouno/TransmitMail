@@ -6,14 +6,14 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2011-10-28
+ * Modified : 2012-03-21
 */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.0.3');
+define('VERSION', '1.0.4');
 
 // 入力情報として除外する項目
 define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len');
@@ -411,6 +411,17 @@ function delete_blank($s) {
 		return array_map('delete_blank', $s);
 	}
 	return preg_replace('/\s|　/', '', $s);
+}
+
+
+// ----------------------------------------------------------------
+// 改行コードの削除
+// ----------------------------------------------------------------
+function delete_crlf($s) {
+	if (is_array($s)) {
+		return array_map('delete_crlf', $s);
+	}
+	return preg_replace('/\r|\n/', '', $s);
 }
 
 

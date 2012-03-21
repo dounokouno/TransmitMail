@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2011-10-16
+ * Modified : 2012-03-21
 */
 
 // --------------------------------------------------------------
@@ -260,12 +260,24 @@ if (isset($_POST['email'])) {
 		$tmpl->set("email.$v", false);
 		if (!empty($_POST[$v])) {
 			$_POST[$v] = mb_convert_kana($_POST[$v], 'a');
+			$_POST[$v] = delete_crlf($_POST[$v]);
 			if (!check_mail_address($_POST[$v])) {
 				$tmpl->set("email.$v", h($v . ERROR_EMAIL));
 				$global_error[] = h($v . ERROR_EMAIL);
 				$global_error_flag = true;
 			}
 		}
+	}
+}
+
+// 自動返信メールの宛先（$_POST[AUTO_REPLY_EMAIL]）のメールアドレスチェック
+if (isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL])) {
+	$_POST[AUTO_REPLY_EMAIL] = mb_convert_kana($_POST[AUTO_REPLY_EMAIL], 'a');
+	$_POST[AUTO_REPLY_EMAIL] = delete_crlf($_POST[AUTO_REPLY_EMAIL]);
+	if (!check_mail_address($_POST[AUTO_REPLY_EMAIL])) {
+		$tmpl->set("email." . AUTO_REPLY_EMAIL, h(AUTO_REPLY_EMAIL . ERROR_EMAIL));
+		$global_error[] = h(AUTO_REPLY_EMAIL . ERROR_EMAIL);
+		$global_error_flag = true;
 	}
 }
 
@@ -452,7 +464,7 @@ if ($page === 'deny') {
 	$body = hd($body);
 	
 	// メール送信元
-	if (isset($_POST[AUTO_REPLY_EMAIL])) {
+	if (isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL])) {
 		$from_email = $_POST[AUTO_REPLY_EMAIL];
 	} else {
 		$from_email = $to_email;
