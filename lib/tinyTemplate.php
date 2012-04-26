@@ -74,7 +74,7 @@ class tinyTemplate {
 
         $contents = preg_replace('/\{\$.*\}/', '', $contents);
         $contents = preg_replace('/\{if.*?}.*?\{\/if.*?\}/s', '', $contents);
-				$contents = preg_replace('/\{loop.*?}.*?\{\/loop.*?\}/s', '', $contents);
+        $contents = preg_replace('/\{loop.*?}.*?\{\/loop.*?\}/s', '', $contents);
 				
         return $contents;
     }
