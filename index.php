@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-03-21
+ * Modified : 2012-06-05
 */
 
 // --------------------------------------------------------------
@@ -276,7 +276,9 @@ if (isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL])) {
 	$_POST[AUTO_REPLY_EMAIL] = delete_crlf($_POST[AUTO_REPLY_EMAIL]);
 	if (!check_mail_address($_POST[AUTO_REPLY_EMAIL])) {
 		$tmpl->set("email." . AUTO_REPLY_EMAIL, h(AUTO_REPLY_EMAIL . ERROR_EMAIL));
-		$global_error[] = h(AUTO_REPLY_EMAIL . ERROR_EMAIL);
+		if (!in_array(h(AUTO_REPLY_EMAIL . ERROR_EMAIL), $global_error, true)) {
+			$global_error[] = h(AUTO_REPLY_EMAIL . ERROR_EMAIL);
+		}
 		$global_error_flag = true;
 	}
 }
