@@ -340,7 +340,7 @@ function put_error_log($s, $suffix) {
 	$log_name = is_log_file($file_name);
 	
 	// ファイルロック
-	$lock_file = DIR_LOGS . 'lock';
+	$lock_file = DIR_LOGS . '/lock';
 	$lock_fp = @fopen($lock_file, 'w');
 	$lock = @flock($lock_fp, LOCK_EX);
 	while (!$lock) {
@@ -351,7 +351,7 @@ function put_error_log($s, $suffix) {
 	}
 	
 	// ファイル書き込み
-	$byte = file_put_contents(DIR_LOGS . $log_name.'.txt', $s);
+	$byte = file_put_contents(DIR_LOGS . '/' . $log_name.'.txt', $s);
 	fclose($lock_fp);
 	unlink($lock_file);
 	return $byte;
