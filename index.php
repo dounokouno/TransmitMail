@@ -320,6 +320,22 @@ if (isset($_POST['len'])) {
 	}
 }
 
+// URLチェック
+if (isset($_POST['url'])) {
+	foreach ($_POST['url'] as $v) {
+		$tmpl->set("url.$v", false);
+		if (!empty($_POST[$v])) {
+			$_POST[$v] = mb_convert_kana($_POST[$v], 'a');
+			$_POST[$v] = delete_crlf($_POST[$v]);
+			if (!check_url($_POST[$v])) {
+				$tmpl->set("url.$v", h($v . ERROR_URL));
+				$global_error[] = h($v . ERROR_URL);
+				$global_error_flag = true;
+			}
+		}
+	}
+}
+
 // セッションチェック
 $session_flag = false;
 session_start();
