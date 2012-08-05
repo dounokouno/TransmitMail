@@ -315,7 +315,7 @@ if (isset($_POST['len'])) {
 				if ($delim[0] === $delim[1]) {
 					$error_len = str_replace('{文字数}', "$delim[0]文字", ERROR_LEN);
 				} else {
-  				$error_len = str_replace('{文字数}', "$delim[0]〜$delim[1]文字", ERROR_LEN);
+					$error_len = str_replace('{文字数}', "$delim[0]〜$delim[1]文字", ERROR_LEN);
 				}
 			}
 			$tmpl->set("len.$array[0]", h($array[0] . $error_len));
