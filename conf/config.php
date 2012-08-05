@@ -87,6 +87,7 @@ define('ERROR_ZENKAKU_ALL', 'は全て全角文字で入力してください');
 define('ERROR_EMAIL', 'はメールアドレスの書式で入力してください');
 define('ERROR_MATCH', 'が一致しません');
 define('ERROR_LEN', 'は{文字数}で入力してください');
+define('ERROR_URL', 'はURLの書式で入力してください');
 define('ERROR_DENY', 'お使いのホストからのアクセスは管理者によって拒否されています');
 define('ERROR_FAILURE_SEND_MAIL', 'メールの送信に失敗しました');
 define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗しました');

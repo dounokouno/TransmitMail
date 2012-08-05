@@ -286,6 +286,16 @@
 								{/if:$match.一致1}
 							</td>
 						</tr>
+						<tr>
+							<th>URL</th>
+							<td>
+								<input type="text" name="URL" value="{$URL}" class="middle" />
+								<input type="hidden" name="url[]" value="URL" />
+								{if:$url.URL}
+								<div class="error"><em>{$url.URL}</em></div>
+								{/if:$url.URL}
+							</td>
+						</tr>
 					</table>
 				</div>
 				<div class="section">
