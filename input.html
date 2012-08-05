@@ -251,6 +251,16 @@
 							</td>
 						</tr>
 						<tr>
+							<th>3文字固定</th>
+							<td>
+								<input type="text" name="3文字固定" value="{$3文字固定}" class="middle" />
+								<input type="hidden" name="len[]" value="3文字固定 3-3" />
+								{if:$len.3文字固定}
+								<div class="error"><em>{$len.3文字固定}</em></div>
+								{/if:$len.3文字固定}
+							</td>
+						</tr>
+						<tr>
 							<th>6文字以上8以下</th>
 							<td>
 								<input type="text" name="6文字以上8以下" value="{$6文字以上8以下}" class="middle" />

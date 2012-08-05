@@ -304,6 +304,7 @@ if (isset($_POST['len'])) {
 	foreach ($_POST['len'] as $v) {
 		$array = preg_split('/\s|,/', $v);
 		$delim = explode('-', $array[1]);
+		$delim = array_map('intval', $delim);
 		$tmpl->set("len.$array[0]", false);
 		if (!empty($_POST[$array[0]]) && !check_len($_POST[$array[0]], $delim)) {
 			if (empty($delim[0])) {
@@ -311,7 +312,11 @@ if (isset($_POST['len'])) {
 			} elseif (empty($delim[1])) {
 				$error_len = str_replace('{文字数}', "$delim[0]文字以上", ERROR_LEN);
 			} else {
-				$error_len = str_replace('{文字数}', "$delim[0]〜$delim[1]文字", ERROR_LEN);
+				if ($delim[0] === $delim[1]) {
+					$error_len = str_replace('{文字数}', "$delim[0]文字", ERROR_LEN);
+				} else {
+  				$error_len = str_replace('{文字数}', "$delim[0]〜$delim[1]文字", ERROR_LEN);
+				}
 			}
 			$tmpl->set("len.$array[0]", h($array[0] . $error_len));
 			$global_error[] = h($array[0] . $error_len);
