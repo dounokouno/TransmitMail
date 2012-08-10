@@ -16,7 +16,7 @@ define('SYSTEM_NAME', 'TransmitMail');
 define('VERSION', '1.0.5');
 
 // 入力情報として除外する項目
-define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len');
+define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url');
 
 // タイムゾーン
 date_default_timezone_set('Asia/Tokyo');
