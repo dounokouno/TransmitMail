@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2011-10-16
+ * Modified : 2012-08-28
 */
 
 // ----------------------------------------------------------------
@@ -41,6 +41,8 @@ define('AUTO_REPLY_NAME', '株式会社テスト');
 //  例3）上記両方を設定する場合 → ^192.168.1.*|*.example.jp$
 define('DENY_HOST', '');
 
+// CSVファイルを出力する場合はtrue
+define('CSV_OUTPUT', true);
 
 // ----------------------------------------------------------------
 // ※以下は必要な場合のみ編集してください
@@ -51,6 +53,10 @@ ini_set('display_errors', 'Off');
 
 // ログファイル出力ディレクトリ
 define('DIR_LOGS', './logs');
+
+// CSVファイル
+define('CSV_FILE', 'data.csv');		// CSVのファイル名
+define('CSV_ENCODE', 'SJIS-win');	// CSVのエンコード
 
 // 文字コード
 define('CHARASET', 'UTF-8');
