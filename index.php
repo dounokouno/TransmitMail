@@ -514,6 +514,11 @@ if ($page === 'deny') {
 			"$body";
 		put_error_log($data, $suffix);
 	}
+
+	// CSVの出力
+	if (CSV_OUTPUT) {
+		put_csv($_POST);
+	}
 	
 	// -------------------------------------------------------
 	// 自動返信メール

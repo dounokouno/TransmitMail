@@ -384,6 +384,67 @@ function is_log_file($file_name) {
 
 
 // ----------------------------------------------------------------
+// CSV出力 
+// ----------------------------------------------------------------
+function put_csv($post) {
+	$a = array();
+	foreach ($post as $k => $v) {
+		$pattern = '/' . EXCLUSION_ITEM . '/';
+		if (!preg_match($pattern, $k)) {
+			if (is_array($v)) {
+				$s = implode(' / ', $v);
+			} else {
+				$s = $v;
+			}
+			// エンコード変換
+			if (CSV_ENCODE !== 'UTF-8') {
+				$ck = mb_convert_encoding($k, CSV_ENCODE, 'UTF-8');
+				$cs = mb_convert_encoding($s, CSV_ENCODE, 'UTF-8');
+				$a[$ck] = $cs;
+			} else {
+				$a[$k] = $s;
+			}
+		}
+	}
+
+	// key順に並び替える（デザインが変更しても良いように）
+	//ksort($a);
+
+	// ファイル名
+	$csv_name = DIR_LOGS . '/' . CSV_FILE;
+
+	// ファイルロック
+	$lock_file = DIR_LOGS . '/lock';
+	do {
+		usleep(100000);	// 0.1秒スリープ(2000000 = 1秒)
+		$lock_fp = @fopen($lock_file, 'w');
+		$lock = @flock($lock_fp, LOCK_EX);
+	} while (!$lock);
+
+	// ファイルが存在するかどうかの確認
+	$first_time = false;
+	if (file_exists($csv_name) === false) {
+		$first_time = true;
+	}
+
+	// ファイル書き込み
+	$fp = fopen($csv_name, 'a');
+
+	// 最初の書き込みの場合は、ヘッダーも追加する
+	if ($first_time) {
+		$byte = fputcsv($fp, array_keys($a));
+	}
+	$byte = fputcsv($fp, array_values($a));
+	fclose($fp);
+
+    // ファイルロックの終了処理
+	fclose($lock_fp);
+	unlink($lock_file);
+	return $byte;
+}
+
+
+// ----------------------------------------------------------------
 // ヌルバイトの削除
 // ----------------------------------------------------------------
 function delete_nullbyte($s) {
