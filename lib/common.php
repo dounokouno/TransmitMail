@@ -6,7 +6,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-06-05
+ * Modified : 2012-09-30
 */
 
 // ----------------------------------------------------------------
@@ -437,7 +437,7 @@ function put_csv($post) {
 	$byte = fputcsv($fp, array_values($a));
 	fclose($fp);
 
-    // ファイルロックの終了処理
+	// ファイルロックの終了処理
 	fclose($lock_fp);
 	unlink($lock_file);
 	return $byte;
