@@ -104,6 +104,7 @@ define('ATTR_SELECTED', 'selected="selected"');
 
 // セッション設定
 define('DIR_TEMP', './temp');
+ini_set('session.save_handler', 'files');
 session_name('TRANSMITMAILSESSID');
 session_save_path(DIR_TEMP);
 session_set_cookie_params(0, DIR_MAILFORM, $_SERVER['HTTP_HOST']);
