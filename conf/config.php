@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-08-28
+ * Modified : 2012-09-30
 */
 
 // ----------------------------------------------------------------
@@ -35,14 +35,14 @@ define('AUTO_REPLY_FROM_EMAIL', '');
 // 自動返信メールの送信元メールアドレスの名前（空でも可）
 define('AUTO_REPLY_NAME', '株式会社テスト');
 
+// CSVファイルを出力（true=>yes, false=>no）
+define('CSV_OUTPUT', false);
+
 // 拒否ホスト名またはIPアドレスを正規表現で記述（複数あれば「|」（パイプ）で区切る）
 //  例1）前方一致は先頭に ^ をつける → ^192.168.1.*
 //  例2）後方一致は末尾に $ をつける → *.example.jp$
 //  例3）上記両方を設定する場合 → ^192.168.1.*|*.example.jp$
 define('DENY_HOST', '');
-
-// CSVファイルを出力する場合はtrue
-define('CSV_OUTPUT', true);
 
 // ----------------------------------------------------------------
 // ※以下は必要な場合のみ編集してください
