@@ -518,7 +518,7 @@ if ($page === 'deny') {
 	// -------------------------------------------------------
 	// 自動返信メール
 	// -------------------------------------------------------
-	if (AUTO_REPLY) {
+	if (AUTO_REPLY && isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL]) && $_POST[AUTO_REPLY_EMAIL] !== "") {
 		// 宛先
 		$to_email = $from_email;
 		
