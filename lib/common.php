@@ -6,14 +6,14 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-09-30
+ * Modified : 2012-10-17
 */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.0.5');
+define('VERSION', '1.0.6');
 
 // 入力情報として除外する項目
 define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url');
@@ -329,10 +329,14 @@ function send_mail($to_email, $subject, $body, $from_email, $from_name = '') {
 	$body = mb_convert_encoding($body, 'UTF-8', 'AUTO');
 	
 	// params
-	$params  = "-f$from_email";
+	$params = "-f$from_email";
 	
 	// send
-	return mail($to_email, $subject, $body, $headers, $params);
+	if (ini_get('safe_mode')) {
+		return mail($to_email, $subject, $body, $headers);
+	} else {
+		return mail($to_email, $subject, $body, $headers, $params);
+	}
 }
 
 
