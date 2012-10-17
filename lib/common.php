@@ -13,13 +13,15 @@
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.0.6');
+define('VERSION', '1.0.11');
 
 // 入力情報として除外する項目
 define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url');
 
 // タイムゾーン
-date_default_timezone_set('Asia/Tokyo');
+if (function_exists('date_default_timezone_set')) {
+	date_default_timezone_set('Asia/Tokyo');
+}
 
 
 // ----------------------------------------------------------------
@@ -256,12 +258,14 @@ function check_mail_address($s) {
 	return preg_match('/^([a-z0-9_]|\-|\.|\+)+@(([a-z0-9_]|\-)+\.)+[a-z]{2,6}$/i', $s);
 }
 
+
 // ----------------------------------------------------------------
 // URLの書式チェック
 // ----------------------------------------------------------------
 function check_url($s) {
 	return preg_match('/^(http|https):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i', $s);
 }
+
 
 // ----------------------------------------------------------------
 // 文字数チェック
