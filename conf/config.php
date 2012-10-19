@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-09-30
+ * Modified : 2012-10-19
 */
 
 // ----------------------------------------------------------------
@@ -34,6 +34,22 @@ define('AUTO_REPLY_FROM_EMAIL', '');
 
 // 自動返信メールの送信元メールアドレスの名前（空でも可）
 define('AUTO_REPLY_NAME', '株式会社テスト');
+
+// ファイル添付機能を利用する（true=>yes, false=>no）
+define('FILE', true);
+
+// ファイル添付を許可する拡張子（カンマ区切りで複数の拡張子を設定可能）
+//  例1）画像 → gif,jpg,jpeg,png
+//  例2）Office系 → doc,docx,xls,xlsx,ppt,pptx
+define('FILE_ALLOW_EXTENSION', 'gif,jpg,jpeg,png');
+
+// 1ファイルの上限サイズ（Byte）
+//  例）512000Bytes = 500KB
+define('FILE_MAX_SIZE', 512000);
+
+// ファイルの保存期間（秒）
+//  例）30分 = 1800秒
+define('FILE_RETENTION_PERIOD', 1800);
 
 // CSVファイルを出力（true=>yes, false=>no）
 define('CSV_OUTPUT', false);
@@ -94,6 +110,13 @@ define('ERROR_EMAIL', 'はメールアドレスの書式で入力してくださ
 define('ERROR_MATCH', 'が一致しません');
 define('ERROR_LEN', 'は{文字数}で入力してください');
 define('ERROR_URL', 'はURLの書式で入力してください');
+define('ERROR_FILE_EXTENSION', 'は許可されていない拡張子です');
+define('ERROR_FILE_EMPTY', 'は空のファイルです');
+define('ERROR_FILE_MAX_SIZE', 'は指定サイズ（{ファイルサイズ}）を超えています');
+define('ERROR_FILE_UPLOAD', 'のアップロードに失敗しました');
+define('ERROR_FILE_REMOVE', 'を削除できませんでした');
+define('ERROR_FILE_NOT_EXIST', 'は見つかりませんでした');
+define('ERROR_FILE_OVER_THE_PERIOD', 'は一時保存期間を超えました');
 define('ERROR_DENY', 'お使いのホストからのアクセスは管理者によって拒否されています');
 define('ERROR_FAILURE_SEND_MAIL', 'メールの送信に失敗しました');
 define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗しました');
@@ -102,11 +125,12 @@ define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗
 define('ATTR_CHECKED', 'checked="checked"');
 define('ATTR_SELECTED', 'selected="selected"');
 
+// ファイルアップロード
+define('FILE_NAME_PREFIX', 'file_');
+
 // セッション設定
 define('DIR_TEMP', './temp');
 ini_set('session.save_handler', 'files');
 session_name('TRANSMITMAILSESSID');
 session_save_path(DIR_TEMP);
 session_set_cookie_params(0, DIR_MAILFORM, $_SERVER['HTTP_HOST']);
-
-?>

@@ -6,17 +6,17 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-10-17
+ * Modified : 2012-10-19
 */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.0.11');
+define('VERSION', '1.1.0');
 
 // 入力情報として除外する項目
-define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url');
+define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url|file|file_remove');
 
 // タイムゾーン
 if (function_exists('date_default_timezone_set')) {
@@ -289,6 +289,14 @@ function check_len($s, $a) {
 
 
 // ----------------------------------------------------------------
+// 添付ファイルの拡張子チェック
+// ----------------------------------------------------------------
+function check_file_extension($s) {
+	return preg_match('/\.' . str_replace(',', '$|\.', FILE_ALLOW_EXTENSION) . '$/i', $s);
+}
+
+
+// ----------------------------------------------------------------
 // input type="hidden"に置き換え
 // ----------------------------------------------------------------
 function convert_input_hidden($k, $v) {
@@ -311,7 +319,7 @@ function convert_input_hidden($k, $v) {
 // ----------------------------------------------------------------
 // メール送信
 // ----------------------------------------------------------------
-function send_mail($to_email, $subject, $body, $from_email, $from_name = '') {
+function send_mail($to_email, $subject, $body, $from_email, $from_name = '', $files = array()) {
 	// from
 	if (empty($from_name)) {
 		$from = $from_email;
@@ -319,18 +327,52 @@ function send_mail($to_email, $subject, $body, $from_email, $from_name = '') {
 		$from = mb_encode_mimeheader(mb_convert_encoding($from_name, 'UTF-8', 'AUTO')) . ' <' . $from_email . '>';
 	}
 	
+	// file_flag
+	$file_flag = false;
+	if (count($files) > 0) {
+		$file_flag = true;
+	}
+	
 	// headers
+	$array = array();
 	$array[] = 'MIME-Version: 1.0';
 	$array[] = 'From: ' . $from;
 	$array[] = 'Reply-To: ' . $from;
-	$array[] = 'Content-Type: text/plain; charset=UTF-8';
+	if (!$file_flag) {
+		$array[] = 'Content-Type: text/plain; charset=UTF-8';
+	} else {
+		$boundary = uniqid(rand());
+		$array[] = 'Content-Type: multipart/mixed; boundary=' . $boundary;
+	}
 	$headers = implode("\n", $array);
 	
 	// subject
 	$subject = mb_encode_mimeheader(mb_convert_encoding($subject, 'UTF-8', 'AUTO'));
 	
 	// body
-	$body = mb_convert_encoding($body, 'UTF-8', 'AUTO');
+	if (!$file_flag) {
+		$body = mb_convert_encoding($body, 'UTF-8', 'AUTO');
+	} else {
+		$array = array();
+		$array[] = '--' . $boundary;
+		$array[] = 'Content-Type: text/plain; charset=UTF-8';
+		$array[] = '';
+		$array[] = mb_convert_encoding($body, 'UTF-8', 'AUTO');
+		$array[] = '';
+		$array[] = '';
+		
+		foreach ($files as $file) {
+			$array[] = '--' . $boundary;
+			$array[] = 'Content-Type: ' . get_mime_type($file['tmp_name']) . '; name="' . $file['name'] . '"';
+			$array[] = 'Content-Transfer-Encoding: base64';
+			$array[] = 'Content-Disposition: attachment; filename="' . $file['name'] . '"';
+			$array[] = '';
+			$array[] = chunk_split(base64_encode(file_get_contents(DIR_TEMP . '/' . $file['tmp_name'])));
+		}
+		
+		$array[] = '--' . $boundary . '--';
+		$body = implode("\n", $array);
+	}
 	
 	// params
 	$params = "-f$from_email";
@@ -513,12 +555,118 @@ function h($s) {
 
 // ----------------------------------------------------------------
 // html_entity_decodeのショートハンド関数
-// --------------------------------------------------------------
+// ----------------------------------------------------------------
 function hd($s) {
 	if(is_array($s)) {
 		return array_map('hd', $s);
 	}
 	return html_entity_decode($s, ENT_QUOTES, mb_internal_encoding());
+}
+
+
+// ----------------------------------------------------------------
+// ファイル容量のフォーマット
+// ----------------------------------------------------------------
+function format_bytes($bytes) {
+	if ($bytes < 1024) {
+		return $bytes .'B';
+	} elseif ($bytes < 1048576) {
+		return round($bytes / 1024, 2) . 'KB';
+	} elseif ($bytes < 1073741824) {
+		return round($bytes / 1048576, 2) . 'MB';
+	} elseif ($bytes < 1099511627776) {
+		return round($bytes / 1073741824, 2) . 'GB';
+	} elseif ($bytes < 1125899906842624) {
+		return round($bytes / 1099511627776, 2) . 'TB';
+	} elseif ($bytes < 1152921504606846976) {
+		return round($bytes / 1125899906842624, 2) . 'PB';
+	} elseif ($bytes < 1180591620717411303424) {
+		return round($bytes / 1152921504606846976, 2) . 'EB';
+	} elseif ($bytes < 1208925819614629174706176) {
+		return round($bytes / 1180591620717411303424, 2) . 'ZB';
+	} else {
+		return round($bytes / 1208925819614629174706176, 2) . 'YB';
+	}
+}
+
+
+// ----------------------------------------------------------------
+// 拡張子からMIME Typeを判別
+// ----------------------------------------------------------------
+function get_mime_type($s) {
+	preg_match('/\.([a-z0-9]{2,4})$/i', $s, $matches);
+	$suffix = strtolower($matches[1]);
+	switch ($suffix) {
+		case 'jpg':
+		case 'jpeg':
+		case 'jpe':
+			return 'image/jpeg';
+		case 'png':
+		case 'gif':
+		case 'bmp':
+		case 'tiff':
+			return 'image/' . $suffix;
+		case 'css':
+			return 'text/css';
+		case 'js':
+			return 'application/x-javascript';
+		case 'json':
+			return 'application/json';
+		case 'xml':
+			return 'application/xml';
+		case 'doc':
+		case 'docx':
+			return 'application/msword';
+		case 'xls':
+		case 'xlsx':
+		case 'xlt':
+		case 'xlm':
+		case 'xld':
+		case 'xla':
+		case 'xlc':
+		case 'xlw':
+		case 'xll':
+			return 'application/vnd.ms-excel';
+		case 'ppt':
+		case 'pptx':
+		case 'pps':
+			return 'application/vnd.ms-powerpoint';
+		case 'rtf':
+			return 'application/rtf';
+		case 'pdf':
+			return 'application/pdf';
+		case 'html':
+		case 'htm':
+		case 'php':
+			return 'text/html';
+		case 'txt':
+			return 'text/plain';
+		case 'mpeg':
+		case 'mpg':
+		case 'mpe':
+			return 'video/mpeg';
+		case 'mp3':
+			return 'audio/mpeg3';
+		case 'wav':
+			return 'audio/wav';
+		case 'aiff':
+		case 'aif':
+			return 'audio/aiff';
+		case 'avi':
+			return 'video/msvideo';
+		case 'wmv':
+			return 'video/x-ms-wmv';
+		case 'mov':
+			return 'video/quicktime';
+		case 'zip':
+			return 'application/zip';
+		case 'tar':
+			return 'application/x-tar';
+		case 'swf':
+			return 'application/x-shockwave-flash';
+		default:
+			return 'application/octet-stream';
+	}
 }
 
 
@@ -547,6 +695,3 @@ function print_debug($v) {
 	var_dump($v);
 	echo '</pre>';
 }
-
-
-?>

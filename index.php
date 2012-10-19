@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-09-30
+ * Modified : 2012-10-19
 */
 
 // --------------------------------------------------------------
@@ -341,6 +341,98 @@ if (isset($_POST['url'])) {
 	}
 }
 
+// ファイル添付を利用する場合
+if (FILE) {
+	$files = array();
+	
+	// ファイルの削除
+	if (isset($_POST['file_remove'])) {
+		foreach ($_POST['file_remove'] as $v) {
+			if (file_exists(DIR_TEMP . '/' . $v) && (preg_match('/^' . FILE_NAME_PREFIX . '/', $v)) && check_file_extension($v)) {
+				if (!unlink(DIR_TEMP . '/' . $v)) {
+					$global_error[] = h($v . ERROR_FILE_REMOVE);
+					$global_error_flag = true;
+				}
+			} else {
+				$global_error[] = h($v . ERROR_FILE_REMOVE);
+				$global_error_flag = true;
+			}
+		}
+	}
+	
+	// 既にファイルがアップロードされている場合
+	if (isset($_POST['file'])) {
+		foreach ($_POST['file'] as $k => $v) {
+			if (isset($v['tmp_name'])) {
+				// singleの場合
+				if (file_exists(DIR_TEMP . '/' . $v['tmp_name'])) {
+					$tmpl->set("$k.tmp_name", h($v['tmp_name']));
+					$tmpl->set("$k.name", h($v['name']));
+					$files[$k] = array('tmp_name' => h($v['tmp_name']), 'name' => h($v['name']));
+				}
+			}
+		}
+	}
+	
+	// ファイルのアップロード
+	if (isset($_FILES)) {
+		foreach ($_FILES as $k => $v) {
+			$file_error = array();
+			$tmpl->set("file.$k", false);
+			if (!is_array($v['name'])) {
+				// singleの場合
+				if (!empty($v['name'])) {
+					// 拡張子のチェック
+					if (FILE_ALLOW_EXTENSION !== '' && !check_file_extension($v['name'])) {
+						$file_error[] = h($k . ERROR_FILE_EXTENSION);
+						$global_error[] = h($k . ERROR_FILE_EXTENSION);
+						$global_error_flag = true;
+					}
+					
+					// 空ファイルのチェック
+					if ($v['size'] === 0) {
+						$file_error[] = h($k . ERROR_FILE_EMPTY);
+						$global_error[] = h($k . ERROR_FILE_EMPTY);
+						$global_error_flag = true;
+					}
+					
+					// ファイルサイズのチェック
+					if ($v['size'] > FILE_MAX_SIZE) {
+						$file_error[] = h($k . str_replace('{ファイルサイズ}', format_bytes(FILE_MAX_SIZE), ERROR_FILE_MAX_SIZE));
+						$global_error[] = h($k . str_replace('{ファイルサイズ}', format_bytes(FILE_MAX_SIZE), ERROR_FILE_MAX_SIZE));
+						$global_error_flag = true;
+					}
+					
+					// エラーを判別
+					if (count($file_error) > 0) {
+						// エラーがある場合、エラーメッセージをセット
+						$tmpl->set("file.$k", $file_error);
+					} else {
+						// エラーが無い場合、ファイルをDIR_TEMPに移動
+						$tmp_name = FILE_NAME_PREFIX . uniqid(rand()) . '_' . $v['name'];
+						$file_path = DIR_TEMP . '/' . $tmp_name;
+						if (move_uploaded_file($v['tmp_name'], $file_path)) {
+							$tmpl->set("$k.tmp_name", h($tmp_name));
+							$tmpl->set("$k.name", h($v['name']));
+							$files[$k] = array('tmp_name' => h($tmp_name), 'name' => h($v['name']));
+						} else {
+							// アップロードに失敗した場合
+							$file_error[] = h($k . ERROR_FILE_UPLOAD);
+							$global_error[] = h($k . ERROR_FILE_UPLOAD);
+							$global_error_flag = true;
+							$tmpl->set("file.$k", $file_error);
+						}
+					}
+				} else {
+					if (!isset($files[$k])) {
+						$files[$k] = false;
+					}
+				}
+			}
+		}
+	}
+}
+
 // セッションチェック
 $session_flag = false;
 session_start();
@@ -359,11 +451,15 @@ if ($deny_flag) {
 } elseif (isset($_GET['mode']) && ($_GET['mode'] === 'check')) {
 	// チェックモード
 	$page = 'checkmode';
-
+	
+} elseif (isset($_GET['file'])) {
+	// ファイル表示
+	$page = 'file';
+	
 } elseif (!$session_flag) {
 	// セッションが無い場合 入力画面
 	$page = '';
-
+	
 } elseif (count($_POST) > 0) {
 	if ($global_error_flag) {
 		// エラーがある場合 入力エラー画面
@@ -422,6 +518,8 @@ if (empty($page)) {
 	// 確認画面 or 完了画面
 	$params = array();
 	$hiddens = array();
+	
+	// $_POST
 	foreach ($_POST as $k => $v) {
 		$pattern = '/' . EXCLUSION_ITEM . '/';
 		if (!preg_match($pattern, $k)) {
@@ -435,10 +533,32 @@ if (empty($page)) {
 			$tmpl->set("$k.value", h($s));
 			$tmpl->set("$k.value.nl2br", nl2br(h($s)));
 			$tmpl->set("$k.hidden", $h);
-			$params[] = array('key'=>h($k), 'value'=>h($s), 'value.nl2br'=>nl2br(h($s)), 'hidden'=>$h);
+			$params[] = array('key' => h($k), 'value' => h($s), 'value.nl2br' => nl2br(h($s)), 'hidden' => $h);
 			$hiddens[] = $h;
 		}
 	}
+	
+	// $_FILES
+	if (FILE) {
+		$array = array();
+		foreach ($files as $k => $v) {
+			if (isset($v['tmp_name'])) {
+				// singleの場合
+				$h_tmp_name = convert_input_hidden('file[' . $k . '][tmp_name]', $v['tmp_name']);
+				$h_name = convert_input_hidden('file[' . $k . '][name]', $v['name']);
+				$tmpl->set("$k.key", h($k));
+				$tmpl->set("$k.tmp_name", h($v['tmp_name']));
+				$tmpl->set("$k.name", h($v['name']));
+				$tmpl->set("$k.hidden_tmp_name", $h_tmp_name);
+				$tmpl->set("$k.hidden_name", $h_name);
+				$array[] = array('key' => h($k), 'tmp_name' => h($v['tmp_name']), 'name' => h($v['name']), 'hidden_tmp_name' => $h_tmp_name, 'hidden_name' => $h_tmp_name);
+				$hiddens[] = $h_tmp_name;
+				$hiddens[] = $h_name;
+			}
+		}
+		$tmpl->set('files', $array);
+	}
+	
 	$tmpl->set('params', $params);
 	$tmpl->set('hiddens', implode('', $hiddens));
 	$tmpl->set('_GET', h($_GET));
@@ -463,14 +583,32 @@ if ($page === 'deny') {
 	
 	// HTML書き出し
 	echo $tmpl->fetch(TMPL_ERROR);
-	exit();
-	
 	
 } elseif ($page === 'checkmode') {
 	// -------------------------------------------------------
 	// チェックモード
 	// -------------------------------------------------------
 	output_checkmode();
+	exit();
+	
+} elseif ($page === 'file') {
+	// -------------------------------------------------------
+	// ファイル表示
+	// -------------------------------------------------------
+	$file_path = DIR_TEMP . '/' . $_GET['file'];
+	if (file_exists($file_path)) {
+		if ((filemtime($file_path) + FILE_RETENTION_PERIOD) < time()) {
+			// 保存期間を超えている場合
+			echo $_GET['file'] . ERROR_FILE_OVER_THE_PERIOD;
+		} else {
+			header('Content-type: ' . get_mime_type($_GET['file']));
+			readfile(DIR_TEMP . '/' . $_GET['file']);
+		}
+	} else {
+		// ファイルが存在しない
+		echo $_GET['file'] . ERROR_FILE_NOT_EXIST;
+	}
+	exit();
 	
 } elseif ($page === 'finish') {
 	// -------------------------------------------------------
@@ -494,14 +632,19 @@ if ($page === 'deny') {
 	}
 	
 	// メール送信
-	$result = send_mail($to_email, $to_subject, $body, $from_email);
+	if (!FILE) {
+		$result = send_mail($to_email, $to_subject, $body, $from_email, '');
+	} else {
+		$result = send_mail($to_email, $to_subject, $body, $from_email, '', $files);
+	}
 	
 	// 送信できなかった場合
 	if (!$result) {
 		// エラーメッセージ
 		$global_error_flag = true;
 		$global_error[] = ERROR_FAILURE_SEND_MAIL;
-		// ログ出力
+		
+		// ログの内容
 		$suffix = 'sendmail';
 		$data = ERROR_FAILURE_SEND_MAIL .
 			"\n\n" .
@@ -512,6 +655,24 @@ if ($page === 'deny') {
 			"$to_subject\n\n" .
 			"【本文】\n" .
 			"$body";
+		
+		// 添付ファイルがある場合
+		if (FILE) {
+			foreach ($files as $key => $file ) {
+				if (copy(DIR_TEMP . '/' . $file['tmp_name'], DIR_LOGS . '/' . $file['tmp_name'])) {
+					$data .= "\n\n" .
+						"【$key】\n" .
+						"ファイル名 : $file[name]\n" .
+						"一時保存ファイル名 : $file[tmp_name]";
+				} else {
+					$data .= "\n\n" .
+						"【$key】\n" .
+						"ファイルの保存に失敗しました";
+				}
+			}
+		}
+		
+		// ログ出力
 		put_error_log($data, $suffix);
 	}
 	
@@ -539,14 +700,19 @@ if ($page === 'deny') {
 		}
 		
 		// メール送信
-		$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME);
-	
+		if (!FILE) {
+			$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME);
+		} else {
+  		$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME, $files);
+		}
+		
 		// 送信できなかった場合
 		if (!$result) {
 			// エラーメッセージ
 			$global_error_flag = true;
 			$global_error[] = ERROR_FAILURE_SEND_AUTO_REPLY;
-			// ログ出力
+			
+			// ログの内容
 			$suffix = 'autoreply';
 			$data = ERROR_FAILURE_SEND_AUTO_REPLY .
 				"\n\n" .
@@ -557,7 +723,34 @@ if ($page === 'deny') {
 				"$to_subject\n\n" .
 				"【本文】\n" .
 				"$body";
+			
+			// 添付ファイルがある場合
+			if (FILE) {
+				foreach ($files as $key => $file) {
+					if (copy(DIR_TEMP . '/' . $file['tmp_name'], DIR_LOGS . '/' . $file['tmp_name'])) {
+						$data .= "\n\n" .
+							"【$key】\n" .
+							"ファイル名 : $file[name]\n" .
+							"一時保存ファイル名 : $file[tmp_name]";
+					} else {
+						$data .= "\n\n" .
+							"【$key】\n" .
+							"ファイルの保存に失敗しました";
+					}
+				}
+			}
+			
+			// ログ出力
 			put_error_log($data, $suffix);
+		}
+	}
+	
+	// -------------------------------------------------------
+	// 添付ファイルを削除
+	// -------------------------------------------------------
+	if (FILE) {
+		foreach ($files as $file) {
+			unlink(DIR_TEMP . '/' . $file['tmp_name']);
 		}
 	}
 	
@@ -578,12 +771,10 @@ if ($page === 'deny') {
 		$tmpl->set('global_error_flag', $global_error_flag);
 		$tmpl->set('global_error', $global_error);
 		echo $tmpl->fetch(TMPL_ERROR);
-		exit();
 		
 	} else {
 		// 送信できた場合
 		echo $tmpl->fetch(TMPL_FINISH);
-		exit();
 		
 	}
 	
@@ -594,7 +785,6 @@ if ($page === 'deny') {
 	
 	// テンプレート書き出し
 	echo $tmpl->fetch(TMPL_CONFIRM);
-	exit();
 	
 } else {
 	// -------------------------------------------------------
@@ -607,8 +797,5 @@ if ($page === 'deny') {
 	
 	// HTML書き出し
 	echo $tmpl->fetch(TMPL_INPUT);
-	exit();
 	
 }
-
-?>
