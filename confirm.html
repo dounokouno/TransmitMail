@@ -35,7 +35,7 @@
 					<th>{$files[].key}&nbsp;</th>
 					<td>{$files[].name}<br />
 						<img src="index.php?file={$files[].tmp_name}" width="300" /><br />
-						<a href="index.php?file={$ファイル.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></td>
+						<a href="index.php?file={$files[].tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></td>
 				</tr>
 				{/loop:$files}
 			</table>
