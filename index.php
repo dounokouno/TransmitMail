@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-10-19
+ * Modified : 2012-10-21
 */
 
 // --------------------------------------------------------------
@@ -448,7 +448,7 @@ if ($deny_flag) {
 	// アクセス拒否
 	$page === 'deny';
 	
-} elseif (isset($_GET['mode']) && ($_GET['mode'] === 'check')) {
+} elseif (CHECK_MODE && isset($_GET['mode']) && ($_GET['mode'] === 'check')) {
 	// チェックモード
 	$page = 'checkmode';
 	

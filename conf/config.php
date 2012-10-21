@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-10-19
+ * Modified : 2012-10-21
 */
 
 // ----------------------------------------------------------------
@@ -34,6 +34,9 @@ define('AUTO_REPLY_FROM_EMAIL', '');
 
 // 自動返信メールの送信元メールアドレスの名前（空でも可）
 define('AUTO_REPLY_NAME', '株式会社テスト');
+
+// チェックモードを利用する（true=>yes, false=>no）
+define('CHECK_MODE', true);
 
 // ファイル添付機能を利用する（true=>yes, false=>no）
 define('FILE', true);
