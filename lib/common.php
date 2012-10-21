@@ -50,12 +50,17 @@ function output_checkmode() {
 	// sendmail
 	$a[] = '<h2>sendmail</h2>';
 	$a[] = '<ul>';
-	$ini = ini_get_all();
-	$sendmail = $ini['sendmail_path']['global_value'];
-	if ($sendmail != '') {
-		$a[] = '<li>' . $sendmail . '</li>';
+	$a[] = '<li>' . ini_get('sendmail_path') . '</li>';
+	$a[] = '</li>';
+	$a[] = '</ul>';
+	
+	// safe_mode
+	$a[] = '<h2>セーフモード</h2>';
+	$a[] = '<ul>';
+	if (ini_get('safe_mode')) {
+		$a[] = '<li>On</li>';
 	} else {
-		$a[] = '<li>' . $ng . '</li>';
+		$a[] = '<li>Off</li>';
 	}
 	$a[] = '</li>';
 	$a[] = '</ul>';
