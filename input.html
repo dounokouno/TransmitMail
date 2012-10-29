@@ -313,6 +313,17 @@
 								{/if:$url.URL}
 							</td>
 						</tr>
+						<tr>
+							<th>1〜12の数字</th>
+							<td>
+								<input type="text" name="1〜12の数字" value="{$1〜12の数字}" class="middle" />
+								<input type="hidden" name="num_range[]" value="1〜12の数字 1-12" />
+								{if:$num_range.1〜12の数字}
+								<div class="error"><em>{$num_range.1〜12の数字}</em></div>
+								{/if:$num_range.1〜12の数字}
+							</td>
+						</tr>
+
 					</table>
 				</div>
 				<div class="section">

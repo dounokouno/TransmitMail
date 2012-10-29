@@ -341,6 +341,32 @@ if (isset($_POST['url'])) {
 	}
 }
 
+// 整数範囲チェック
+if (isset($_POST['num_range'])) {
+	foreach ($_POST['num_range'] as $v) {
+		$array = preg_split('/\s|,/', $v);
+		$delim = explode('-', $array[1]);
+		$delim = array_map('intval', $delim);
+		$tmpl->set("num_range.$array[0]", false);
+		if (isset($_POST[$array[0]]) && $_POST[$array[0]] != "" && !check_num_range($_POST[$array[0]], $delim)) {
+			if (!isset($delim[0])) {
+				$error_num_range = str_replace('{範囲}', "{$delim[1]}以下", ERROR_NUM_RANGE);
+			} elseif (!isset($delim[1])) {
+				$error_num_range = str_replace('{範囲}', "{$delim[0]}以上", ERROR_NUM_RANGE);
+			} else {
+				if ($delim[0] === $delim[1]) {
+					$error_num_range = str_replace('{範囲}', "丁度{$delim[0]}", ERROR_NUM_RANGE);
+				} else {
+					$error_num_range = str_replace('{範囲}', "{$delim[0]}以上、{$delim[1]}以下", ERROR_NUM_RANGE);
+				}
+			}
+			$tmpl->set("num_range.$array[0]", h($array[0] . $error_num_range));
+			$global_error[] = h($array[0] . $error_num_range);
+			$global_error_flag = true;
+		}
+	}
+}
+
 // ファイル添付を利用する場合
 if (FILE) {
 	$files = array();
