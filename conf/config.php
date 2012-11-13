@@ -129,11 +129,13 @@ define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗
 define('ATTR_CHECKED', 'checked="checked"');
 define('ATTR_SELECTED', 'selected="selected"');
 
+// 一時保存ディレクトリ
+define('DIR_TEMP', './temp');
+
 // ファイルアップロード
 define('FILE_NAME_PREFIX', 'file_');
 
 // セッション設定
-define('DIR_TEMP', './temp');
 ini_set('session.save_handler', 'files');
 session_name('TRANSMITMAILSESSID');
 session_save_path(DIR_TEMP);
