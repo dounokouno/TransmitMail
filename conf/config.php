@@ -69,6 +69,7 @@ define('DENY_HOST', '');
 
 // エラー表示（On=>表示, Off=>非表示）
 ini_set('display_errors', 'Off');
+error_reporting(E_ALL);
 
 // ログファイル出力ディレクトリ
 define('DIR_LOGS', './logs');
