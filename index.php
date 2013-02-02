@@ -703,7 +703,7 @@ if ($page === 'deny') {
 		if (!FILE) {
 			$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME);
 		} else {
-  		$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME, $files);
+			$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME, $files);
 		}
 		
 		// 送信できなかった場合
