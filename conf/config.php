@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-11-15
+ * Modified : 2013-05-23
 */
 
 // ----------------------------------------------------------------
@@ -99,36 +99,36 @@ define('MAIL_BODY', './conf/mail_body.txt');							// 送信メール
 define('MAIL_AUTO_REPLY_BODY', './conf/mail_autoreply_body.txt');	// 自動返信メール
 
 // エラーメッセージ
-define('ERROR_REQUIRED', 'は入力必須です');
-define('ERROR_HANKAKU', 'は半角文字で入力してください');
-define('ERROR_HANKAKU_EISU', 'は半角英数字で入力してください');
-define('ERROR_HANKAKU_EIJI', 'は半角英字で入力してください');
-define('ERROR_NUM', 'は数字で入力してください');
-define('ERROR_NUM_HYPHEN', 'は数字とハイフンで入力してください');
-define('ERROR_HIRAGANA', 'はひらがなで入力してください');
-define('ERROR_ZENKAKU_KATAKANA', 'は全角カタカナで入力してください');
-define('ERROR_HANKAKU_KATAKANA', 'は半角カタカナで入力してください');
-define('ERROR_ZENKAKU', 'は全角文字を含めて入力してください');
-define('ERROR_ZENKAKU_ALL', 'は全て全角文字で入力してください');
-define('ERROR_EMAIL', 'はメールアドレスの書式で入力してください');
-define('ERROR_MATCH', 'が一致しません');
-define('ERROR_LEN', 'は{文字数}で入力してください');
-define('ERROR_URL', 'はURLの書式で入力してください');
-define('ERROR_NUM_RANGE', 'は{範囲}の数値を入力してください');
-define('ERROR_FILE_EXTENSION', 'は許可されていない拡張子です');
-define('ERROR_FILE_EMPTY', 'は空のファイルです');
-define('ERROR_FILE_MAX_SIZE', 'は指定サイズ（{ファイルサイズ}）を超えています');
-define('ERROR_FILE_UPLOAD', 'のアップロードに失敗しました');
-define('ERROR_FILE_REMOVE', 'を削除できませんでした');
-define('ERROR_FILE_NOT_EXIST', 'は見つかりませんでした');
-define('ERROR_FILE_OVER_THE_PERIOD', 'は一時保存期間を超えました');
-define('ERROR_DENY', 'お使いのホストからのアクセスは管理者によって拒否されています');
-define('ERROR_FAILURE_SEND_MAIL', 'メールの送信に失敗しました');
-define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗しました');
+define('ERROR_REQUIRED', 'は入力必須です。');
+define('ERROR_HANKAKU', 'は半角文字で入力してください。');
+define('ERROR_HANKAKU_EISU', 'は半角英数字で入力してください。');
+define('ERROR_HANKAKU_EIJI', 'は半角英字で入力してください。');
+define('ERROR_NUM', 'は数字で入力してください。');
+define('ERROR_NUM_HYPHEN', 'は数字とハイフンで入力してください。');
+define('ERROR_HIRAGANA', 'はひらがなで入力してください。');
+define('ERROR_ZENKAKU_KATAKANA', 'は全角カタカナで入力してください。');
+define('ERROR_HANKAKU_KATAKANA', 'は半角カタカナで入力してください。');
+define('ERROR_ZENKAKU', 'は全角文字を含めて入力してください。');
+define('ERROR_ZENKAKU_ALL', 'は全て全角文字で入力してください。');
+define('ERROR_EMAIL', 'はメールアドレスの書式で入力してください。');
+define('ERROR_MATCH', 'が一致しません。');
+define('ERROR_LEN', 'は{文字数}で入力してください。');
+define('ERROR_URL', 'はURLの書式で入力してください。');
+define('ERROR_NUM_RANGE', 'は{範囲}の数値で入力してください。');
+define('ERROR_FILE_EXTENSION', 'は許可されていない拡張子です。');
+define('ERROR_FILE_EMPTY', 'は空のファイルです。');
+define('ERROR_FILE_MAX_SIZE', 'は指定サイズ（{ファイルサイズ}）を超えています。');
+define('ERROR_FILE_UPLOAD', 'のアップロードに失敗しました。');
+define('ERROR_FILE_REMOVE', 'を削除できませんでした。');
+define('ERROR_FILE_NOT_EXIST', 'は見つかりませんでした。');
+define('ERROR_FILE_OVER_THE_PERIOD', 'は一時保存期間を超えました。');
+define('ERROR_DENY', 'お使いのホストからのアクセスは管理者によって拒否されています。');
+define('ERROR_FAILURE_SEND_MAIL', 'メールの送信に失敗しました。');
+define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗しました。');
 
 // 入力フォームパーツの属性
-define('ATTR_CHECKED', 'checked="checked"');
-define('ATTR_SELECTED', 'selected="selected"');
+define('ATTR_CHECKED', 'checked');
+define('ATTR_SELECTED', 'selected');
 
 // 一時保存ディレクトリ
 define('DIR_TEMP', './temp');

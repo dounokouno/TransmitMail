@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-10-21
+ * Modified : 2013-05-23
 */
 
 // --------------------------------------------------------------
@@ -348,21 +348,29 @@ if (isset($_POST['num_range'])) {
 		$delim = explode('-', $array[1]);
 		$delim = array_map('intval', $delim);
 		$tmpl->set("num_range.$array[0]", false);
-		if (isset($_POST[$array[0]]) && $_POST[$array[0]] != "" && !check_num_range($_POST[$array[0]], $delim)) {
-			if (!isset($delim[0])) {
-				$error_num_range = str_replace('{範囲}', "{$delim[1]}以下", ERROR_NUM_RANGE);
-			} elseif (!isset($delim[1])) {
-				$error_num_range = str_replace('{範囲}', "{$delim[0]}以上", ERROR_NUM_RANGE);
+		if ($_POST[$array[0]] !== '') {
+			// 数値チェック
+			$_POST[$array[0]] = mb_convert_kana($_POST[$array[0]], 'n');
+			if (!check_num($_POST[$array[0]])) {
+				$tmpl->set("num_range.$array[0]", h($array[0] . ERROR_NUM));
+				$global_error[] = h($array[0] . ERROR_NUM);
+				$global_error_flag = true;
 			} else {
-				if ($delim[0] === $delim[1]) {
-					$error_num_range = str_replace('{範囲}', "丁度{$delim[0]}", ERROR_NUM_RANGE);
-				} else {
-					$error_num_range = str_replace('{範囲}', "{$delim[0]}以上、{$delim[1]}以下", ERROR_NUM_RANGE);
+				if (!check_num_range($_POST[$array[0]], $delim)) {
+					if ($delim[0] === $delim[1]) {
+						$error_num_range = str_replace('{範囲}', "ちょうど{$delim[0]}", ERROR_NUM_RANGE);
+					} else {
+						if ($delim[1] === 0) {
+							$error_num_range = str_replace('{範囲}', "{$delim[0]}以上", ERROR_NUM_RANGE);
+						} else {
+							$error_num_range = str_replace('{範囲}', "{$delim[0]}以上、{$delim[1]}以下", ERROR_NUM_RANGE);
+						}
+					}
+					$tmpl->set("num_range.$array[0]", h($array[0] . $error_num_range));
+					$global_error[] = h($array[0] . $error_num_range);
+					$global_error_flag = true;
 				}
 			}
-			$tmpl->set("num_range.$array[0]", h($array[0] . $error_num_range));
-			$global_error[] = h($array[0] . $error_num_range);
-			$global_error_flag = true;
 		}
 	}
 }
@@ -705,7 +713,7 @@ if ($page === 'deny') {
 	// -------------------------------------------------------
 	// 自動返信メール
 	// -------------------------------------------------------
-	if (AUTO_REPLY && isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL]) && $_POST[AUTO_REPLY_EMAIL] !== "") {
+	if (AUTO_REPLY && isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL]) && $_POST[AUTO_REPLY_EMAIL] !== '') {
 		// 宛先
 		$to_email = $from_email;
 		

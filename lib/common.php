@@ -6,17 +6,17 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-11-15
+ * Modified : 2013-05-23
 */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.1.5');
+define('VERSION', '1.2.1');
 
 // 入力情報として除外する項目
-define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url|file|file_remove');
+define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url|num_range|file|file_remove');
 
 // タイムゾーン
 if (function_exists('date_default_timezone_set')) {
@@ -284,7 +284,7 @@ function check_len($s, $a) {
 		if (mb_strlen($s) < $a[0]) {
 			return false;
 		}
-	}	else {
+	} else {
 		if ((mb_strlen($s) < $a[0]) || (mb_strlen($s) > $a[1])) {
 			return false;
 		}
@@ -295,13 +295,16 @@ function check_len($s, $a) {
 // ----------------------------------------------------------------
 // 整数範囲チェック
 // ----------------------------------------------------------------
-function check_num_range($s, $a) {
-	$num = intval($s);
-	if(isset($a[0])) {
-		if($num < $a[0]) return false;
-	} 
-	if (isset($a[1])) {
-		if($num > $a[1])  return false;
+function check_num_range($n, $a) {
+	if ($a[0] >= 0) {
+		if ($n < $a[0]) {
+			return false;
+		}
+	}
+	if ($a[1] > 0) {
+		if ($n > $a[1]) {
+			return false;
+		}
 	}
 	return true;
 }

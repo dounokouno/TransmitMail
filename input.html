@@ -314,6 +314,36 @@
 							</td>
 						</tr>
 						<tr>
+							<th>3以下の数字</th>
+							<td>
+								<input type="text" name="3以下の数字" value="{$3以下の数字}" class="middle" />
+								<input type="hidden" name="num_range[]" value="3以下の数字 -3" />
+								{if:$num_range.3以下の数字}
+								<div class="error"><em>{$num_range.3以下の数字}</em></div>
+								{/if:$num_range.3以下の数字}
+							</td>
+						</tr>
+						<tr>
+							<th>3以上の数字</th>
+							<td>
+								<input type="text" name="3以上の数字" value="{$3以上の数字}" class="middle" />
+								<input type="hidden" name="num_range[]" value="3以上の数字 3-" />
+								{if:$num_range.3以上の数字}
+								<div class="error"><em>{$num_range.3以上の数字}</em></div>
+								{/if:$num_range.3以上の数字}
+							</td>
+						</tr>
+						<tr>
+							<th>ちょうど3の数字</th>
+							<td>
+								<input type="text" name="ちょうど3の数字" value="{$ちょうど3の数字}" class="middle" />
+								<input type="hidden" name="num_range[]" value="ちょうど3の数字 3-3" />
+								{if:$num_range.ちょうど3の数字}
+								<div class="error"><em>{$num_range.ちょうど3の数字}</em></div>
+								{/if:$num_range.ちょうど3の数字}
+							</td>
+						</tr>
+						<tr>
 							<th>1〜12の数字</th>
 							<td>
 								<input type="text" name="1〜12の数字" value="{$1〜12の数字}" class="middle" />
@@ -323,7 +353,6 @@
 								{/if:$num_range.1〜12の数字}
 							</td>
 						</tr>
-
 					</table>
 				</div>
 				<div class="section">
