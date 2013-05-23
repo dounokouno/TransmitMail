@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2012-11-15
+ * Modified : 2013-05-23
 */
 
 // ----------------------------------------------------------------
@@ -125,6 +125,7 @@ define('ERROR_FILE_OVER_THE_PERIOD', 'は一時保存期間を超えました');
 define('ERROR_DENY', 'お使いのホストからのアクセスは管理者によって拒否されています');
 define('ERROR_FAILURE_SEND_MAIL', 'メールの送信に失敗しました');
 define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗しました');
+define('ERROR_NUM_RANGE', 'は{範囲}の数値で入力してください');
 
 // 入力フォームパーツの属性
 define('ATTR_CHECKED', 'checked="checked"');
