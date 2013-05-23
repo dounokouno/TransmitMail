@@ -284,7 +284,7 @@ function check_len($s, $a) {
 		if (mb_strlen($s) < $a[0]) {
 			return false;
 		}
-	}	else {
+	} else {
 		if ((mb_strlen($s) < $a[0]) || (mb_strlen($s) > $a[1])) {
 			return false;
 		}
