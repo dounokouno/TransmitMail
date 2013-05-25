@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-05-23
+ * Modified : 2013-05-25
 */
 
 // --------------------------------------------------------------
@@ -13,14 +13,28 @@
 // --------------------------------------------------------------
 require_once('./conf/config.php');
 require_once('./lib/common.php');
+require_once('./lib/qdmail.php');
+require_once('./lib/qdsmtp.php');
 require_once('./lib/tinyTemplate.php');
+$mail = new Qdmail();
 $tmpl = new tinyTemplate();
+
+// Qdmailの設定
+$mail->errorDisplay(false);
+$mail->errorlogPath(DIR_LOGS . '/');
+$mail->errorlogLevel(3);
+$mail->errorlogFilename('qdmail_error.log');
+
+// Qdsmptの設定
+$smtp = new QdSmtp();
+$smtp->pop3TimeFilename(DIR_TEMP . '/qdsmtp.time');
+$mail->setSmtpObject($smtp);
 
 
 // --------------------------------------------------------------
 // 言語環境など
 // --------------------------------------------------------------
-mb_language('uni');
+mb_language('ja');
 mb_internal_encoding(CHARASET);
 mb_regex_encoding(CHARASET);
 ini_set('error_log', DIR_LOGS . '/error.log');
@@ -649,7 +663,7 @@ if ($page === 'deny') {
 	// メール送信
 	// -------------------------------------------------------
 	// 宛先
-	$to_email = TO_EMAIL;
+	$to_email = preg_split('/,\s*/', TO_EMAIL);
 	
 	// 件名
 	$to_subject = TO_SUBJECT;
@@ -657,7 +671,7 @@ if ($page === 'deny') {
 	// メール本文
 	$body = $tmpl->fetch(MAIL_BODY);
 	$body = hd($body);
-	
+
 	// メール送信元
 	if (isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL])) {
 		$from_email = $_POST[AUTO_REPLY_EMAIL];
@@ -665,13 +679,53 @@ if ($page === 'deny') {
 		$from_email = $to_email;
 	}
 	
-	// メール送信
-	if (!FILE) {
-		$result = send_mail($to_email, $to_subject, $body, $from_email, '');
-	} else {
-		$result = send_mail($to_email, $to_subject, $body, $from_email, '', $files);
+	// メール送信内容
+	$mail->to($to_email);
+	$mail->subject($to_subject);
+	$mail->text($body);
+	$mail->from($from_email);
+
+	// CCメールアドレスの設定がある場合
+	if (CC_EMAIL !== '') {
+		$mail->cc(CC_EMAIL);
+	}
+
+	// BCCメールアドレスの設定がある場合
+	if (BCC_EMAIL !== '') {
+		$mail->bcc(BCC_EMAIL);
 	}
 	
+	// 添付ファイル機能を利用する場合
+	if (FILE) {
+		foreach ($files as $file) {
+			$attach[] = array(
+				'PATH' => DIR_TEMP . '/' . $file['tmp_name'],
+				'NAME' => $file['name']
+			);
+		}
+		if (isset($attach)) {
+			$mail->attach($attach);
+		}
+	}
+	
+	// 外部SMTPを利用する場合
+	if (SMTP) {
+		$mail->smtp(true);
+		$mail->smtpServer(
+			array(
+				'host' => SMTP_HOST,
+				'port' => SMTP_PORT,
+				'protocol' => SMTP_PROTOCOL,
+				'user' => SMTP_USER,
+				'pass' => SMTP_PASSWORD,
+				'from' => $from_email
+			)
+		);
+	}
+
+	// メール送信
+	$result = $mail->send();
+
 	// 送信できなかった場合
 	if (!$result) {
 		// エラーメッセージ
@@ -692,7 +746,7 @@ if ($page === 'deny') {
 		
 		// 添付ファイルがある場合
 		if (FILE) {
-			foreach ($files as $key => $file ) {
+			foreach ($files as $key => $file) {
 				if (copy(DIR_TEMP . '/' . $file['tmp_name'], DIR_LOGS . '/' . $file['tmp_name'])) {
 					$data .= "\n\n" .
 						"【$key】\n" .
@@ -733,13 +787,30 @@ if ($page === 'deny') {
 			$from_email = TO_EMAIL;
 		}
 		
-		// メール送信
-		if (!FILE) {
-			$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME);
-		} else {
-			$result = send_mail($to_email, $to_subject, $body, $from_email, AUTO_REPLY_NAME, $files);
+		// メール送信内容
+		$mail->to($to_email);
+		$mail->subject($to_subject);
+		$mail->text($body);
+		$mail->from($from_email);
+		
+		// 外部SMTPを利用する場合
+		if (SMTP) {
+			$mail->smtp(true);
+			$mail->smtpServer(
+				array(
+					'host' => SMTP_HOST,
+					'port' => SMTP_PORT,
+					'protocol' => SMTP_PROTOCOL,
+					'user' => SMTP_USER,
+					'pass' => SMTP_PASSWORD,
+					'from' => $from_email
+				)
+			);
 		}
 		
+		// メール送信
+		$result = $mail->send();
+	
 		// 送信できなかった場合
 		if (!$result) {
 			// エラーメッセージ

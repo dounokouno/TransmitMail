@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-05-23
+ * Modified : 2013-05-25
 */
 
 // ----------------------------------------------------------------
@@ -16,6 +16,12 @@
 // ※複数の宛先を指定する場合は必ず「自動返信メールの送信元メールアドレス」を指定してください
 // ※空の場合、自動返信メールの宛先にメールが送信されます
 define('TO_EMAIL', 'dounokouno@gmail.com');
+
+// CC送信先メールアドレス（空でも可）（カンマ区切りで複数の宛先を設定可能）
+define('CC_EMAIL', '');
+
+// BCC送信先メールアドレス（空でも可）（カンマ区切りで複数の宛先を設定可能）
+define('BCC_EMAIL', '');
 
 // 送信メール件名
 define('TO_SUBJECT', '［株式会社テスト］お問い合わせ');
@@ -62,6 +68,33 @@ define('CSV_OUTPUT', false);
 //  例2）後方一致は末尾に $ をつける → *.example.jp$
 //  例3）上記両方を設定する場合 → ^192.168.1.*|*.example.jp$
 define('DENY_HOST', '');
+
+
+// ----------------------------------------------------------------
+// 設定（外部SMTPサーバーを利用する場合）
+// ----------------------------------------------------------------
+// 外部SMTPサーバーを利用する（true=>yes, false=>no）
+define('SMTP', true);
+
+// 外部SMTPサーバーのホスト名
+//  Gmailの場合）ssl://smtp.gmail.com もしくは tls://smtp.gmail. com
+define('SMTP_HOST', '');
+
+// 外部SMTPのポート番号
+//  Gmailの場合）465
+define('SMTP_PORT', '');
+
+// 外部SMTPに接続するプロトコル（SMTP_AUTH, POP_BEFORE, SMTP）
+//  Gmailの場合）SMTP_AUTH
+define('SMTP_PROTOCOL', '');
+
+// 外部SMTPに接続するユーザー名
+//  Gmailの場合）username@gmail.com
+define('SMTP_USER', '');
+
+// 外部SMTPに接続するパスワード
+define('SMTP_PASSWORD', '');
+
 
 // ----------------------------------------------------------------
 // ※以下は必要な場合のみ編集してください

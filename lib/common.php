@@ -6,14 +6,14 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-05-23
+ * Modified : 2013-05-25
 */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.2.1');
+define('VERSION', '1.3.0');
 
 // 入力情報として除外する項目
 define('EXCLUSION_ITEM', 'page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url|num_range|file|file_remove');
@@ -334,76 +334,6 @@ function convert_input_hidden($k, $v) {
 		$results[] = str_replace('{value}', h($v), $str);
 	}
 	return implode('', $results);
-}
-
-
-// ----------------------------------------------------------------
-// メール送信
-// ----------------------------------------------------------------
-function send_mail($to_email, $subject, $body, $from_email, $from_name = '', $files = array()) {
-	// from
-	if (empty($from_name)) {
-		$from = $from_email;
-	} else {
-		$from = mb_encode_mimeheader(mb_convert_encoding($from_name, 'UTF-8', 'AUTO')) . ' <' . $from_email . '>';
-	}
-	
-	// file_flag
-	$file_flag = false;
-	if (count($files) > 0) {
-		$file_flag = true;
-	}
-	
-	// headers
-	$array = array();
-	$array[] = 'MIME-Version: 1.0';
-	$array[] = 'From: ' . $from;
-	$array[] = 'Reply-To: ' . $from;
-	if (!$file_flag) {
-		$array[] = 'Content-Type: text/plain; charset=UTF-8';
-	} else {
-		$boundary = uniqid(rand());
-		$array[] = 'Content-Type: multipart/mixed; boundary=' . $boundary;
-	}
-	$headers = implode("\n", $array);
-	
-	// subject
-	$subject = mb_encode_mimeheader(mb_convert_encoding($subject, 'UTF-8', 'AUTO'));
-	
-	// body
-	if (!$file_flag) {
-		$body = mb_convert_encoding($body, 'UTF-8', 'AUTO');
-	} else {
-		$array = array();
-		$array[] = '--' . $boundary;
-		$array[] = 'Content-Type: text/plain; charset=UTF-8';
-		$array[] = '';
-		$array[] = mb_convert_encoding($body, 'UTF-8', 'AUTO');
-		$array[] = '';
-		$array[] = '';
-		
-		foreach ($files as $file) {
-			$array[] = '--' . $boundary;
-			$array[] = 'Content-Type: ' . get_mime_type($file['tmp_name']) . '; name="' . $file['name'] . '"';
-			$array[] = 'Content-Transfer-Encoding: base64';
-			$array[] = 'Content-Disposition: attachment; filename="' . $file['name'] . '"';
-			$array[] = '';
-			$array[] = chunk_split(base64_encode(file_get_contents(DIR_TEMP . '/' . $file['tmp_name'])));
-		}
-		
-		$array[] = '--' . $boundary . '--';
-		$body = implode("\n", $array);
-	}
-	
-	// params
-	$params = "-f$from_email";
-	
-	// send
-	if (ini_get('safe_mode')) {
-		return mail($to_email, $subject, $body, $headers);
-	} else {
-		return mail($to_email, $subject, $body, $headers, $params);
-	}
 }
 
 
