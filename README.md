@@ -33,7 +33,12 @@ Wikiにマニュアルをまとめました。
 
 下記テンプレートエンジンを改変して利用させていただきました。
 
-[firegoby » tinyTemplate](http://firegoby.theta.ne.jp/download/tinytemplate)
+* [firegoby » tinyTemplate](http://firegoby.theta.ne.jp/download/tinytemplate)
+
+メール送信にQdmail、Qdsmtpを利用させていただきました。
+
+* [PHP高機能日本語メール送信ライブラリ・文字化けフリー - Qdmail - PHP::Mail Library , Quick and Detailed for Multibyte](http://hal456.net/qdmail/)
+* [Qdsmtpとは - Qdsmtp-Simple SMTP Mailer for PHP](http://hal456.net/qdsmtp/)
 
 ##Copyright
 
