@@ -106,20 +106,37 @@
 							</td>
 						</tr>
 						<tr>
-							<th>ファイル（500KB以下のGIF、JPG、PNG）</th>
+							<th>ファイル1（500KB以下のGIF、JPG、PNG）</th>
 							<td>
-								{if:$ファイル.tmp_name}
-								<input type="checkbox" name="file_remove[]" value="{$ファイル.tmp_name}" id="file-remove" />
+								{if:$ファイル1.tmp_name}
+								<input type="checkbox" name="file_remove[]" value="{$ファイル1.tmp_name}" id="file-remove" />
 								<label for="file-remove">このファイルを削除する</label>
-								<p><img src="index.php?file={$ファイル.tmp_name}" alt="{$ファイル.name}" width="300"><br />
-									<a href="index.php?file={$ファイル.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
-								<input type="hidden" name="file[ファイル][tmp_name]" value="{$ファイル.tmp_name}" />
-								<input type="hidden" name="file[ファイル][name]" value="{$ファイル.name}" />
-								{/if:$ファイル.tmp_name}
-								<input type="file" name="ファイル" />
-								{loop:$file.ファイル}
-								<div class="error"><em>{$file.ファイル[]}</em></div>
-								{/loop:$file.ファイル}
+								<p><img src="index.php?file={$ファイル1.tmp_name}" alt="{$ファイル1.name}" width="300"><br />
+									<a href="index.php?file={$ファイル1.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
+								<input type="hidden" name="file[ファイル1][tmp_name]" value="{$ファイル1.tmp_name}" />
+								<input type="hidden" name="file[ファイル1][name]" value="{$ファイル1.name}" />
+								{/if:$ファイル1.tmp_name}
+								<input type="file" name="ファイル1" />
+								{loop:$file.ファイル1}
+								<div class="error"><em>{$file.ファイル1[]}</em></div>
+								{/loop:$file.ファイル1}
+							</td>
+						</tr>
+						<tr>
+							<th>ファイル2（500KB以下のGIF、JPG、PNG）</th>
+							<td>
+								{if:$ファイル2.tmp_name}
+								<input type="checkbox" name="file_remove[]" value="{$ファイル2.tmp_name}" id="file-remove" />
+								<label for="file-remove">このファイルを削除する</label>
+								<p><img src="index.php?file={$ファイル2.tmp_name}" alt="{$ファイル2.name}" width="300"><br />
+									<a href="index.php?file={$ファイル2.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
+								<input type="hidden" name="file[ファイル2][tmp_name]" value="{$ファイル2.tmp_name}" />
+								<input type="hidden" name="file[ファイル2][name]" value="{$ファイル2.name}" />
+								{/if:$ファイル2.tmp_name}
+								<input type="file" name="ファイル2" />
+								{loop:$file.ファイル2}
+								<div class="error"><em>{$file.ファイル2[]}</em></div>
+								{/loop:$file.ファイル2}
 							</td>
 						</tr>
 					</table>
