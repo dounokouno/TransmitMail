@@ -176,7 +176,7 @@ if (isset($_POST['num'])) {
 		}
 	}
 }
-	
+
 // 数値とハイフンチェック
 if (isset($_POST['num_hyphen'])) {
 	foreach ($_POST['num_hyphen'] as $v) {
@@ -191,7 +191,7 @@ if (isset($_POST['num_hyphen'])) {
 		}
 	}
 }
-	
+
 // ひらがなチェック
 if (isset($_POST['hiragana'])) {
 	foreach ($_POST['hiragana'] as $v) {
@@ -207,7 +207,7 @@ if (isset($_POST['hiragana'])) {
 		}
 	}
 }
-	
+
 // 全角カタカナチェック
 if (isset($_POST['zenkaku_katakana'])) {
 	foreach ($_POST['zenkaku_katakana'] as $v) {
@@ -392,7 +392,7 @@ if (isset($_POST['num_range'])) {
 // ファイル添付を利用する場合
 if (FILE) {
 	$files = array();
-	
+
 	// ファイルの削除
 	if (isset($_POST['file_remove'])) {
 		foreach ($_POST['file_remove'] as $v) {
@@ -407,7 +407,7 @@ if (FILE) {
 			}
 		}
 	}
-	
+
 	// 既にファイルがアップロードされている場合
 	if (isset($_POST['file'])) {
 		foreach ($_POST['file'] as $k => $v) {
@@ -421,7 +421,7 @@ if (FILE) {
 			}
 		}
 	}
-	
+
 	// ファイルのアップロード
 	if (isset($_FILES)) {
 		foreach ($_FILES as $k => $v) {
@@ -436,21 +436,21 @@ if (FILE) {
 						$global_error[] = h($k . ERROR_FILE_EXTENSION);
 						$global_error_flag = true;
 					}
-					
+				
 					// 空ファイルのチェック
 					if ($v['size'] === 0) {
 						$file_error[] = h($k . ERROR_FILE_EMPTY);
 						$global_error[] = h($k . ERROR_FILE_EMPTY);
 						$global_error_flag = true;
 					}
-					
+				
 					// ファイルサイズのチェック
 					if ($v['size'] > FILE_MAX_SIZE) {
 						$file_error[] = h($k . str_replace('{ファイルサイズ}', format_bytes(FILE_MAX_SIZE), ERROR_FILE_MAX_SIZE));
 						$global_error[] = h($k . str_replace('{ファイルサイズ}', format_bytes(FILE_MAX_SIZE), ERROR_FILE_MAX_SIZE));
 						$global_error_flag = true;
 					}
-					
+				
 					// エラーを判別
 					if (count($file_error) > 0) {
 						// エラーがある場合、エラーメッセージをセット
@@ -495,40 +495,40 @@ if (isset($_SESSION['transmit_mail_input']) && $_SESSION['transmit_mail_input'])
 if ($deny_flag) {
 	// アクセス拒否
 	$page === 'deny';
-	
+
 } elseif (CHECK_MODE && isset($_GET['mode']) && ($_GET['mode'] === 'check')) {
 	// チェックモード
 	$page = 'checkmode';
-	
+
 } elseif (isset($_GET['file'])) {
 	// ファイル表示
 	$page = 'file';
-	
+
 } elseif (!$session_flag) {
 	// セッションが無い場合 入力画面
 	$page = '';
-	
+
 } elseif (count($_POST) > 0) {
 	if ($global_error_flag) {
 		// エラーがある場合 入力エラー画面
 		$page = '';
-	
+
 	} elseif (isset($_POST['page']) && ($_POST['page'] === 'input') && !$global_error_flag) {
 		// 再入力画面
 		$page = '';
-			
+		
 	} elseif (isset($_POST['page']) && ($_POST['page'] === 'finish') && !$global_error_flag) {
 		// 完了画面
 		$page = 'finish';
-		
+	
 	} elseif (!$global_error_flag) {
 		// エラーが無い場合 確認画面
 		$page = 'confirm';
-		
+	
 	} else {
 		// 入力画面
 		$page = '';
-		
+	
 	}
 }
 
@@ -547,7 +547,7 @@ if (empty($page)) {
 		setcookie(session_name(), '', time()-42000, DIR_MAILFORM, $_SERVER['HTTP_HOST']);
 	}
 	session_destroy();
-	
+
 }
 
 
@@ -561,12 +561,12 @@ if (empty($page)) {
 	}
 	$tmpl->set('_GET', h($_GET));
 	$tmpl->set('_SERVER', h($_SERVER));
-	
+
 } elseif ($page === 'confirm' || $page === 'finish') {
 	// 確認画面 or 完了画面
 	$params = array();
 	$hiddens = array();
-	
+
 	// $_POST
 	foreach ($_POST as $k => $v) {
 		$pattern = '/' . EXCLUSION_ITEM . '/';
@@ -585,7 +585,7 @@ if (empty($page)) {
 			$hiddens[] = $h;
 		}
 	}
-	
+
 	// $_FILES
 	if (FILE) {
 		$array = array();
@@ -606,7 +606,7 @@ if (empty($page)) {
 		}
 		$tmpl->set('files', $array);
 	}
-	
+
 	$tmpl->set('params', $params);
 	$tmpl->set('hiddens', implode('', $hiddens));
 	$tmpl->set('_GET', h($_GET));
@@ -624,21 +624,21 @@ if ($page === 'deny') {
 	// エラーメッセージ
 	$global_error_flag = true;
 	$global_error[] = ERROR_DENY;
-	
+
 	// エラー情報をテンプレートにセット
 	$tmpl->set('global_error_flag', $global_error_flag);
 	$tmpl->set('global_error', $global_error);
-	
+
 	// HTML書き出し
 	echo $tmpl->fetch(TMPL_ERROR);
-	
+
 } elseif ($page === 'checkmode') {
 	// -------------------------------------------------------
 	// チェックモード
 	// -------------------------------------------------------
 	output_checkmode();
 	exit();
-	
+
 } elseif ($page === 'file') {
 	// -------------------------------------------------------
 	// ファイル表示
@@ -657,17 +657,17 @@ if ($page === 'deny') {
 		echo $_GET['file'] . ERROR_FILE_NOT_EXIST;
 	}
 	exit();
-	
+
 } elseif ($page === 'finish') {
 	// -------------------------------------------------------
 	// メール送信
 	// -------------------------------------------------------
 	// 宛先
 	$to_email = preg_split('/,\s*/', TO_EMAIL);
-	
+
 	// 件名
 	$to_subject = TO_SUBJECT;
-	
+
 	// メール本文
 	$body = $tmpl->fetch(MAIL_BODY);
 	$body = hd($body);
@@ -678,7 +678,7 @@ if ($page === 'deny') {
 	} else {
 		$from_email = $to_email;
 	}
-	
+
 	// メール送信内容
 	$mail->to($to_email);
 	$mail->subject($to_subject);
@@ -694,7 +694,7 @@ if ($page === 'deny') {
 	if (BCC_EMAIL !== '') {
 		$mail->bcc(BCC_EMAIL);
 	}
-	
+
 	// 添付ファイル機能を利用する場合
 	if (FILE) {
 		foreach ($files as $file) {
@@ -707,7 +707,7 @@ if ($page === 'deny') {
 			$mail->attach($attach);
 		}
 	}
-	
+
 	// 外部SMTPを利用する場合
 	if (SMTP) {
 		$mail->smtp(true);
@@ -731,7 +731,7 @@ if ($page === 'deny') {
 		// エラーメッセージ
 		$global_error_flag = true;
 		$global_error[] = ERROR_FAILURE_SEND_MAIL;
-		
+	
 		// ログの内容
 		$suffix = 'sendmail';
 		$data = ERROR_FAILURE_SEND_MAIL .
@@ -743,7 +743,7 @@ if ($page === 'deny') {
 			"$to_subject\n\n" .
 			"【本文】\n" .
 			"$body";
-		
+	
 		// 添付ファイルがある場合
 		if (FILE) {
 			foreach ($files as $key => $file) {
@@ -759,40 +759,40 @@ if ($page === 'deny') {
 				}
 			}
 		}
-		
+	
 		// ログ出力
 		put_error_log($data, $suffix);
 	}
-	
+
 	// -------------------------------------------------------
 	// 自動返信メール
 	// -------------------------------------------------------
 	if (AUTO_REPLY && isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL]) && $_POST[AUTO_REPLY_EMAIL] !== '') {
 		// 宛先
 		$to_email = $from_email;
-		
+	
 		// 件名
 		$to_subject = AUTO_REPLY_SUBJECT;
 		if (empty($to_subject)) {
 			$to_subject = TO_SUBJECT;
 		}
-		
+	
 		// メール本文
 		$body = $tmpl->fetch(MAIL_AUTO_REPLY_BODY);
 		$body = hd($body);
-		
+	
 		// メール送信元
 		$from_email = AUTO_REPLY_FROM_EMAIL;
 		if (empty($from_email)) {
 			$from_email = TO_EMAIL;
 		}
-		
+	
 		// メール送信内容
 		$mail->to($to_email);
 		$mail->subject($to_subject);
 		$mail->text($body);
 		$mail->from($from_email);
-		
+	
 		// 外部SMTPを利用する場合
 		if (SMTP) {
 			$mail->smtp(true);
@@ -807,16 +807,16 @@ if ($page === 'deny') {
 				)
 			);
 		}
-		
+	
 		// メール送信
 		$result = $mail->send();
-	
+
 		// 送信できなかった場合
 		if (!$result) {
 			// エラーメッセージ
 			$global_error_flag = true;
 			$global_error[] = ERROR_FAILURE_SEND_AUTO_REPLY;
-			
+		
 			// ログの内容
 			$suffix = 'autoreply';
 			$data = ERROR_FAILURE_SEND_AUTO_REPLY .
@@ -828,7 +828,7 @@ if ($page === 'deny') {
 				"$to_subject\n\n" .
 				"【本文】\n" .
 				"$body";
-			
+		
 			// 添付ファイルがある場合
 			if (FILE) {
 				foreach ($files as $key => $file) {
@@ -844,12 +844,12 @@ if ($page === 'deny') {
 					}
 				}
 			}
-			
+		
 			// ログ出力
 			put_error_log($data, $suffix);
 		}
 	}
-	
+
 	// -------------------------------------------------------
 	// 添付ファイルを削除
 	// -------------------------------------------------------
@@ -858,49 +858,49 @@ if ($page === 'deny') {
 			unlink(DIR_TEMP . '/' . $file['tmp_name']);
 		}
 	}
-	
+
 	// -------------------------------------------------------
 	// CSVの出力
 	// -------------------------------------------------------
 	if (CSV_OUTPUT) {
 		put_csv($_POST);
 	}
-	
+
 	// -------------------------------------------------------
 	// 完了画面
 	// -------------------------------------------------------
-	
+
 	// エラー判別
 	if ($global_error_flag) {
 		// エラーの場合
 		$tmpl->set('global_error_flag', $global_error_flag);
 		$tmpl->set('global_error', $global_error);
 		echo $tmpl->fetch(TMPL_ERROR);
-		
+	
 	} else {
 		// 送信できた場合
 		echo $tmpl->fetch(TMPL_FINISH);
-		
-	}
 	
+	}
+
 } elseif ($page === 'confirm') {
 	// -------------------------------------------------------
 	// 確認画面
 	// -------------------------------------------------------
-	
+
 	// テンプレート書き出し
 	echo $tmpl->fetch(TMPL_CONFIRM);
-	
+
 } else {
 	// -------------------------------------------------------
 	// 入力画面 or 入力エラー画面
 	// -------------------------------------------------------
-	
+
 	// エラー情報をテンプレートにセット
 	$tmpl->set('global_error_flag', $global_error_flag);
 	$tmpl->set('global_error', $global_error);
-	
+
 	// HTML書き出し
 	echo $tmpl->fetch(TMPL_INPUT);
-	
+
 }

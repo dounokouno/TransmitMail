@@ -31,7 +31,7 @@ function output_checkmode() {
 	// 変数
 	$a = array();
 	$ng = '<span style="color:#f00;">NG</span>';
-	
+
 	// HTML生成
 	$a[] = '<html>';
 	$a[] = '<head>';
@@ -39,21 +39,21 @@ function output_checkmode() {
 	$a[] = '</head>';
 	$a[] = '<body>';
 	$a[] = '<h1>チェックモード</h1>';
-	
+
 	// システム情報
 	$a[] = '<h2>システム情報</h2>';
 	$a[] = '<ul>';
 	$a[] = '<li>システム名 : ' . SYSTEM_NAME . '</li>';
 	$a[] = '<li>バージョン : ' . VERSION . '</li>';
 	$a[] = '</ul>';
-	
+
 	// sendmail
 	$a[] = '<h2>sendmail</h2>';
 	$a[] = '<ul>';
 	$a[] = '<li>' . ini_get('sendmail_path') . '</li>';
 	$a[] = '</li>';
 	$a[] = '</ul>';
-	
+
 	// safe_mode
 	$a[] = '<h2>セーフモード</h2>';
 	$a[] = '<ul>';
@@ -64,11 +64,11 @@ function output_checkmode() {
 	}
 	$a[] = '</li>';
 	$a[] = '</ul>';
-	
+
 	// HTMLテンプレート
 	$a[] = '<h2>HTMLテンプレート</h2>';
 	$a[] = '<ul>';
-	
+
 	// HTMLテンプレート 入力画面
 	$s = '<li>' . TMPL_INPUT . ' : ';
 	if (is_file(TMPL_INPUT)) {
@@ -78,7 +78,7 @@ function output_checkmode() {
 	}
 	$s .= '</li>';
 	$a[] = $s;
-	
+
 	// HTMLテンプレート 確認画面
 	$s = '<li>' . TMPL_CONFIRM . ' : ';
 	if (is_file(TMPL_CONFIRM)) {
@@ -88,7 +88,7 @@ function output_checkmode() {
 	}
 	$s .= '</li>';
 	$a[] = $s;
-	
+
 	// HTMLテンプレート 完了画面
 	$s = '<li>' . TMPL_FINISH . ' : ';
 	if (is_file(TMPL_FINISH)) {
@@ -98,7 +98,7 @@ function output_checkmode() {
 	}
 	$s .= '</li>';
 	$a[] = $s;
-	
+
 	// HTMLテンプレート エラー画面
 	$s = '<li>' . TMPL_ERROR . ' : ';
 	if (is_file(TMPL_ERROR)) {
@@ -108,14 +108,14 @@ function output_checkmode() {
 	}
 	$s .= '</li>';
 	$a[] = $s;
-	
+
 	// HTMLテンプレート ここまで
 	$a[] = '</ul>';
-	
+
 	// メールテンプレート
 	$a[] = '<h2>メールテンプレート</h2>';
 	$a[] = '<ul>';
-	
+
 	// メールテンプレート 送信メール
 	$s = '<li>' . MAIL_BODY . ' : ';
 	if (is_file(MAIL_BODY)) {
@@ -125,7 +125,7 @@ function output_checkmode() {
 	}
 	$s .= '</li>';
 	$a[] = $s;
-	
+
 	// メールテンプレート 自動返信メール
 	$s = '<li>' . MAIL_AUTO_REPLY_BODY . ' : ';
 	if (is_file(MAIL_AUTO_REPLY_BODY)) {
@@ -134,14 +134,14 @@ function output_checkmode() {
 		$s .= '<span style="color:#f00;">NG</span>';
 	}
 	$a[] = $s;
-	
+
 	// メールテンプレート ここまで
 	$a[] = '</ul>';
-	
+
 	// パーミッション
 	$a[] = '<h2>パーミッション</h2>';
 	$a[] = '<ul>';
-	
+
 	// パーミッション logsディレクトリ
 	$s = '<li>' . DIR_LOGS . '/ : ';
 	$perms = substr(sprintf('%o', fileperms(DIR_LOGS)), -3);
@@ -152,7 +152,7 @@ function output_checkmode() {
 	}
 	$s .= ' (' . $perms . ')</li>';
 	$a[] = $s;
-	
+
 	// パーミッション tempディレクトリ
 	$s = '<li>' . DIR_TEMP . '/ : ';
 	$perms = substr(sprintf('%o', fileperms(DIR_TEMP)), -3);
@@ -163,13 +163,13 @@ function output_checkmode() {
 	}
 	$s .= ' (' . $perms . ')</li>';
 	$a[] = $s;
-	
+
 	// パーミッション ここまで
 	$a[] = '</ul>';
-	
+
 	$a[] = '</body>';
 	$a[] = '</html>';
-	
+
 	// HTML出力
 	header("Content-type: text/html; charset=utf-8");
 	echo implode($a, "\n");
@@ -345,7 +345,7 @@ function put_error_log($s, $suffix) {
 	$date = date('Ymd_His');
 	$file_name = 'error_' . $date . '_' . $suffix;
 	$log_name = is_log_file($file_name);
-	
+
 	// ファイルロック
 	$lock_file = DIR_LOGS . '/lock';
 	$lock_fp = @fopen($lock_file, 'w');
@@ -356,7 +356,7 @@ function put_error_log($s, $suffix) {
 		$lock_fp = @fopen($lock_file, 'w');
 		$lock = @flock($lock_fp, LOCK_EX);
 	}
-	
+
 	// ファイル書き込み
 	$byte = file_put_contents(DIR_LOGS . '/' . $log_name.'.txt', $s);
 	fclose($lock_fp);
