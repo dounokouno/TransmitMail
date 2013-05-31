@@ -74,7 +74,7 @@ define('DENY_HOST', '');
 // 設定（外部SMTPサーバーを利用する場合）
 // ----------------------------------------------------------------
 // 外部SMTPサーバーを利用する（true=>yes, false=>no）
-define('SMTP', true);
+define('SMTP', false);
 
 // 外部SMTPサーバーのホスト名
 //  Gmailの場合）ssl://smtp.gmail.com もしくは tls://smtp.gmail. com
