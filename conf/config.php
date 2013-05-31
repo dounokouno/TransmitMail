@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-05-25
+ * Modified : 2013-05-31
 */
 
 // ----------------------------------------------------------------
