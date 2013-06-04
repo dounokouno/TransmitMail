@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-05-25
+ * Modified : 2013-06-04
 */
 
 // --------------------------------------------------------------
@@ -482,9 +482,13 @@ if (FILE) {
 }
 
 // セッションチェック
-$session_flag = false;
-session_start();
-if (isset($_SESSION['transmit_mail_input']) && $_SESSION['transmit_mail_input']) {
+if (SESSION) {
+	$session_flag = false;
+	session_start();
+	if (isset($_SESSION['transmit_mail_input']) && $_SESSION['transmit_mail_input']) {
+		$session_flag = true;
+	}
+} else {
 	$session_flag = true;
 }
 
@@ -536,18 +540,20 @@ if ($deny_flag) {
 // --------------------------------------------------------------
 // セッションの書き込み、破棄
 // --------------------------------------------------------------
-if (empty($page)) {
-	// 入力画面 or 入力エラー画面 の場合 セッションの書き込み
-	$_SESSION['transmit_mail_input'] = true;
+if (SESSION) {
+	if (empty($page)) {
+		// 入力画面 or 入力エラー画面 の場合 セッションの書き込み
+		$_SESSION['transmit_mail_input'] = true;
 
-} elseif ($page === 'finish') {
-	// 完了画面の場合 セッションを破棄
-	$_SESSION = array();
-	if (isset($_COOKIE[session_name()])) {
-		setcookie(session_name(), '', time()-42000, DIR_MAILFORM, $_SERVER['HTTP_HOST']);
+	} elseif ($page === 'finish') {
+		// 完了画面の場合 セッションを破棄
+		$_SESSION = array();
+		if (isset($_COOKIE[session_name()])) {
+			setcookie(session_name(), '', time()-42000, DIR_MAILFORM, $_SERVER['HTTP_HOST']);
+		}
+		session_destroy();
+
 	}
-	session_destroy();
-
 }
 
 

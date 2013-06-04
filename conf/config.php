@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-05-31
+ * Modified : 2013-06-04
 */
 
 // ----------------------------------------------------------------
@@ -40,6 +40,9 @@ define('AUTO_REPLY_FROM_EMAIL', '');
 
 // 自動返信メールの送信元メールアドレスの名前（空でも可）
 define('AUTO_REPLY_NAME', '株式会社テスト');
+
+// セッションによる多重送信防止を利用する（true=>yes, false=>no）
+define('SESSION', true);
 
 // チェックモードを利用する（true=>yes, false=>no）
 define('CHECK_MODE', true);
@@ -170,7 +173,9 @@ define('DIR_TEMP', './temp');
 define('FILE_NAME_PREFIX', 'file_');
 
 // セッション設定
-ini_set('session.save_handler', 'files');
-session_name('TRANSMITMAILSESSID');
-session_save_path(DIR_TEMP);
-session_set_cookie_params(0, DIR_MAILFORM, $_SERVER['SERVER_NAME']);
+if (SESSION) {
+	ini_set('session.save_handler', 'files');
+	session_name('TRANSMITMAILSESSID');
+	session_save_path(DIR_TEMP);
+	session_set_cookie_params(0, DIR_MAILFORM, $_SERVER['SERVER_NAME']);
+}
