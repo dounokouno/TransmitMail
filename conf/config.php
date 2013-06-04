@@ -105,7 +105,7 @@ define('SMTP_PASSWORD', '');
 
 // エラー表示（On=>表示, Off=>非表示）
 ini_set('display_errors', 'Off');
-error_reporting(E_ALL);
+error_reporting(E_ALL ^ E_STRICT ^ E_DEPRECATED);
 
 // ログファイル出力ディレクトリ
 define('DIR_LOGS', './logs');
