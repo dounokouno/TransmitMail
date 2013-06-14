@@ -436,21 +436,21 @@ if (FILE) {
 						$global_error[] = h($k . ERROR_FILE_EXTENSION);
 						$global_error_flag = true;
 					}
-				
+
 					// 空ファイルのチェック
 					if ($v['size'] === 0) {
 						$file_error[] = h($k . ERROR_FILE_EMPTY);
 						$global_error[] = h($k . ERROR_FILE_EMPTY);
 						$global_error_flag = true;
 					}
-				
+
 					// ファイルサイズのチェック
 					if ($v['size'] > FILE_MAX_SIZE) {
 						$file_error[] = h($k . str_replace('{ファイルサイズ}', format_bytes(FILE_MAX_SIZE), ERROR_FILE_MAX_SIZE));
 						$global_error[] = h($k . str_replace('{ファイルサイズ}', format_bytes(FILE_MAX_SIZE), ERROR_FILE_MAX_SIZE));
 						$global_error_flag = true;
 					}
-				
+
 					// エラーを判別
 					if (count($file_error) > 0) {
 						// エラーがある場合、エラーメッセージをセット
@@ -520,19 +520,19 @@ if ($deny_flag) {
 	} elseif (isset($_POST['page']) && ($_POST['page'] === 'input') && !$global_error_flag) {
 		// 再入力画面
 		$page = '';
-		
+
 	} elseif (isset($_POST['page']) && ($_POST['page'] === 'finish') && !$global_error_flag) {
 		// 完了画面
 		$page = 'finish';
-	
+
 	} elseif (!$global_error_flag) {
 		// エラーが無い場合 確認画面
 		$page = 'confirm';
-	
+
 	} else {
 		// 入力画面
 		$page = '';
-	
+
 	}
 }
 
@@ -737,7 +737,7 @@ if ($page === 'deny') {
 		// エラーメッセージ
 		$global_error_flag = true;
 		$global_error[] = ERROR_FAILURE_SEND_MAIL;
-	
+
 		// ログの内容
 		$suffix = 'sendmail';
 		$data = ERROR_FAILURE_SEND_MAIL .
@@ -749,7 +749,7 @@ if ($page === 'deny') {
 			"$to_subject\n\n" .
 			"【本文】\n" .
 			"$body";
-	
+
 		// 添付ファイルがある場合
 		if (FILE) {
 			foreach ($files as $key => $file) {
@@ -765,7 +765,7 @@ if ($page === 'deny') {
 				}
 			}
 		}
-	
+
 		// ログ出力
 		put_error_log($data, $suffix);
 	}
@@ -776,23 +776,23 @@ if ($page === 'deny') {
 	if (AUTO_REPLY && isset($_POST[AUTO_REPLY_EMAIL]) && !empty($_POST[AUTO_REPLY_EMAIL]) && $_POST[AUTO_REPLY_EMAIL] !== '') {
 		// 宛先
 		$to_email = $from_email;
-	
+
 		// 件名
 		$to_subject = AUTO_REPLY_SUBJECT;
 		if (empty($to_subject)) {
 			$to_subject = TO_SUBJECT;
 		}
-	
+
 		// メール本文
 		$body = $tmpl->fetch(MAIL_AUTO_REPLY_BODY);
 		$body = hd($body);
-	
+
 		// メール送信元
 		$from_email = AUTO_REPLY_FROM_EMAIL;
 		if (empty($from_email)) {
 			$from_email = TO_EMAIL;
 		}
-	
+
 		// メール送信内容
 		$mail->to($to_email);
 		$mail->subject($to_subject);
@@ -819,7 +819,7 @@ if ($page === 'deny') {
 				)
 			);
 		}
-	
+
 		// メール送信
 		$result = $mail->send();
 
@@ -828,7 +828,7 @@ if ($page === 'deny') {
 			// エラーメッセージ
 			$global_error_flag = true;
 			$global_error[] = ERROR_FAILURE_SEND_AUTO_REPLY;
-		
+
 			// ログの内容
 			$suffix = 'autoreply';
 			$data = ERROR_FAILURE_SEND_AUTO_REPLY .
@@ -840,7 +840,7 @@ if ($page === 'deny') {
 				"$to_subject\n\n" .
 				"【本文】\n" .
 				"$body";
-		
+
 			// 添付ファイルがある場合
 			if (FILE) {
 				foreach ($files as $key => $file) {
@@ -856,7 +856,7 @@ if ($page === 'deny') {
 					}
 				}
 			}
-		
+
 			// ログ出力
 			put_error_log($data, $suffix);
 		}
@@ -888,11 +888,11 @@ if ($page === 'deny') {
 		$tmpl->set('global_error_flag', $global_error_flag);
 		$tmpl->set('global_error', $global_error);
 		echo $tmpl->fetch(TMPL_ERROR);
-	
+
 	} else {
 		// 送信できた場合
 		echo $tmpl->fetch(TMPL_FINISH);
-	
+
 	}
 
 } elseif ($page === 'confirm') {
