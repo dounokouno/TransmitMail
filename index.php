@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-06-04
+ * Modified : 2013-06-14
 */
 
 // --------------------------------------------------------------
@@ -797,8 +797,14 @@ if ($page === 'deny') {
 		$mail->to($to_email);
 		$mail->subject($to_subject);
 		$mail->text($body);
-		$mail->from($from_email);
-	
+
+		// AUTO_REPLY_NAMEの設定がある場合
+		if (AUTO_REPLY_NAME !== '') {
+			$mail->from($from_email, AUTO_REPLY_NAME);
+		} else {
+			$mail->from($from_email);
+		}
+
 		// 外部SMTPを利用する場合
 		if (SMTP) {
 			$mail->smtp(true);
