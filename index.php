@@ -5,7 +5,7 @@
  * Author : TAGAWA Takao (dounokouno@gmail.com)
  * License : MIT License
  * Since : 2010-11-19
- * Modified : 2013-06-14
+ * Modified : 2013-07-05
 */
 
 // --------------------------------------------------------------
@@ -579,8 +579,7 @@ if (empty($page)) {
 		if (!preg_match($pattern, $k)) {
 			if (is_array($v)) {
 				$s = implode(', ', $v);
-        
-        $tmpl->set("$k.array", array_map('h', $v));
+				$tmpl->set("$k.array", array_map('h', $v));
 			} else {
 				$s = $v;
 			}
