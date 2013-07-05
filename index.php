@@ -579,6 +579,8 @@ if (empty($page)) {
 		if (!preg_match($pattern, $k)) {
 			if (is_array($v)) {
 				$s = implode(', ', $v);
+        
+        $tmpl->set("$k.array", array_map('h', $v));
 			} else {
 				$s = $v;
 			}
