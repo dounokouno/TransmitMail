@@ -52,6 +52,17 @@
 					<th>{$マルチプルセレクトメニュー.key}&nbsp;</th>
 					<td>{$マルチプルセレクトメニュー.value}&nbsp;</td>
 				</tr>
+				<tr>
+					<th>チェックボックスを配列で受け取り、<br>
+						ul要素とli要素でマークアップする</th>
+					<td>
+						<ul>
+							{loop:$チェックボックス.array}
+								<li>{$チェックボックス.array[]}</li>
+							{/loop:$チェックボックス.array}
+						</ul>
+					</td>
+				</tr>
 			</table>
 			<div class="center">
 				<form method="post" action="index.php" class="inline">
