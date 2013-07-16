@@ -670,7 +670,7 @@ if ($page === 'deny') {
 	// メール送信
 	// -------------------------------------------------------
 	// 宛先
-	$to_email = preg_split('/,\s*/', TO_EMAIL);
+	$to_email = TO_EMAIL;
 
 	// 件名
 	$to_subject = TO_SUBJECT;
