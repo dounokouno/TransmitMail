@@ -461,9 +461,9 @@ function delete_nullbyte($s) {
 // ----------------------------------------------------------------
 function safe_strip_slashes($s) {
 	if (is_array($s)) {
-		return array_map('safe_strip_slashes',$s);
+		return array_map('safe_strip_slashes', $s);
 	} else {
-		if (get_magic_quotes_gpc()){
+		if (get_magic_quotes_gpc()) {
 			$s = stripslashes($s);
 		}
 		return $s;
