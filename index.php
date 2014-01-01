@@ -94,14 +94,16 @@ if (count($_POST) > 0) {
 
 // ラジオボタン、チェックボックス、セレクトメニューの選択状態
 foreach ($_POST as $k1 => $v1) {
-	if (is_array($v1)) {
-		foreach ($v1 as $v2) {
-			$tmpl->set("checked.$k1.$v2", ATTR_CHECKED);
-			$tmpl->set("selected.$k1.$v2", ATTR_SELECTED);
+	if ($k1 !== 'file') {
+		if (is_array($v1)) {
+			foreach ($v1 as $v2) {
+				$tmpl->set("checked.$k1.$v2", ATTR_CHECKED);
+				$tmpl->set("selected.$k1.$v2", ATTR_SELECTED);
+			}
+		} else {
+			$tmpl->set("checked.$k1.$v1", ATTR_CHECKED);
+			$tmpl->set("selected.$k1.$v1", ATTR_SELECTED);
 		}
-	} else {
-		$tmpl->set("checked.$k1.$v1", ATTR_CHECKED);
-		$tmpl->set("selected.$k1.$v1", ATTR_SELECTED);
 	}
 }
 
