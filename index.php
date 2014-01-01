@@ -498,7 +498,7 @@ if (SESSION) {
 // --------------------------------------------------------------
 if ($deny_flag) {
 	// アクセス拒否
-	$page === 'deny';
+	$page = 'deny';
 
 } elseif (CHECK_MODE && isset($_GET['mode']) && ($_GET['mode'] === 'check')) {
 	// チェックモード
