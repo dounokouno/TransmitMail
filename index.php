@@ -71,7 +71,7 @@ if (isset($_SERVER['REMOTE_HOST']) || empty($_SERVER['REMOTE_HOST'])) {
 }
 
 // アクセス拒否判定
-if (defined('DENY_HOST') && strlen(DENY_HOST) > 0) {
+if (defined('DENY_HOST') && (DENY_HOST !== '')) {
 	$pattern = '/' . DENY_HOST . '/';
 	if (preg_match($pattern, $_SERVER['REMOTE_ADDR'])
 		|| preg_match($pattern, $_SERVER['REMOTE_HOST'])
