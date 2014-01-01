@@ -66,7 +66,7 @@ $_POST = safe_strip_slashes($_POST);
 // $_SERVER
 $_SERVER = delete_nullbyte($_SERVER);
 $_SERVER = safe_strip_slashes($_SERVER);
-if (isset($_SERVER['REMOTE_HOST']) || empty($_SERVER['REMOTE_HOST'])) {
+if (empty($_SERVER['REMOTE_HOST'])) {
 	$_SERVER['REMOTE_HOST'] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 }
 
