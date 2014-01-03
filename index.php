@@ -119,6 +119,25 @@ if (isset($_POST['required'])) {
 	}
 }
 
+// 入力必須(複数)チェック
+if (isset($_POST['required_plural'])) {
+	foreach ($_POST['required_plural'] as $v) {
+		$flag = array();
+		$required_plural_array = array_map('delete_blank', explode(',', $v));
+		
+		for ($i = 0; $i < count($required_plural_array); $i++) {
+			$tmpl->set("required_plural.$required_plural_array[$i]", false);
+			$flag[] = strlen($_POST[$required_plural_array[$i]]) ? TRUE : FALSE;
+		}
+		
+		if (in_array(FALSE, $flag)) {
+			$tmpl->set("required_plural.$v", h($v . ERROR_REQUIRED));
+			$global_error[] = h($v . ERROR_REQUIRED);
+			$global_error_flag = true;
+		}
+	}
+}
+
 // 半角文字チェック
 if (isset($_POST['hankaku'])) {
 	foreach ($_POST['hankaku'] as $v) {
