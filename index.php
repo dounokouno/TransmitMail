@@ -13,22 +13,8 @@
 // --------------------------------------------------------------
 require_once('./conf/config.php');
 require_once(DIR_LIB . '/common.php');
-require_once(DIR_LIB . '/qdmail.php');
-require_once(DIR_LIB . '/qdsmtp.php');
 require_once(DIR_LIB . '/tinyTemplate.php');
-$mail = new Qdmail();
 $tmpl = new tinyTemplate();
-
-// Qdmailの設定
-$mail->errorDisplay(false);
-$mail->errorlogPath(DIR_LOGS . '/');
-$mail->errorlogLevel(3);
-$mail->errorlogFilename('qdmail_error.log');
-
-// Qdsmtpの設定
-$smtp = new QdSmtp();
-$smtp->pop3TimeFilename(DIR_TEMP . '/qdsmtp.time');
-$mail->setSmtpObject($smtp);
 
 
 // --------------------------------------------------------------
@@ -671,6 +657,22 @@ if ($page === 'deny') {
 	// -------------------------------------------------------
 	// メール送信
 	// -------------------------------------------------------
+	// ライブラリ読み込み
+	require_once(DIR_LIB . '/qdmail.php');
+	require_once(DIR_LIB . '/qdsmtp.php');
+
+	// Qdmailの設定
+	$mail = new Qdmail();
+	$mail->errorDisplay(false);
+	$mail->errorlogPath(DIR_LOGS . '/');
+	$mail->errorlogLevel(3);
+	$mail->errorlogFilename('qdmail_error.log');
+
+	// Qdsmtpの設定
+	$smtp = new QdSmtp();
+	$smtp->pop3TimeFilename(DIR_TEMP . '/qdsmtp.time');
+	$mail->setSmtpObject($smtp);
+
 	// 宛先
 	$to_email = TO_EMAIL;
 
