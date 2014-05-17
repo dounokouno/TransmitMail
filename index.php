@@ -25,7 +25,7 @@ $mail->errorlogPath(DIR_LOGS . '/');
 $mail->errorlogLevel(3);
 $mail->errorlogFilename('qdmail_error.log');
 
-// Qdsmptの設定
+// Qdsmtpの設定
 $smtp = new QdSmtp();
 $smtp->pop3TimeFilename(DIR_TEMP . '/qdsmtp.time');
 $mail->setSmtpObject($smtp);
