@@ -12,10 +12,10 @@
 // ライブラリ読み込み
 // --------------------------------------------------------------
 require_once('./conf/config.php');
-require_once('./lib/common.php');
-require_once('./lib/qdmail.php');
-require_once('./lib/qdsmtp.php');
-require_once('./lib/tinyTemplate.php');
+require_once(DIR_LIB . '/common.php');
+require_once(DIR_LIB . '/qdmail.php');
+require_once(DIR_LIB . '/qdsmtp.php');
+require_once(DIR_LIB . '/tinyTemplate.php');
 $mail = new Qdmail();
 $tmpl = new tinyTemplate();
 

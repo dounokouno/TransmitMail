@@ -166,6 +166,9 @@ define('ERROR_FAILURE_SEND_AUTO_REPLY', '自動返信メールの送信に失敗
 define('ATTR_CHECKED', 'checked');
 define('ATTR_SELECTED', 'selected');
 
+// ライブラリディレクトリ
+define('DIR_LIB', './lib');
+
 // 一時保存ディレクトリ
 define('DIR_TEMP', './temp');
 
