@@ -180,7 +180,7 @@ function output_checkmode() {
 // 半角文字チェック
 // ----------------------------------------------------------------
 function check_hankaku($s) {
-	return preg_match('/^[!-~]*$/', $s);
+	return preg_match('/\A[!-~]*\z/u', $s);
 }
 
 
@@ -188,7 +188,7 @@ function check_hankaku($s) {
 // 半角英数字チェック
 // ----------------------------------------------------------------
 function check_hankaku_eisu($s) {
-	return preg_match('/^[a-zA-Z0-9]*$/', $s);
+	return preg_match('/\A[a-zA-Z0-9]*\z/u', $s);
 }
 
 
@@ -196,7 +196,7 @@ function check_hankaku_eisu($s) {
 // 半角英字チェック
 // ----------------------------------------------------------------
 function check_hankaku_eiji($s) {
-	return preg_match('/^[a-zA-Z]*$/', $s);
+	return preg_match('/\A[a-zA-Z]*\z/u', $s);
 }
 
 
@@ -204,7 +204,7 @@ function check_hankaku_eiji($s) {
 // 数字チェック
 // ----------------------------------------------------------------
 function check_num($s) {
-	return preg_match('/^[0-9]*$/', $s);
+	return preg_match('/\A[0-9]*\z/u', $s);
 }
 
 
@@ -212,7 +212,7 @@ function check_num($s) {
 // 数字とハイフンチェック
 // ----------------------------------------------------------------
 function check_num_hyphen($s) {
-	return preg_match('/^[0-9-]*$/', $s);
+	return preg_match('/\A[0-9-]*\z/u', $s);
 }
 
 
@@ -220,7 +220,7 @@ function check_num_hyphen($s) {
 // ひらがなチェック
 // ----------------------------------------------------------------
 function check_hiragana($s) {
-	return preg_match('/^[ぁ-ゞ]*$/' . REG_OPTION, $s);
+	return preg_match('/\A[ぁ-ゞ]*\z/u' . REG_OPTION, $s);
 }
 
 
@@ -228,7 +228,7 @@ function check_hiragana($s) {
 // 全角カタカナチェック
 // ----------------------------------------------------------------
 function check_zenkaku_katakana($s) {
-	return preg_match('/^[ァ-ヶー]*$/' . REG_OPTION, $s);
+	return preg_match('/\A[ァ-ヶー]*\z/u' . REG_OPTION, $s);
 }
 
 
@@ -236,7 +236,7 @@ function check_zenkaku_katakana($s) {
 // 半角カタカナチェック
 // ----------------------------------------------------------------
 function check_hankaku_katakana($s) {
-	return preg_match('/^[ｱ-ﾝﾞﾟ]*$/' . REG_OPTION, $s);
+	return preg_match('/\A[ｱ-ﾝﾞﾟ]*\z/u' . REG_OPTION, $s);
 }
 
 
@@ -244,7 +244,7 @@ function check_hankaku_katakana($s) {
 // 全角文字を含むかチェック
 // ----------------------------------------------------------------
 function check_zenkaku($s) {
-	return preg_match('/[^ -~｡-ﾟ]/' . REG_OPTION, $s);
+	return preg_match('/[^ -~｡-ﾟ]/u' . REG_OPTION, $s);
 }
 
 
@@ -252,7 +252,7 @@ function check_zenkaku($s) {
 // 全て全角文字チェック
 // ----------------------------------------------------------------
 function check_zenkaku_all($s) {
-	return preg_match('/^[^ -~｡-ﾟ]*$/' . REG_OPTION, $s);
+	return preg_match('/\A[^ -~｡-ﾟ]*\z/u' . REG_OPTION, $s);
 }
 
 
@@ -260,7 +260,7 @@ function check_zenkaku_all($s) {
 // メールアドレスの書式チェック
 // ----------------------------------------------------------------
 function check_mail_address($s) {
-	return preg_match('/^([a-z0-9_]|\-|\.|\+)+@(([a-z0-9_]|\-)+\.)+[a-z]{2,6}$/i', $s);
+	return preg_match('/\A([a-z0-9_]|\-|\.|\+)+@(([a-z0-9_]|\-)+\.)+[a-z]{2,6}\z/ui', $s);
 }
 
 
@@ -268,7 +268,7 @@ function check_mail_address($s) {
 // URLの書式チェック
 // ----------------------------------------------------------------
 function check_url($s) {
-	return preg_match('/^(http|https):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i', $s);
+	return preg_match('/\A(http|https):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/ui', $s);
 }
 
 
@@ -313,7 +313,7 @@ function check_num_range($n, $a) {
 // 添付ファイルの拡張子チェック
 // ----------------------------------------------------------------
 function check_file_extension($s) {
-	return preg_match('/\.' . str_replace(',', '$|\.', FILE_ALLOW_EXTENSION) . '$/i', $s);
+	return preg_match('/\.' . str_replace(',', '$|\.', FILE_ALLOW_EXTENSION) . '\z/i', $s);
 }
 
 
@@ -478,7 +478,7 @@ function delete_blank($s) {
 	if (is_array($s)) {
 		return array_map('delete_blank', $s);
 	}
-	return preg_replace('/\s|　/', '', $s);
+	return preg_replace('/\s|　/u', '', $s);
 }
 
 
@@ -489,7 +489,7 @@ function delete_crlf($s) {
 	if (is_array($s)) {
 		return array_map('delete_crlf', $s);
 	}
-	return preg_replace('/\r|\n/', '', $s);
+	return preg_replace('/\r|\n/u', '', $s);
 }
 
 
@@ -545,7 +545,7 @@ function format_bytes($bytes) {
 // 拡張子からMIME Typeを判別
 // ----------------------------------------------------------------
 function get_mime_type($s) {
-	preg_match('/\.([a-z0-9]{2,4})$/i', $s, $matches);
+	preg_match('/\.([a-z0-9]{2,4})\z/i', $s, $matches);
 	$suffix = strtolower($matches[1]);
 	switch ($suffix) {
 		case 'jpg':
