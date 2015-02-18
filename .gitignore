@@ -1,2 +1,4 @@
 logs/error.log
 temp/sess_*
+tests/screenshots
+vendor
