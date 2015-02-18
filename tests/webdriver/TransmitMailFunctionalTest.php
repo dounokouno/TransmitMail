@@ -124,7 +124,8 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     {
         //$this->setBrowser('phantomjs');
         $this->setBrowser('firefox');
-        $this->setBrowserUrl('http://localhost:8000/');
+        //$this->setBrowserUrl('http://localhost:8000/');
+        $this->setBrowserUrl('http://localhost/');
 
         // MEMO: 他のブラウザの設定
         // MEMO: IEとChromeは別途ライブラリが必要っぽい
