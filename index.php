@@ -642,14 +642,14 @@ if ($page === 'deny') {
 	if (file_exists($file_path)) {
 		if ((filemtime($file_path) + FILE_RETENTION_PERIOD) < time()) {
 			// 保存期間を超えている場合
-			echo $_GET['file'] . ERROR_FILE_OVER_THE_PERIOD;
+			echo h($_GET['file']) . ERROR_FILE_OVER_THE_PERIOD;
 		} else {
 			header('Content-type: ' . get_mime_type($_GET['file']));
 			readfile(DIR_TEMP . '/' . $_GET['file']);
 		}
 	} else {
 		// ファイルが存在しない
-		echo $_GET['file'] . ERROR_FILE_NOT_EXIST;
+		echo h($_GET['file']) . ERROR_FILE_NOT_EXIST;
 	}
 	exit();
 
