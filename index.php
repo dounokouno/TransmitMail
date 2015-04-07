@@ -638,14 +638,14 @@ if ($page === 'deny') {
 	// -------------------------------------------------------
 	// ファイル表示
 	// -------------------------------------------------------
-	$file_path = DIR_TEMP . '/' . $_GET['file'];
+	$file_path = DIR_TEMP . '/' . basename($_GET['file']);
 	if (file_exists($file_path)) {
 		if ((filemtime($file_path) + FILE_RETENTION_PERIOD) < time()) {
 			// 保存期間を超えている場合
 			echo h($_GET['file']) . ERROR_FILE_OVER_THE_PERIOD;
 		} else {
 			header('Content-type: ' . get_mime_type($_GET['file']));
-			readfile(DIR_TEMP . '/' . $_GET['file']);
+			readfile($file_path);
 		}
 	} else {
 		// ファイルが存在しない
