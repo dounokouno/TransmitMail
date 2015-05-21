@@ -61,16 +61,18 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         $invalidValues = array(
             'user@foo,com',
             'user_at_foo.org',
-            'example.user@foo',
             'foo@bar_baz_com',
             'foo@bar+baz.com'
         );
         $validValues = array(
+            'info@example',
             'info@example.com',
+            'info..@example.com',
             'info@example.co.jp',
             'info@example.museum',
             'lastname.firstname@example.com',
-            'lastname+firstname@example.com'
+            'lastname+firstname@example.com',
+            'lastname+firstname@example.unknowndomain'
         );
 
         // 入力フィールドの確認
