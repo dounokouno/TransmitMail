@@ -26,23 +26,47 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
         $errorMessage = $targetNameValue . ERROR_REQUIRED;
-        $validValue = '入力必須項目の入力テスト';
 
-        // 入力必須とするフィールドを確認
-        $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $invalidValues = array(
+            null,
+            ''
+        );
+        $validValues = array(
+            '0',
+            '00',
+            '1',
+            'a',
+            '入力必須項目の入力テスト'
+        );
 
         // エラーの場合
-        $this->submitInputForm();
-        $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-        $this->assertEquals($errorMessage, $this->byCssSelector('#content ul li')->text());
-        $this->assertEquals($errorMessage, $this->byCssSelector('#content table tr td div.error')->text());
+        for ($i = 0, $size = count($invalidValues); $i < $size; ++$i) {
+            $element = $this->byCssSelector($selectors['target']);
+            $element->clear();
+            $element->value($invalidValues[$i]);
+            $this->submitInputForm();
+            $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+            $this->assertEquals($errorMessage, $this->byCssSelector('#content ul li')->text());
+            $this->assertEquals($errorMessage, $this->byCssSelector('#content table tr td div.error')->text());
+            $this->assertEquals($invalidValues[$i], $this->byCssSelector($selectors['target'])->value());
+        }
 
         // 成功の場合
-        $this->byCssSelector($selectors['target'])->value($validValue);
-        $this->submitInputForm();
-        $this->assertEquals($this->confirmPageTitle, $this->title());
-        $this->assertContains($validValue, $this->byCssSelector('#content table')->text());
+        $hiddenFieldSelector = str_replace('[type="text"]', '[type="hidden"]', $selectors['target']);
+
+        for ($i = 0, $size = count($validValues); $i < $size; ++$i) {
+            $this->url('');
+            $element = $this->byCssSelector($selectors['target']);
+            $element->value($validValues[$i]);
+            $this->submitInputForm();
+            $this->assertEquals($this->confirmPageTitle, $this->title());
+            $this->assertContains($validValues[$i], $this->byCssSelector('#content table')->text());
+            $this->assertEquals($validValues[$i], $this->byCssSelector($hiddenFieldSelector)->value());
+
+            // 入力画面に戻る
+            $this->returnInputPage();
+            $this->assertEquals($validValues[$i], $this->byCssSelector($selectors['target'])->value());
+        }
     }
 
     /**
