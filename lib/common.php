@@ -16,7 +16,29 @@ define('SYSTEM_NAME', 'TransmitMail');
 define('VERSION', '1.5.11');
 
 // 入力情報として除外する項目
-define('EXCLUSION_ITEM', 'x|y|page|required|hankaku|hankaku_eisu|hankaku_eiji|num|num_hyphen|hiragana|zenkaku_katakana|hankaku_katakana|zenkaku|zenkaku_all|email|match|len|url|num_range|file|file_remove');
+define('EXCLUSION_ITEM', '[
+	"x",
+	"y",
+	"page",
+	"required",
+	"hankaku",
+	"hankaku_eisu",
+	"hankaku_eiji",
+	"num",
+	"num_hyphen",
+	"hiragana",
+	"zenkaku_katakana",
+	"hankaku_katakana",
+	"zenkaku",
+	"zenkaku_all",
+	"email",
+	"match",
+	"len",
+	"url",
+	"num_range",
+	"file",
+	"file_remove"
+]');
 
 // タイムゾーン
 if (function_exists('date_default_timezone_set')) {
@@ -173,6 +195,18 @@ function output_checkmode() {
 	// HTML出力
 	header("Content-type: text/html; charset=utf-8");
 	echo implode($a, "\n");
+}
+
+
+// ----------------------------------------------------------------
+// EXCLUSION_ITEM を正規表現形式に変換した文字列を返す
+// ----------------------------------------------------------------
+function exclusion_item_pattern() {
+	$a = json_decode(EXCLUSION_ITEM);
+	$a = array_map(function($s) {
+		return '\A' . $s . '\z';
+	}, $a);
+	return '/' . implode('|', $a) . '/';
 }
 
 
@@ -390,8 +424,7 @@ function is_log_file($file_name) {
 function put_csv($post) {
 	$a = array();
 	foreach ($post as $k => $v) {
-		$pattern = '/' . EXCLUSION_ITEM . '/';
-		if (!preg_match($pattern, $k)) {
+		if (!preg_match(exclusion_item_pattern(), $k)) {
 			if (is_array($v)) {
 				$s = implode(' / ', $v);
 			} else {

@@ -563,8 +563,7 @@ if (empty($page)) {
 
 	// $_POST
 	foreach ($_POST as $k => $v) {
-		$pattern = '/' . EXCLUSION_ITEM . '/';
-		if (!preg_match($pattern, $k)) {
+		if (!preg_match(exclusion_item_pattern(), $k)) {
 			if (is_array($v)) {
 				$s = implode(', ', $v);
 				$tmpl->set("$k.array", array_map('h', $v));
