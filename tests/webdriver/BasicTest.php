@@ -29,6 +29,7 @@ class BasicTest extends TransmitMailFunctionalTest
     {
         $this->url('');
 
+        // フォームパーツサンプル
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="シングルラインインプット"]')->value());
         $this->assertEquals('', $this->byCssSelector('textarea[name="マルチラインインプット"]')->value());
         $this->assertEquals('項目1', $this->byCssSelector('input[type="radio"][name="ラジオボタン"]:first-of-type')->value());
@@ -38,6 +39,7 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->assertEquals('', $this->byCssSelector('input[type="file"][name="ファイル1"]')->value());
         $this->assertEquals('', $this->byCssSelector('input[type="file"][name="ファイル2"]')->value());
 
+        // 入力オプション
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="入力必須"]')->value());
         $this->assertEquals('入力必須', $this->byCssSelector('input[type="hidden"][name="required[]"]')->value());
 
@@ -105,6 +107,7 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="1〜12の数字"]')->value());
         $this->assertEquals('1〜12の数字 1-12', $this->byCssSelector('input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]')->value());
 
+        // 入力オプションを複数組み合わせるサンプル
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="郵便番号"]')->value());
         $this->assertEquals('郵便番号', $this->byCssSelector('input[type="hidden"][name="num_hyphen[]"][value="郵便番号"]')->value());
         $this->assertEquals('郵便番号 8', $this->byCssSelector('input[type="hidden"][name="len[]"][value="郵便番号 8"]')->value());
