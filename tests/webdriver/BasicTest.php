@@ -112,6 +112,39 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->assertEquals('郵便番号', $this->byCssSelector('input[type="hidden"][name="num_hyphen[]"][value="郵便番号"]')->value());
         $this->assertEquals('郵便番号 8', $this->byCssSelector('input[type="hidden"][name="len[]"][value="郵便番号 8"]')->value());
 
+        // x、yを含む項目名
+        $this->assertEquals('', $this->byCssSelector('input[type="text"][name="abcdefghijklnmopqrstuvwxyz"]')->value());
+
         $this->assertEquals('入力内容を確認する', $this->byCssSelector('input[type="submit"]')->value());
+    }
+
+    /**
+     * サンプル用フィールドの入力確認画面のテスト
+     */
+    public function testContainsXAndYField()
+    {
+        $this->url('');
+
+        $selector = 'input[type="text"][name="abcdefghijklnmopqrstuvwxyz"]';
+        $hiddenFieldSelector = str_replace('[type="text"]', '[type="hidden"]', $selector);
+        $targetNameValue = $this->byCssSelector($selector)->attribute('name');
+        $value = 'x、yを含む項目名への入力';
+
+        // 入力フィールドの確認
+        $this->assertEquals('', $this->byCssSelector($selector)->value());
+        $this->assertInternalType('object', $this->byCssSelector($selector));
+
+        // テストの実行
+        $element = $this->byCssSelector($selector);
+        $element->value($value);
+        $this->inputRequiredField();
+        $this->submitInputForm();
+        $this->assertEquals($this->confirmPageTitle, $this->title());
+        $this->assertContains($value, $this->byCssSelector('#content table')->text());
+        $this->assertEquals($value, $this->byCssSelector($hiddenFieldSelector)->value());
+
+        // 入力画面に戻る
+        $this->returnInputPage();
+        $this->assertEquals($value, $this->byCssSelector($selector)->value());
     }
 }
