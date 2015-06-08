@@ -97,7 +97,7 @@ foreach ($_POST as $k1 => $v1) {
 if (isset($_POST['required'])) {
 	foreach ($_POST['required'] as $v) {
 		$tmpl->set("required.$v", false);
-		if (isset($_POST[$v]) && (is_null($_POST[$v]) || ($_POST[$v] === ''))) {
+		if (!isset($_POST[$v]) || (isset($_POST[$v]) && (is_null($_POST[$v]) || ($_POST[$v] === '')))) {
 			$tmpl->set("required.$v", h($v . ERROR_REQUIRED));
 			$global_error[] = h($v . ERROR_REQUIRED);
 			$global_error_flag = true;
