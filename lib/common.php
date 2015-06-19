@@ -13,7 +13,7 @@
 // システム名、バージョン
 // ----------------------------------------------------------------
 define('SYSTEM_NAME', 'TransmitMail');
-define('VERSION', '1.5.13');
+define('VERSION', '1.5.14');
 
 // 入力情報として除外する項目
 define('EXCLUSION_ITEM', '[
