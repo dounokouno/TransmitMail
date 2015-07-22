@@ -1,12 +1,13 @@
 <?php
-/*
- * System name : TransmitMail
- * Description : 設定ファイル
- * Author : TAGAWA Takao (dounokouno@gmail.com)
- * License : MIT License
- * Since : 2010-11-19
- * Modified : 2014-09-08
-*/
+/**
+ * TransmitMail の設定ファイル
+ *
+ * @package    TransmitMail
+ * @author     TAGAWA Takao
+ * @license    MIT License
+ * @copyright  TransmitMail Development Team
+ * @link       https://github.com/dounokouno/TransmitMail
+ */
 
 // ----------------------------------------------------------------
 // 設定

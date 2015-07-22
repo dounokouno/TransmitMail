@@ -1,13 +1,13 @@
 <?php
-/*
- * System name : TransmitMail
- * File name : common.php
- * Description : 関数群
- * Author : TAGAWA Takao (dounokouno@gmail.com)
- * License : MIT License
- * Since : 2010-11-19
- * Modified : 2015-06-20
-*/
+/**
+ * TransmitMail の共通設定および共通関数群
+ *
+ * @package    TransmitMail
+ * @author     TAGAWA Takao
+ * @license    MIT License
+ * @copyright  TransmitMail Development Team
+ * @link       https://github.com/dounokouno/TransmitMail
+ */
 
 // ----------------------------------------------------------------
 // システム名、バージョン
