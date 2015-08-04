@@ -155,6 +155,33 @@
 							</td>
 						</tr>
 						<tr>
+							<th>入力必須（複数）※全て入力必須</th>
+							<td>
+								<input type="text" name="入力必須複数1-1" value="{$入力必須複数1-1}" />
+								<input type="text" name="入力必須複数1-2" value="{$入力必須複数1-2}" />
+
+								
+								<input type="hidden" name="required_plural[]" value="入力必須複数1-1,入力必須複数1-2" />
+								{if:$required_plural.入力必須複数1-1,入力必須複数1-2}
+								<div class="error"><em>すべての項目を入力して下さい。</em></div>
+								{/if:$required_plural.入力必須複数1-1,入力必須複数1-2}
+							</td>
+						</tr>
+						<tr>
+							<th>入力必須（複数）※全て入力必須</th>
+							<td>
+								<input type="text" name="入力必須複数2-1" value="{$入力必須複数2-1}" />
+								<input type="text" name="入力必須複数2-2" value="{$入力必須複数2-2}" />
+								<input type="text" name="入力必須複数2-3" value="{$入力必須複数2-3}" />
+								
+								
+								<input type="hidden" name="required_plural[]" value="入力必須複数2-1,入力必須複数2-2,入力必須複数2-3" />
+								{if:$required_plural.入力必須複数2-1,入力必須複数2-2,入力必須複数2-3}
+								<div class="error"><em>すべての項目を入力して下さい。</em></div>
+								{/if:$required_plural.入力必須複数2-1,入力必須複数2-2,入力必須複数2-3}
+							</td>
+						</tr>
+						<tr>
 							<th>メールアドレス</th>
 							<td>
 								<input type="text" name="メールアドレス" value="{$メールアドレス}" class="middle" />
