@@ -385,7 +385,7 @@ function put_error_log($s, $suffix) {
 	$lock_fp = @fopen($lock_file, 'w');
 	$lock = @flock($lock_fp, LOCK_EX);
 	while (!$lock) {
-		usleep(100000);	// 0.1秒スリープ(2000000 = 1秒)
+		usleep(100000);	// 0.1秒スリープ(1000000 = 1秒)
 		$log_name = is_log_file($file_name);
 		$lock_fp = @fopen($lock_file, 'w');
 		$lock = @flock($lock_fp, LOCK_EX);
@@ -450,7 +450,7 @@ function put_csv($post) {
 	// ファイルロック
 	$lock_file = DIR_LOGS . '/lock';
 	do {
-		usleep(100000);	// 0.1秒スリープ(2000000 = 1秒)
+		usleep(100000);	// 0.1秒スリープ(1000000 = 1秒)
 		$lock_fp = @fopen($lock_file, 'w');
 		$lock = @flock($lock_fp, LOCK_EX);
 	} while (!$lock);
