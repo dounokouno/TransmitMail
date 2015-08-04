@@ -408,7 +408,7 @@ function is_log_file($file_name) {
 		$i = 1;
 		$num = '_' . $i;
 		$log_file = $file_name . $num;
-		while (is_file($result)) {
+		while (is_file($log_file)) {
 			$i++;
 			$num = '_' . $i;
 			$log_file = $file_name . $num;
