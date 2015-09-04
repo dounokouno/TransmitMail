@@ -205,7 +205,7 @@ if (isset($_POST['zenkaku_katakana'])) {
 			$_POST[$v] = mb_convert_kana($_POST[$v], 'CK');
 			$_POST[$v] = delete_blank($_POST[$v]);
 			if (!check_zenkaku_katakana($_POST[$v])) {
-				$tmpl->set("zenkaku_katakana.$v", ($v . ERROR_ZENKAKU_KATAKANA));
+				$tmpl->set("zenkaku_katakana.$v", h($v . ERROR_ZENKAKU_KATAKANA));
 				$global_error[] = ($v . ERROR_ZENKAKU_KATAKANA);
 				$global_error_flag = true;
 			}
