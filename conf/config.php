@@ -111,8 +111,8 @@ error_reporting(E_ALL ^ E_STRICT ^ E_DEPRECATED);
 define('DIR_LOGS', './logs');
 
 // CSVファイル
-define('CSV_FILE', 'data.csv');		// CSVのファイル名
-define('CSV_ENCODE', 'SJIS-win');	// CSVのエンコード
+define('CSV_FILE', 'data.csv');   // CSVのファイル名
+define('CSV_ENCODE', 'SJIS-win'); // CSVのエンコード
 
 // 文字コード
 define('CHARASET', 'UTF-8');
@@ -125,14 +125,14 @@ define('MAILFORM_PROGRAM', 'index.php');
 define('DIR_MAILFORM', str_replace(MAILFORM_PROGRAM, '', $_SERVER['PHP_SELF']));
 
 // テンプレートファイル
-define('TMPL_INPUT', 'input.html');		// 入力画面
-define('TMPL_CONFIRM', 'confirm.html');	// 確認画面
-define('TMPL_FINISH', 'finish.html');		// 完了画面
-define('TMPL_ERROR', 'error.html');		// エラー画面
+define('TMPL_INPUT', 'input.html');     // 入力画面
+define('TMPL_CONFIRM', 'confirm.html'); // 確認画面
+define('TMPL_FINISH', 'finish.html');   // 完了画面
+define('TMPL_ERROR', 'error.html');     // エラー画面
 
 // 送信メール文章テンプレート
-define('MAIL_BODY', './conf/mail_body.txt');							// 送信メール
-define('MAIL_AUTO_REPLY_BODY', './conf/mail_autoreply_body.txt');	// 自動返信メール
+define('MAIL_BODY', './conf/mail_body.txt');                      // 送信メール
+define('MAIL_AUTO_REPLY_BODY', './conf/mail_autoreply_body.txt'); // 自動返信メール
 
 // エラーメッセージ
 define('ERROR_REQUIRED', 'は入力必須です。');
@@ -177,7 +177,7 @@ define('FILE_NAME_PREFIX', 'file_');
 
 // セッション設定
 if (SESSION) {
-	ini_set('session.save_handler', 'files');
-	session_name('TRANSMITMAILSESSID');
-	session_set_cookie_params(0, DIR_MAILFORM);
+    ini_set('session.save_handler', 'files');
+    session_name('TRANSMITMAILSESSID');
+    session_set_cookie_params(0, DIR_MAILFORM);
 }

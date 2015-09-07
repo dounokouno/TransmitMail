@@ -12,74 +12,74 @@
 </head>
 <body class="home">
 <div id="header">
-	<div class="container">
-		<h1>TransmitMail サンプル</h1>
-	</div>
+    <div class="container">
+        <h1>TransmitMail サンプル</h1>
+    </div>
 </div>
 <div id="content">
-	<div class="container">
-		<!-- mailform -->
-		<div class="section">
-			<h2>入力内容の確認</h2>
-			<p>以下の内容でよろしければ、ページ下部の送信ボタンを押してください。<br />
-				誤りがある場合は、前画面に戻って再度ご入力ください。</p>
-			<table width="100%" class="alpha">
-				<tr>
-					<th width="300">{$GET値取得サンプル.key}&nbsp;</th>
-					<td>{$GET値取得サンプル.value}&nbsp;</td>
-				</tr>
-				<tr>
-					<th>{$シングルラインインプット.key}&nbsp;</th>
-					<td>{$シングルラインインプット.value}&nbsp;</td>
-				</tr>
-				<tr>
-					<th>{$マルチラインインプット.key}&nbsp;</th>
-					<td>{$マルチラインインプット.value.nl2br}&nbsp;</td>
-				</tr>
-				<tr>
-					<th>{$ラジオボタン.key}&nbsp;</th>
-					<td>{$ラジオボタン.value}&nbsp;</td>
-				</tr>
-				<tr>
-					<th>{$チェックボックス.key}&nbsp;</th>
-					<td>{$チェックボックス.value}&nbsp;</td>
-				</tr>
-				<tr>
-					<th>{$セレクトメニュー.key}&nbsp;</th>
-					<td>{$セレクトメニュー.value}&nbsp;</td>
-				</tr>
-				<tr>
-					<th>{$マルチプルセレクトメニュー.key}&nbsp;</th>
-					<td>{$マルチプルセレクトメニュー.value}&nbsp;</td>
-				</tr>
-				<tr>
-					<th>チェックボックスを配列で受け取り、<br>
-						ul要素とli要素でマークアップする</th>
-					<td>
-						<ul>
-							{loop:$チェックボックス.array}
-								<li>{$チェックボックス.array[]}</li>
-							{/loop:$チェックボックス.array}
-						</ul>
-					</td>
-				</tr>
-			</table>
-			<div class="center">
-				<form method="post" action="index.php" class="inline">
-					{$hiddens}
-					<input type="hidden" name="page" value="input" />
-					<input type="submit" value="入力画面に戻る" />
-				</form>
-				&nbsp;
-				<form method="post" action="index.php" class="inline">
-					{$hiddens}
-					<input type="hidden" name="page" value="finish" />
-					<input type="submit" value="送信する" />
-				</form>
-			</div>
-		</div>
-		<!-- /mailform -->
-	</div>
+    <div class="container">
+        <!-- mailform -->
+        <div class="section">
+            <h2>入力内容の確認</h2>
+            <p>以下の内容でよろしければ、ページ下部の送信ボタンを押してください。<br />
+                誤りがある場合は、前画面に戻って再度ご入力ください。</p>
+            <table width="100%" class="alpha">
+                <tr>
+                    <th width="300">{$GET値取得サンプル.key}&nbsp;</th>
+                    <td>{$GET値取得サンプル.value}&nbsp;</td>
+                </tr>
+                <tr>
+                    <th>{$シングルラインインプット.key}&nbsp;</th>
+                    <td>{$シングルラインインプット.value}&nbsp;</td>
+                </tr>
+                <tr>
+                    <th>{$マルチラインインプット.key}&nbsp;</th>
+                    <td>{$マルチラインインプット.value.nl2br}&nbsp;</td>
+                </tr>
+                <tr>
+                    <th>{$ラジオボタン.key}&nbsp;</th>
+                    <td>{$ラジオボタン.value}&nbsp;</td>
+                </tr>
+                <tr>
+                    <th>{$チェックボックス.key}&nbsp;</th>
+                    <td>{$チェックボックス.value}&nbsp;</td>
+                </tr>
+                <tr>
+                    <th>{$セレクトメニュー.key}&nbsp;</th>
+                    <td>{$セレクトメニュー.value}&nbsp;</td>
+                </tr>
+                <tr>
+                    <th>{$マルチプルセレクトメニュー.key}&nbsp;</th>
+                    <td>{$マルチプルセレクトメニュー.value}&nbsp;</td>
+                </tr>
+                <tr>
+                    <th>チェックボックスを配列で受け取り、<br>
+                        ul要素とli要素でマークアップする</th>
+                    <td>
+                        <ul>
+                            {loop:$チェックボックス.array}
+                                <li>{$チェックボックス.array[]}</li>
+                            {/loop:$チェックボックス.array}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <div class="center">
+                <form method="post" action="index.php" class="inline">
+                    {$hiddens}
+                    <input type="hidden" name="page" value="input" />
+                    <input type="submit" value="入力画面に戻る" />
+                </form>
+                &nbsp;
+                <form method="post" action="index.php" class="inline">
+                    {$hiddens}
+                    <input type="hidden" name="page" value="finish" />
+                    <input type="submit" value="送信する" />
+                </form>
+            </div>
+        </div>
+        <!-- /mailform -->
+    </div>
 </div>
 </body>
 </html>
