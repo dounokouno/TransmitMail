@@ -2,11 +2,11 @@
 /**
  * TransmitMail の設定ファイル
  *
- * @package    TransmitMail
- * @author     TAGAWA Takao
- * @license    MIT License
- * @copyright  TransmitMail Development Team
- * @link       https://github.com/dounokouno/TransmitMail
+ * @package   TransmitMail
+ * @author    TAGAWA Takao
+ * @license   MIT License
+ * @copyright TransmitMail Development Team
+ * @link      https://github.com/dounokouno/TransmitMail
  */
 
 // ----------------------------------------------------------------
