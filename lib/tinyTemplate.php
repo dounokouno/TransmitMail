@@ -9,7 +9,7 @@ if (!class_exists('tinyTemplate')) {
 class tinyTemplate {
     // Configuration variables
     private $base_path = '';
-    private $reset_vars = TRUE;
+    private $reset_vars = false;
 
     // Default Modifier
     public $default_modifier = null;
@@ -36,7 +36,7 @@ class tinyTemplate {
 //
 // Simply sets the base path (if you don't set the default).
 //
-    function __construct($base_path = NULL, $reset_vars = TRUE)
+    function __construct($base_path = null, $reset_vars = false)
     {
         if($base_path) $this->base_path = $base_path;
         $this->reset_vars = $reset_vars;
@@ -47,7 +47,7 @@ class tinyTemplate {
 //
 // Sets all types of variables (scalar, loop, hash).
 //
-    public function set($tag, $var, $modifier = true)
+    public function set($tag, $var, $modifier = false)
     {
         if(is_array($var)) {
             if ($modifier) {
@@ -79,7 +79,13 @@ class tinyTemplate {
         $contents = fread($fp, filesize($file));
         fclose($fp);
 
-        return $this->parse($contents);
+        $contents = $this->parse($contents);
+
+        $contents = preg_replace('/\{\$.*\}/', '', $contents);
+        $contents = preg_replace('/\{if.*?}.*?\{\/if.*?\}/s', '', $contents);
+        $contents = preg_replace('/\{loop.*?}.*?\{\/loop.*?\}/s', '', $contents);
+
+        return $contents;
     }
 
 
@@ -88,11 +94,6 @@ class tinyTemplate {
 //
     public function parse($contents)
     {
-        $this->set('_SERVER', $_SERVER);
-        $this->set('_POST', $_POST);
-        $this->set('_GET', $_GET);
-        $this->set('_COOKIE', $_COOKIE);
-
         // Process the ifs
         if(!empty($this->ifs)) {
             foreach($this->ifs as $value) {
@@ -116,7 +117,7 @@ class tinyTemplate {
         }
 
         // Reset the arrays
-        if($this->reset_vars) $this->reset_vars(FALSE, TRUE, TRUE, FALSE);
+        if($this->reset_vars) $this->reset_vars(false, true, true, false);
 
         // Return the contents
         return $contents;
