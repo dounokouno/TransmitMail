@@ -1,21 +1,21 @@
 <?php
 /**
- * Part of TransmitMail.
+ * Part of TransmitMail
  *
  * @package    TransmitMail
  * @subpackage PHPUnit with Selenium 2
- * @author     TAGAWA Takao
  * @license    MIT License
- * @copyright  TransmitMail Development Team
+ * @copyright  TransmitMail development team
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
 abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2TestCase
 {
-
+    public $tm;
     public $topPageTitle = 'TransmitMail サンプル';
     public $confirmPageTitle = '入力内容の確認 | TransmitMail サンプル';
     public $globalErrorMessage = '入力内容に誤りがあります';
+    public $testimage = 'tests/FunctionalTest/testimage01.jpg';
     public $inputPatterns = array();
     public $lenFieldInputPatterns = array();
 
@@ -25,6 +25,8 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     public function __construct($name = NULL, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
+
+        $this->tm = new TransmitMail();
 
         // 入力パターン
         $this->inputPatterns['kanji'] = '漢字';
@@ -133,15 +135,28 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
      */
     protected function setUp()
     {
+        // MEMO: PhantomJS 2.0 ではファイルアップロードのテストができないため、 Firefox を指定している
+        // MEMO: PhantomJS 2.1 では直るらしいので、 2.1 が出たら PhantomJS を試す
         //$this->setBrowser('phantomjs');
         $this->setBrowser('firefox');
-        //$this->setBrowserUrl('http://localhost:8000/');
-        $this->setBrowserUrl('http://localhost/');
 
-        // MEMO: 他のブラウザの設定
-        // MEMO: IEとChromeは別途ライブラリが必要っぽい
-        //$this->setBrowser('firefox');
-        //$this->setBrowser('safari');
+        // MEMO: 開発環境の場合は http://localhost:8000/ に変更する
+        $this->setBrowserUrl('http://localhost/');
+    }
+
+    /**
+     * ティアダウン
+     */
+    protected function tearDown()
+    {
+        $testimage = basename($this->testimage);
+        $tmp_files = scandir($this->tm->config['tmp_dir']);
+
+        foreach ($tmp_files as $tmp_file) {
+            if (strpos($tmp_file, $testimage)) {
+                unlink($this->tm->config['tmp_dir'] . $tmp_file);
+            }
+        }
     }
 
     /**
@@ -150,7 +165,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     public function onNotSuccessfulTest(Exception $e)
     {
         if ($e instanceof PHPUnit_Framework_AssertionFailedError) {
-            $listener = new PHPUnit_Extensions_Selenium2TestCase_ScreenshotListener('tests/screenshots');
+            $listener = new PHPUnit_Extensions_Selenium2TestCase_ScreenshotListener('tmp/screenshot');
             $listener->addFailure($this, $e, null);
         }
 
@@ -165,6 +180,10 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
         $element = $this->byCssSelector('input[type="text"][name="入力必須"]');
         $element->clear();
         $element->value('入力必須項目の入力テスト');
+
+        // ファイルの入力必須
+        $element = $this->byCssSelector('input[type="file"][name="ファイルの入力必須"]');
+        $element->value($this->file($this->testimage));
     }
 
     /**
@@ -211,9 +230,9 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     /**
      * 入力エラーにならない場合のテスト
      *
-     * @param array[]  $values       入力パターン
-     * @param array[]  $selector     テストする入力フィールドのCSSセレクタ
-     * @param string[] $convertMode  入力値の変換をするか、する場合はどのように変換をするか
+     * @param array[]  $values      入力パターン
+     * @param array[]  $selector    テストする入力フィールドのCSSセレクタ
+     * @param string[] $convertMode 入力値の変換をするか、する場合はどのように変換をするか
      */
     public function inputSuccessTest($values, $selector, $convertMode = null)
     {
@@ -255,8 +274,8 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     /**
      * 文字への変換
      *
-     * @param array[]  $values       入力パターン
-     * @param string[] $convertMode  入力値の変換をするか、する場合はどのように変換をするか
+     * @param array[]  $values      入力パターン
+     * @param string[] $convertMode 入力値の変換をするか、する場合はどのように変換をするか
      */
     private function convert($values, $convertMode = null) {
         if (is_null($convertMode)) {
@@ -284,10 +303,6 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
 
             case 'zenkaku_katakana':
                 $subscript = 'CK';
-                break;
-
-            case 'hankaku_katakana':
-                $subscript = 'kh';
                 break;
         }
 
