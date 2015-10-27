@@ -1,18 +1,16 @@
 <?php
 /**
- * Basic test.
+ * Basic test
  *
  * @package    TransmitMail
  * @subpackage PHPUnit with Selenium 2
- * @author     TAGAWA Takao
  * @license    MIT License
- * @copyright  TransmitMail Development Team
+ * @copyright  TransmitMail development team
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
 class BasicTest extends TransmitMailFunctionalTest
 {
-
     /**
      * URLを表示しタイトルをテスト
      */
@@ -29,7 +27,6 @@ class BasicTest extends TransmitMailFunctionalTest
     {
         $this->url('');
 
-        // フォームパーツサンプル
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="シングルラインインプット"]')->value());
         $this->assertEquals('', $this->byCssSelector('textarea[name="マルチラインインプット"]')->value());
         $this->assertEquals('項目1', $this->byCssSelector('input[type="radio"][name="ラジオボタン"]:first-of-type')->value());
@@ -39,7 +36,6 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->assertEquals('', $this->byCssSelector('input[type="file"][name="ファイル1"]')->value());
         $this->assertEquals('', $this->byCssSelector('input[type="file"][name="ファイル2"]')->value());
 
-        // 入力オプション
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="入力必須"]')->value());
         $this->assertEquals('入力必須', $this->byCssSelector('input[type="hidden"][name="required[]"]')->value());
 
@@ -67,9 +63,6 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="全角カタカナ"]')->value());
         $this->assertEquals('全角カタカナ', $this->byCssSelector('input[type="hidden"][name="zenkaku_katakana[]"]')->value());
 
-        $this->assertEquals('', $this->byCssSelector('input[type="text"][name="半角カタカナ"]')->value());
-        $this->assertEquals('半角カタカナ', $this->byCssSelector('input[type="hidden"][name="hankaku_katakana[]"]')->value());
-
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="全角文字を含むか"]')->value());
         $this->assertEquals('全角文字を含むか', $this->byCssSelector('input[type="hidden"][name="zenkaku[]"]')->value());
 
@@ -85,8 +78,8 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="3文字固定"]')->value());
         $this->assertEquals('3文字固定 3-3', $this->byCssSelector('input[type="hidden"][name="len[]"][value="3文字固定 3-3"]')->value());
 
-        $this->assertEquals('', $this->byCssSelector('input[type="text"][name="6文字以上8以下"]')->value());
-        $this->assertEquals('6文字以上8以下 6-8', $this->byCssSelector('input[type="hidden"][name="len[]"][value="6文字以上8以下 6-8"]')->value());
+        $this->assertEquals('', $this->byCssSelector('input[type="text"][name="6文字以上8文字以下"]')->value());
+        $this->assertEquals('6文字以上8文字以下 6-8', $this->byCssSelector('input[type="hidden"][name="len[]"][value="6文字以上8文字以下 6-8"]')->value());
 
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="一致1"]')->value());
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="一致2"]')->value());
@@ -107,19 +100,20 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="1〜12の数字"]')->value());
         $this->assertEquals('1〜12の数字 1-12', $this->byCssSelector('input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]')->value());
 
-        // 入力オプションを複数組み合わせるサンプル
+        $this->assertEquals('', $this->byCssSelector('input[type="file"][name="ファイルの入力必須"]')->value());
+        $this->assertEquals('ファイルの入力必須', $this->byCssSelector('input[type="hidden"][name="file_required[]"][value="ファイルの入力必須"]')->value());
+
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="郵便番号"]')->value());
         $this->assertEquals('郵便番号', $this->byCssSelector('input[type="hidden"][name="num_hyphen[]"][value="郵便番号"]')->value());
         $this->assertEquals('郵便番号 8', $this->byCssSelector('input[type="hidden"][name="len[]"][value="郵便番号 8"]')->value());
 
-        // x、yを含む項目名
         $this->assertEquals('', $this->byCssSelector('input[type="text"][name="abcdefghijklnmopqrstuvwxyz"]')->value());
 
         $this->assertEquals('入力内容を確認する', $this->byCssSelector('input[type="submit"]')->value());
     }
 
     /**
-     * サンプル用フィールドの入力確認画面のテスト
+     * x、yを含む項目名のテスト
      */
     public function testContainsXAndYField()
     {
