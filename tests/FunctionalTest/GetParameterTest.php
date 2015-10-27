@@ -1,18 +1,16 @@
 <?php
 /**
- * Get parameter test.
+ * Get parameter test
  *
  * @package    TransmitMail
  * @subpackage PHPUnit with Selenium 2
- * @author     TAGAWA Takao
  * @license    MIT License
- * @copyright  TransmitMail Development Team
+ * @copyright  TransmitMail development team
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
 class GetParameterTest extends TransmitMailFunctionalTest
 {
-
     /**
      * GETパラメータの受け取り、出力のテスト
      */

@@ -1,18 +1,16 @@
 <?php
 /**
- * Basi test.
+ * Basi test
  *
  * @package    TransmitMail
  * @subpackage PHPUnit with Selenium 2
- * @author     TAGAWA Takao
  * @license    MIT License
- * @copyright  TransmitMail Development Team
+ * @copyright  TransmitMail development team
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
 class InputOptionsTest extends TransmitMailFunctionalTest
 {
-
     /**
      * 入力必須のテスト
      */
@@ -21,52 +19,49 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         $this->url('');
  
         $selectors = array(
-            'target' => 'input[type="text"][name="入力必須"]',
-            'option' => 'input[type="hidden"][name="required[]"][value="入力必須"]'
+            'text' => array(
+                'target' => 'input[type="text"][name="入力必須"]',
+                'option' => 'input[type="hidden"][name="required[]"][value="入力必須"]'
+            ),
+            'file' => array(
+                'target' => 'input[type="file"][name="ファイルの入力必須"]',
+                'option' => 'input[type="hidden"][name="file_required[]"][value="ファイルの入力必須"]'
+            )
         );
-        $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_REQUIRED;
-
-        $invalidValues = array(
-            null,
-            ''
+        $targetNameValues = array(
+            'text' => $this->byCssSelector($selectors['text']['target'])->attribute('name'),
+            'file' => $this->byCssSelector($selectors['file']['target'])->attribute('name')
+        );
+        $errorMessages = array(
+            'text' => $targetNameValues['text'] . $this->tm->config['error_required'],
+            'file' => $targetNameValues['file'] . $this->tm->config['error_file_required']
         );
         $validValues = array(
-            '0',
-            '00',
-            '1',
-            'a',
-            '入力必須項目の入力テスト'
+            'text' => '入力必須項目の入力テスト',
+            'file' => $this->testimage
         );
 
+        // 入力必須とするフィールドを確認
+        $this->assertEquals('', $this->byCssSelector($selectors['text']['target'])->value());
+        $this->assertInternalType('object', $this->byCssSelector($selectors['text']['option']));
+        $this->assertEquals('', $this->byCssSelector($selectors['file']['target'])->value());
+        $this->assertInternalType('object', $this->byCssSelector($selectors['file']['option']));
+
         // エラーの場合
-        for ($i = 0, $size = count($invalidValues); $i < $size; ++$i) {
-            $element = $this->byCssSelector($selectors['target']);
-            $element->clear();
-            $element->value($invalidValues[$i]);
-            $this->submitInputForm();
-            $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-            $this->assertEquals($errorMessage, $this->byCssSelector('#content ul li')->text());
-            $this->assertEquals($errorMessage, $this->byCssSelector('#content table tr td div.error')->text());
-            $this->assertEquals($invalidValues[$i], $this->byCssSelector($selectors['target'])->value());
-        }
+        $this->submitInputForm();
+        $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+        $this->assertEquals($errorMessages['text'], $this->byCssSelector('#content ul li:first-child')->text());
+        $this->assertEquals($errorMessages['file'], $this->byCssSelector('#content ul li:last-child')->text());
+        $this->assertEquals($errorMessages['text'], $this->byCssSelector('#content table tr td div.error')->text());
+        $this->assertEquals($errorMessages['file'], $this->byCssSelector('#content form .section:nth-child(3) table tr:last-child td div.error')->text());
 
         // 成功の場合
-        $hiddenFieldSelector = str_replace('[type="text"]', '[type="hidden"]', $selectors['target']);
-
-        for ($i = 0, $size = count($validValues); $i < $size; ++$i) {
-            $this->url('');
-            $element = $this->byCssSelector($selectors['target']);
-            $element->value($validValues[$i]);
-            $this->submitInputForm();
-            $this->assertEquals($this->confirmPageTitle, $this->title());
-            $this->assertContains($validValues[$i], $this->byCssSelector('#content table')->text());
-            $this->assertEquals($validValues[$i], $this->byCssSelector($hiddenFieldSelector)->value());
-
-            // 入力画面に戻る
-            $this->returnInputPage();
-            $this->assertEquals($validValues[$i], $this->byCssSelector($selectors['target'])->value());
-        }
+        $this->byCssSelector($selectors['text']['target'])->value($validValues['text']);
+        $this->byCssSelector($selectors['file']['target'])->value($this->file($validValues['file']));
+        $this->submitInputForm();
+        $this->assertEquals($this->confirmPageTitle, $this->title());
+        $this->assertContains($validValues['text'], $this->byCssSelector('#content table')->text());
+        $this->assertContains(basename($validValues['file']), $this->byCssSelector('#content table')->text());
     }
 
     /**
@@ -81,7 +76,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="email[]"][value="メールアドレス"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_EMAIL;
+        $errorMessage = $targetNameValue . $this->tm->config['error_email'];
         $invalidValues = array(
             'user@foo,com',
             'user_at_foo.org',
@@ -120,7 +115,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="hankaku[]"][value="半角文字"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_HANKAKU;
+        $errorMessage = $targetNameValue . $this->tm->config['error_hankaku'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -160,7 +155,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="hankaku_eisu[]"][value="半角英数字"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_HANKAKU_EISU;
+        $errorMessage = $targetNameValue . $this->tm->config['error_hankaku_eisu'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -192,7 +187,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="hankaku_eiji[]"][value="半角英字"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_HANKAKU_EIJI;
+        $errorMessage = $targetNameValue . $this->tm->config['error_hankaku_eiji'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -220,7 +215,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num[]"][value="数字"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -248,7 +243,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_hyphen[]"][value="数字＋ハイフン"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_HYPHEN;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_hyphen'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -278,7 +273,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="hiragana[]"][value="ひらがな"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_HIRAGANA;
+        $errorMessage = $targetNameValue . $this->tm->config['error_hiragana'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -307,7 +302,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="zenkaku_katakana[]"][value="全角カタカナ"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_ZENKAKU_KATAKANA;
+        $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku_katakana'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -325,35 +320,6 @@ class InputOptionsTest extends TransmitMailFunctionalTest
     }
 
     /**
-     * 半角カタカナの入力チェックのテスト
-     */
-    public function testHankakuKatakanaField()
-    {
-        $this->url('');
-
-        $selectors = array(
-            'target' => 'input[type="text"][name="半角カタカナ"]',
-            'option' => 'input[type="hidden"][name="hankaku_katakana[]"][value="半角カタカナ"]'
-        );
-        $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_HANKAKU_KATAKANA;
-
-        // 入力エラーにならない入力パターン
-        $validValues = array(
-            $this->inputPatterns['hiragana'],
-            $this->inputPatterns['katakana'],
-            $this->inputPatterns['hankakuKatakana']
-        );
-
-        // フィールドの確認
-        $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
-
-        // テストの実行
-        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hankaku_katakana');
-    }
-
-    /**
      * 全角文字を含むかの入力チェックのテスト
      */
     public function testZenkakuField()
@@ -365,7 +331,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="zenkaku[]"][value="全角文字を含むか"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_ZENKAKU;
+        $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -395,8 +361,6 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
     /**
      * 全て全角文字の入力チェックのテスト
-     *
-     * @todo zenkakuEijiHyphen と zenkakuEisuKigo が入力エラーになるが、仕様的には入力エラーでは無いほうがいいのでは。 TransmitMail 本体の実装を検討する
      */
     public function testZenkakuAllField()
     {
@@ -407,7 +371,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="zenkaku_all[]"][value="全て全角文字"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_ZENKAKU_ALL;
+        $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku_all'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -443,7 +407,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="len[]"][value="3文字以上 3-"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_LEN;
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '3文字以上', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -484,7 +448,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="len[]"][value="3文字以下 -3"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_LEN;
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '3文字以下', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -517,7 +481,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="len[]"][value="3文字固定 3-3"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_LEN;
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '3文字', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -536,19 +500,17 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
     /**
      * 6文字以上8文字以下の文字数チェックのテスト
-     *
-     * @todo フィールド名が「6文字以上8以下」になっているが、正しくは「6文字以上8文字以下」では。修正したい。
      */
     public function testLenFieldSixOrMoreAndEightOrLessCharacters()
     {
         $this->url('');
 
         $selectors = array(
-            'target' => 'input[type="text"][name="6文字以上8以下"]',
-            'option' => 'input[type="hidden"][name="len[]"][value="6文字以上8以下 6-8"]'
+            'target' => 'input[type="text"][name="6文字以上8文字以下"]',
+            'option' => 'input[type="hidden"][name="len[]"][value="6文字以上8文字以下 6-8"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_LEN;
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '6〜8文字', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -583,7 +545,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         );
         $target1NameValue = $this->byCssSelector($selectors['target1'])->attribute('name');
         $target2NameValue = $this->byCssSelector($selectors['target2'])->attribute('name');
-        $errorMessage = $target1NameValue . ERROR_MATCH;
+        $errorMessage = $target1NameValue . $this->tm->config['error_match'];
 
         // 入力パターン
         $inputPatterns = array(
@@ -650,8 +612,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
     /**
      * URLの入力チェックのテスト
      *
-     * @todo 今は日本語ドメインはエラーになるが、日本語ドメインの場合もエラーにならないように判別ロジックを修正したい
-     * @todo サブドメインにアンダースコアが入る場合にエラーにならない。判別ロジックの修正が必要
+     * MEMO: ドメインとサブドメインに使用できない文字（例えばアンダースコア）が入力エラーにならないが、判別ロジックが複雑になるため、半角スペースと全角スペース以外の文字は許可するロジックにしている
      */
     public function testUrlField()
     {
@@ -662,7 +623,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="url[]"][value="URL"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_URL;
+        $errorMessage = $targetNameValue . $this->tm->config['error_url'];
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -704,7 +665,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以下の数字 -3"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', '0以上、3以下', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -735,7 +696,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以下の数字 -3"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
@@ -758,7 +719,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以上の数字 3-"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', '3以上', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -800,7 +761,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以上の数字 3-"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
@@ -823,7 +784,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="ちょうど3の数字 3-3"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', 'ちょうど3', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -851,7 +812,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="ちょうど3の数字 3-3"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
@@ -874,7 +835,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', '1以上、12以下', $errorMessage);
 
         // 入力エラーにならない入力パターン
@@ -913,7 +874,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             'option' => 'input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]'
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
-        $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
