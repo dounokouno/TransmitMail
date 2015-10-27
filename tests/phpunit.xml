@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit colors="true" bootstrap="bootstrap.php">
-    <testsuite name="webdriver">
-        <directory>webdriver/</directory>
+    <testsuite name="FunctionalTest">
+        <directory>FunctionalTest/</directory>
     </testsuite>
 </phpunit>
