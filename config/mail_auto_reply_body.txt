@@ -6,7 +6,7 @@
 1週間以上経ってもお返事がない場合は、
 お手数ですが下記アドレスよりお問い合わせくださいませ。
 
-info@example.jp
+info@example.com
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -25,7 +25,7 @@ info@example.jp
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 株式会社テスト
-http://www.example.jp/
-Email : info@example.jp
-TEL : 000-0000-0000
-FAX : 000-0000-0000
+http://www.example.com/
+Email: info@example.com
+TEL: 000-0000-0000
+FAX: 000-0000-0000

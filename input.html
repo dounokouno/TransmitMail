@@ -19,16 +19,16 @@
         </div>
         <div class="section">
             <h2>メールフォーム</h2>
-            {if:$global_error_flag}
+            {if:$global_errors}
             <p><em>入力内容に誤りがあります。</em></p>
             <div class="section">
                 <ul>
-                    {loop:$global_error}
-                    <li><em>{$global_error[]}</em></li>
-                    {/loop:$global_error}
+                    {loop:$global_errors}
+                    <li><em>{$global_errors[]}</em></li>
+                    {/loop:$global_errors}
                 </ul>
             </div>
-            {/if:$global_error_flag}
+            {/if:$global_errors}
             <form method="post" action="index.php" enctype="multipart/form-data">
                 <div class="section">
                     <h3>GET値の取得、表示</h3>
@@ -231,16 +231,6 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>半角カタカナ</th>
-                            <td>
-                                <input type="text" name="半角カタカナ" value="{$半角カタカナ}" class="middle">
-                                <input type="hidden" name="hankaku_katakana[]" value="半角カタカナ">
-                                {if:$hankaku_katakana.半角カタカナ}
-                                <div class="error"><em>{$hankaku_katakana.半角カタカナ}</em></div>
-                                {/if:$hankaku_katakana.半角カタカナ}
-                            </td>
-                        </tr>
-                        <tr>
                             <th>全角文字を含むか</th>
                             <td>
                                 <input type="text" name="全角文字を含むか" value="{$全角文字を含むか}" class="middle">
@@ -291,13 +281,13 @@
                             </td>
                         </tr>
                         <tr>
-                            <th>6文字以上8以下</th>
+                            <th>6文字以上8文字以下</th>
                             <td>
-                                <input type="text" name="6文字以上8以下" value="{$6文字以上8以下}" class="middle">
-                                <input type="hidden" name="len[]" value="6文字以上8以下 6-8">
-                                {if:$len.6文字以上8以下}
-                                <div class="error"><em>{$len.6文字以上8以下}</em></div>
-                                {/if:$len.6文字以上8以下}
+                                <input type="text" name="6文字以上8文字以下" value="{$6文字以上8文字以下}" class="middle">
+                                <input type="hidden" name="len[]" value="6文字以上8文字以下 6-8">
+                                {if:$len.6文字以上8文字以下}
+                                <div class="error"><em>{$len.6文字以上8文字以下}</em></div>
+                                {/if:$len.6文字以上8文字以下}
                             </td>
                         </tr>
                         <tr>
@@ -364,6 +354,28 @@
                                 {if:$num_range.1〜12の数字}
                                 <div class="error"><em>{$num_range.1〜12の数字}</em></div>
                                 {/if:$num_range.1〜12の数字}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ファイルの入力必須<br>
+                                （500KB以下のGIF、JPG、PNG）</th>
+                            <td>
+                                {if:$ファイルの入力必須.tmp_name}
+                                <input type="checkbox" name="file_remove[]" value="ファイルの入力必須" id="file-remove">
+                                <label for="file-remove">このファイルを削除する</label>
+                                <p><img src="index.php?file={$ファイルの入力必須.tmp_name}" alt="{$ファイルの入力必須.name}" width="300"><br>
+                                    <a href="index.php?file={$ファイルの入力必須.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
+                                <input type="hidden" name="file[ファイルの入力必須][tmp_name]" value="{$ファイルの入力必須.tmp_name}">
+                                <input type="hidden" name="file[ファイルの入力必須][name]" value="{$ファイルの入力必須.name}">
+                                {/if:$ファイルの入力必須.tmp_name}
+                                <input type="file" name="ファイルの入力必須">
+                                <input type="hidden" name="file_required[]" value="ファイルの入力必須">
+                                {loop:$file.ファイルの入力必須}
+                                <div class="error"><em>{$file.ファイルの入力必須[]}</em></div>
+                                {/loop:$file.ファイルの入力必須}
+                                {if:$file_required.ファイルの入力必須}
+                                <div class="error"><em>{$file_required.ファイルの入力必須}</em></div>
+                                {/if:$file_required.ファイルの入力必須}
                             </td>
                         </tr>
                     </table>
