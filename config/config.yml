@@ -1,0 +1,7 @@
+config:
+    to_email: dounokouno@gmail.com
+    to_subject: ［株式会社テスト］お問い合わせ
+    auto_reply_subject: ［株式会社テスト］お問い合わせありがとうございます
+    auto_reply_name: 株式会社テスト
+    file: true
+    file_allow_extension: jpg,jpeg,gif,png
