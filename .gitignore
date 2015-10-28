@@ -4,5 +4,5 @@ config/config.yaml
 config/config.yml
 log/error.log
 tmp/file_*
-tmp/screenshot/
+tmp/screenshot/*.png
 vendor/
