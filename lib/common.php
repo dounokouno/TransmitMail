@@ -286,7 +286,7 @@ function check_zenkaku($s) {
 // 全て全角文字チェック
 // ----------------------------------------------------------------
 function check_zenkaku_all($s) {
-    return preg_match('/\A[^ -~｡-ﾟ]*\z/' . REG_OPTION, $s);
+    return preg_match('/\A[^\x01-\x7E]*\z/' . REG_OPTION, $s);
 }
 
 
