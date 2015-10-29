@@ -670,11 +670,18 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             $this->urlInputPatterns['exampleComLastCharacterSlash'],
             $this->urlInputPatterns['exampleComSsl'],
             $this->urlInputPatterns['exampleComWwwSubdomain'],
+            $this->urlInputPatterns['exampleComPage'],
+            $this->urlInputPatterns['exampleComParam'],
+            $this->urlInputPatterns['exampleComHash'],
             $this->urlInputPatterns['exampleMuseum'],
+            $this->urlInputPatterns['japaneseDomain'],
+            $this->urlInputPatterns['japaneseDomainSubdomain'],
+            $this->urlInputPatterns['japaneseDomainJapaneseSubdomain'],
             $this->urlInputPatterns['punycodeJapaneseDomain'],
             $this->urlInputPatterns['exampleComHyphenSubdomain'],
             $this->urlInputPatterns['exampleComUnserscoreSubdomain'],
-            $this->urlInputPatterns['exampleA']
+            $this->urlInputPatterns['exampleA'],
+            $this->urlInputPatterns['example']
         );
 
         // フィールドの確認
