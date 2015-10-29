@@ -150,7 +150,7 @@ define('ERROR_EMAIL', 'はメールアドレスの書式で入力してくださ
 define('ERROR_MATCH', 'が一致しません。');
 define('ERROR_LEN', 'は{文字数}で入力してください。');
 define('ERROR_URL', 'はURLの書式で入力してください。');
-define('ERROR_NUM_RANGE', 'は{範囲}の数値で入力してください。');
+define('ERROR_NUM_RANGE', 'は{範囲}の数字で入力してください。');
 define('ERROR_FILE_EXTENSION', 'は許可されていない拡張子です。');
 define('ERROR_FILE_EMPTY', 'は空のファイルです。');
 define('ERROR_FILE_MAX_SIZE', 'は指定サイズ（{ファイルサイズ}）を超えています。');

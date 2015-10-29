@@ -151,7 +151,7 @@ if (isset($_POST['hankaku_eiji'])) {
     }
 }
 
-// 数値チェック
+// 数字チェック
 if (isset($_POST['num'])) {
     foreach ($_POST['num'] as $v) {
         $tmpl->set("num.$v", false);
@@ -166,7 +166,7 @@ if (isset($_POST['num'])) {
     }
 }
 
-// 数値とハイフンチェック
+// 数字とハイフンチェック
 if (isset($_POST['num_hyphen'])) {
     foreach ($_POST['num_hyphen'] as $v) {
         $tmpl->set("num_hyphen.$v", false);
@@ -311,7 +311,7 @@ if (isset($_POST['len'])) {
         $tmpl->set("len.$array[0]", false);
         if (!empty($_POST[$array[0]]) && !check_len($_POST[$array[0]], $delim)) {
             if (empty($delim[0])) {
-                $error_len = str_replace('{文字数}', "$delim[1]文字以内", ERROR_LEN);
+                $error_len = str_replace('{文字数}', "$delim[1]文字以下", ERROR_LEN);
             } elseif (empty($delim[1])) {
                 $error_len = str_replace('{文字数}', "$delim[0]文字以上", ERROR_LEN);
             } else {
@@ -352,7 +352,7 @@ if (isset($_POST['num_range'])) {
         $delim = array_map('intval', $delim);
         $tmpl->set("num_range.$array[0]", false);
         if ($_POST[$array[0]] !== '') {
-            // 数値チェック
+            // 数字チェック
             $_POST[$array[0]] = mb_convert_kana($_POST[$array[0]], 'n');
             if (!check_num($_POST[$array[0]])) {
                 $tmpl->set("num_range.$array[0]", h($array[0] . ERROR_NUM));
