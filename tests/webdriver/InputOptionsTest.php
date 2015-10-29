@@ -474,8 +474,6 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
     /**
      * 3文字以下の文字数チェックのテスト
-     *
-     * @todo 入力フィールドは「3文字以下」だけどエラーメッセージは「3文字以内」と出力される。どちらかに合わせたい。
      */
     public function testLenFieldThreeOrLessCharacters()
     {
@@ -487,7 +485,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
         $errorMessage = $targetNameValue . ERROR_LEN;
-        $errorMessage = str_replace('{文字数}', '3文字以内', $errorMessage);
+        $errorMessage = str_replace('{文字数}', '3文字以下', $errorMessage);
 
         // 入力エラーにならない入力パターン
         $validValues = array(
@@ -727,8 +725,6 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
     /**
      * 3以下の数字の入力チェックのテスト（数字以外を入力した場合）
-     *
-     * @todo エラーメッセージの「数値」「数字」の表記揺れをどちらかに合わせたい
      */
     public function testNumRangeFieldThreeOrLessNumbersNotNumber()
     {
@@ -740,7 +736,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
         $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
-        $errorMessage = str_replace('{範囲}の数値', '数字', $errorMessage);
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
@@ -794,8 +790,6 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
     /**
      * 3以上の数字の入力チェックのテスト（数字以外を入力した場合）
-     *
-     * @todo エラーメッセージの「数値」「数字」の表記揺れをどちらかに合わせたい
      */
     public function testNumRangeFieldThreeOrMoreNumbersNotNumber()
     {
@@ -807,7 +801,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
         $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
-        $errorMessage = str_replace('{範囲}の数値', '数字', $errorMessage);
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
@@ -847,8 +841,6 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
     /**
      * ちょうど3の数字の入力チェックのテスト（数字以外を入力した場合）
-     *
-     * @todo エラーメッセージの「数値」「数字」の表記揺れをどちらかに合わせたい
      */
     public function testNumRangeFieldThreeNumberFixedNotNumber()
     {
@@ -860,7 +852,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
         $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
-        $errorMessage = str_replace('{範囲}の数値', '数字', $errorMessage);
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
@@ -911,8 +903,6 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
     /**
      * 1〜12の数字の入力チェックのテスト（数字以外を入力した場合）
-     *
-     * @todo エラーメッセージの「数値」「数字」の表記揺れをどちらかに合わせたい
      */
     public function testNumRangeFieldOneOrMoreAndTwelveOrLessNumbersNotNumber()
     {
@@ -924,7 +914,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         );
         $targetNameValue = $this->byCssSelector($selectors['target'])->attribute('name');
         $errorMessage = $targetNameValue . ERROR_NUM_RANGE;
-        $errorMessage = str_replace('{範囲}の数値', '数字', $errorMessage);
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
@@ -933,10 +923,4 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         // テストの実行
         $this->inputTest($this->numRangeNotNumberInputPatterns, array(), $selectors['target'], $errorMessage);
     }
-
-    /**
-     * 郵便番号（数値とハイフンを含む8文字）の入力チェックのテスト
-     *
-     * @todo このテストはいらない気がするので、一旦無しにする
-     */
 }
