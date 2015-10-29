@@ -749,23 +749,23 @@ if ($page === 'deny') {
             "\n\n" .
             "--\n\n" .
             "【宛先】\n" .
-            "$to_email\n\n" .
+            $to_email . "\n\n" .
             "【件名】\n" .
-            "$to_subject\n\n" .
+            $to_subject . "\n\n" .
             "【本文】\n" .
-            "$body";
+            $body;
 
         // 添付ファイルがある場合
         if (FILE) {
             foreach ($files as $key => $file) {
                 if (copy(DIR_TEMP . '/' . $file['tmp_name'], DIR_LOGS . '/' . $file['tmp_name'])) {
                     $data .= "\n\n" .
-                        "【$key】\n" .
-                        "ファイル名 : $file[name]\n" .
-                        "一時保存ファイル名 : $file[tmp_name]";
+                        "【" . $key . "】\n" .
+                        "ファイル名: " . $file['name'] . "\n" .
+                        "一時保存ファイル名: " . $file['tmp_name'];
                 } else {
                     $data .= "\n\n" .
-                        "【$key】\n" .
+                        "【" . $key . "】\n" .
                         "ファイルの保存に失敗しました";
                 }
             }
@@ -840,23 +840,23 @@ if ($page === 'deny') {
                 "\n\n" .
                 "--\n\n" .
                 "【宛先】\n" .
-                "$to_email\n\n" .
+                $to_email . "\n\n" .
                 "【件名】\n" .
-                "$to_subject\n\n" .
+                $to_subject . "\n\n" .
                 "【本文】\n" .
-                "$body";
+                $body;
 
             // 添付ファイルがある場合
             if (FILE) {
                 foreach ($files as $key => $file) {
                     if (copy(DIR_TEMP . '/' . $file['tmp_name'], DIR_LOGS . '/' . $file['tmp_name'])) {
                         $data .= "\n\n" .
-                            "【$key】\n" .
-                            "ファイル名 : $file[name]\n" .
-                            "一時保存ファイル名 : $file[tmp_name]";
+                            "【" . $key . "】\n" .
+                            "ファイル名: " . $file['name'] . "\n" .
+                            "一時保存ファイル名: " . $file['tmp_name'];
                     } else {
                         $data .= "\n\n" .
-                            "【$key】\n" .
+                            "【" . $key . "】\n" .
                             "ファイルの保存に失敗しました";
                     }
                 }
