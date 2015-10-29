@@ -17,11 +17,13 @@
             <h2>エラーが発生しました</h2>
             <p>お手数をおかけしますが、再度、お問い合わせフォームからお問い合わせいただくか、下記メールアドレスよりお問い合わせください。</p>
             {if:$global_error_flag}
-            <ul>
-                {loop:$global_error}
-                <li><em>{$global_error[]}</em></li>
-                {/loop:$global_error}
-            </ul>
+            <div class="section">
+              <ul>
+                  {loop:$global_error}
+                  <li><em>{$global_error[]}</em></li>
+                  {/loop:$global_error}
+              </ul>
+            </div>
             {/if:$global_error_flag}
             <div class="section">
                 <h3>お問い合わせフォームへ戻る</h3>

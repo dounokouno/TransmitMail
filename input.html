@@ -21,11 +21,13 @@
             <h2>メールフォーム</h2>
             {if:$global_error_flag}
             <p><em>入力内容に誤りがあります。</em></p>
-            <ul>
-                {loop:$global_error}
-                <li><em>{$global_error[]}</em></li>
-                {/loop:$global_error}
-            </ul>
+            <div class="section">
+                <ul>
+                    {loop:$global_error}
+                    <li><em>{$global_error[]}</em></li>
+                    {/loop:$global_error}
+                </ul>
+            </div>
             {/if:$global_error_flag}
             <form method="post" action="index.php" enctype="multipart/form-data">
                 <div class="section">
