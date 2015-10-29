@@ -75,8 +75,13 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
         $this->urlInputPatterns['exampleComLastCharacterSlash'] = 'http://example.com/';
         $this->urlInputPatterns['exampleComSsl'] = 'https://example.com';
         $this->urlInputPatterns['exampleComWwwSubdomain'] = 'http://www.example.com';
+        $this->urlInputPatterns['exampleComPage'] = 'http://example.com/page';
+        $this->urlInputPatterns['exampleComParam'] = 'http://example.com/param1=a&param2=_b';
+        $this->urlInputPatterns['exampleComHash'] = 'http://example.com/#hash';
         $this->urlInputPatterns['exampleMuseum'] = 'http://example.museum';
         $this->urlInputPatterns['japaneseDomain'] = 'http://ドメイン名例.jp';
+        $this->urlInputPatterns['japaneseDomainSubdomain'] = 'http://www.ドメイン名例.jp';
+        $this->urlInputPatterns['japaneseDomainJapaneseSubdomain'] = 'http://サブドメイン.ドメイン名例.jp';
         $this->urlInputPatterns['punycodeJapaneseDomain'] = 'http://xn--eckwd4c7cu47r2wf.jp';
         $this->urlInputPatterns['exampleComHyphenSubdomain'] = 'http://sub-domain.example.com';
         $this->urlInputPatterns['exampleComUnserscoreSubdomain'] = 'http://sub_domain.example.com';
@@ -87,7 +92,13 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
         $this->urlInputPatterns['exampleNoneColon'] = 'http//example';
         $this->urlInputPatterns['exampleNoneHttp'] = '://example';
         $this->urlInputPatterns['exampleNoneHttpAndColon'] = '//example';
+        $this->urlInputPatterns['exampleComNoneHttpAndColon'] = '//example.com';
         $this->urlInputPatterns['exampleNoneHttpColonAndSlash'] = 'example';
+        $this->urlInputPatterns['exampleComNoneHttpColonAndSlash'] = 'example.com';
+        $this->urlInputPatterns['exampleSpace'] = 'exam ple';
+        $this->urlInputPatterns['exampleComSpace'] = 'exam ple.com';
+        $this->urlInputPatterns['exampleZenkakuSpace'] = 'exam　ple';
+        $this->urlInputPatterns['exampleComZenkakuSpace'] = 'exam　ple.com';
 
         // 数字の範囲の入力パターン
         $this->numRangeInputPatterns['0'] = '0';
