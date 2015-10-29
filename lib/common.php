@@ -302,7 +302,7 @@ function check_mail_address($s) {
 // URLの書式チェック
 // ----------------------------------------------------------------
 function check_url($s) {
-    return preg_match('/\A(http|https):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i' . REG_OPTION, $s);
+    return preg_match('/\Ahttps?:\/\/[^\s]+\z/i' . REG_OPTION, $s);
 }
 
 
