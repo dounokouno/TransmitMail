@@ -414,9 +414,11 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             $this->inputPatterns['kanji'],
             $this->inputPatterns['hiragana'],
             $this->inputPatterns['katakana'],
+            $this->inputPatterns['hankakuKatakana'],
             $this->inputPatterns['zenkakuNum'],
             $this->inputPatterns['zenkakuEiji'],
             $this->inputPatterns['zenkakuNumHyphen'],
+            $this->inputPatterns['zenkakuEijiHyphen'],
             $this->inputPatterns['zenkakuEisu'],
             $this->inputPatterns['zenkakuEisuHyphen']
         );

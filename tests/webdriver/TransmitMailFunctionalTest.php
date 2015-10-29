@@ -42,7 +42,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
         $this->inputPatterns['numHyphen'] = $this->inputPatterns['num'] . '-';
         $this->inputPatterns['zenkakuNumHyphen'] = mb_convert_kana($this->inputPatterns['numHyphen'], 'A');
         $this->inputPatterns['eijiHyphen'] = $this->inputPatterns['eiji'] . '-';
-        $this->inputPatterns['zenkakuEijiHyphen'] = mb_convert_kana($this->inputPatterns['eijiHyphen'], 'R');
+        $this->inputPatterns['zenkakuEijiHyphen'] = mb_convert_kana($this->inputPatterns['eijiHyphen'], 'A');
         $this->inputPatterns['eisu'] = $this->inputPatterns['num'] . $this->inputPatterns['eiji'];
         $this->inputPatterns['zenkakuEisu'] = mb_convert_kana($this->inputPatterns['eisu'], 'A');
         $this->inputPatterns['eisuHyphen'] = $this->inputPatterns['eisu'] . '-';
