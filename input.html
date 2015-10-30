@@ -412,6 +412,22 @@
                         </tr>
                     </table>
                 </div>
+                <div class="section">
+                    <h3>入力オプションの追加実装</h3>
+                    <p>存在する日付かのチェック</p>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">日付</th>
+                            <td>
+                                <input type="date" name="日付" value="{$日付}" class="middle">
+                                <input type="hidden" name="date[]" value="日付">
+                                {if:$date.日付}
+                                <div class="error"><em>{$date.日付}</em></div>
+                                {/if:$date.日付}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
                 <div class="center"><input type="submit" value="入力内容を確認する"></div>
             </form>
         </div>
