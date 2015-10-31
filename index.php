@@ -9,5 +9,6 @@
  */
 
 require_once 'lib/TransmitMail.php';
-$tm = new TransmitMail('config/config.yml');
+require_once 'lib/exTransmitMail.php';
+$tm = new exTransmitMail('config/config.yml');
 $tm->run();
