@@ -412,6 +412,22 @@
                         </tr>
                     </table>
                 </div>
+                <div class="section">
+                    <h3>メール送信の宛先の分岐の追加実装</h3>
+                    <p>下記のお問い合わせ内容によってメール送信の宛先を切り替える</p>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">お問い合わせ内容</th>
+                            <td>
+                                <select name="お問い合わせ内容">
+                                    <option value="利用方法について" {$selected.お問い合わせ内容.利用方法について}>利用方法について</option>
+                                    <option value="資料請求" {$selected.お問い合わせ内容.資料請求}>資料請求</option>
+                                    <option value="その他" {$selected.お問い合わせ内容.その他}>その他</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
                 <div class="center"><input type="submit" value="入力内容を確認する"></div>
             </form>
         </div>
