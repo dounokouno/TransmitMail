@@ -291,8 +291,7 @@ if (isset($_POST['match'])) {
     foreach ($_POST['match'] as $v) {
         $array = preg_split('/\s|,/', $v);
         $tmpl->set("match.$array[0]", false);
-        if (!empty($_POST[$array[0]])
-            && !empty($_POST[$array[1]])
+        if ((!empty($_POST[$array[0]]) || !empty($_POST[$array[1]]))
             && $_POST[$array[0]] != $_POST[$array[1]]
             ) {
                 $tmpl->set("match.$array[0]", h($array[0] . ERROR_MATCH));
