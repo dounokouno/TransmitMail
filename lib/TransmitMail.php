@@ -1007,7 +1007,7 @@ class TransmitMail
 
             // CSV の出力
             if ($this->config['csv_output']) {
-                putCsv($this->post);
+                $this->putCsv($this->post);
             }
 
             // セッションを破棄
