@@ -1139,6 +1139,8 @@ class TransmitMail
                 $from_email = $to_email;
             }
 
+            $this->mail->from($from_email);
+
             // CC メールアドレスの設定がある場合
             if (!empty($this->config['cc_email'])) {
                 $this->mail->cc($this->config['cc_email']);
@@ -1154,7 +1156,6 @@ class TransmitMail
         $this->mail->to($to_email);
         $this->mail->subject($to_subject);
         $this->mail->text($body);
-        $this->mail->from($from_email);
 
         // 添付ファイル機能を利用する場合
         if ($this->config['file']) {
