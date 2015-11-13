@@ -12,7 +12,7 @@ class TransmitMail
 {
     // システム情報
     const SYSTEM_NAME = 'TransmitMail';
-    const VERSION = '2.0.1';
+    const VERSION = '2.0.2';
 
     // グローバルエラー
     public $global_errors = array();
