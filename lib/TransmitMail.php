@@ -878,34 +878,27 @@ class TransmitMail
             }
         } elseif ($this->page_name === 'confirm' || $this->page_name === 'finish') {
             // 確認画面 or 完了画面
-            foreach ($this->post as $key => $value) {
+            foreach ($this->post as $key => $value1) {
                 if (!preg_match($this->exclusion_item_pattern(), $key)) {
-                    if (is_array($value)) {
-                        $this->tpl->set("$key.array", array_map(array($this, 'h'), $value));
-                        $value = implode(', ', $value);
-                    }
-
-                    $hidden = $this->getInputHidden($key, $value);
-                    $this->tpl->set("$key.key", $this->h($key));
-                    $this->tpl->set("$key.value", $this->h($value));
-                    $this->tpl->set("$key.hidden", $hidden);
-                    $hiddens[] = $hidden;
-
-                    if (is_array($value)) {
-                        $params[] = array(
-                            'key' => $this->h($key),
-                            'value' => $this->h($value),
-                            'hidden' => $hidden
-                        );
+                    if (is_array($value1)) {
+                        $this->tpl->set("$key.array", array_map(array($this, 'h'), $value1));
+                        $value2 = implode(', ', $value1);
                     } else {
-                        $this->tpl->set("$key.value.nl2br", nl2br($this->h($value)));
-                        $params[] = array(
-                            'key' => $this->h($key),
-                            'value' => $this->h($value),
-                            'value.nl2br' => nl2br($this->h($value)),
-                            'hidden' => $hidden
-                        );
+                        $value2 = $value1;
                     }
+
+                    $hidden = $this->getInputHidden($key, $value1);
+                    $this->tpl->set("$key.key", $this->h($key));
+                    $this->tpl->set("$key.value", $this->h($value2));
+                    $this->tpl->set("$key.value.nl2br", nl2br($this->h($value2)));
+                    $this->tpl->set("$key.hidden", $hidden);
+                    $params[] = array(
+                        'key' => $this->h($key),
+                        'value' => $this->h($value2),
+                        'value.nl2br' => nl2br($this->h($value2)),
+                        'hidden' => $hidden
+                    );
+                    $hiddens[] = $hidden;
                 }
             }
         }
