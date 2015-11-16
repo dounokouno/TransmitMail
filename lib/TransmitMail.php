@@ -1004,7 +1004,6 @@ class TransmitMail
             }
 
             // セッションを破棄
-            // TODO: 動作確認する
             if ($this->config['session']) {
                 if (isset($_COOKIE[session_name()])) {
                     setcookie(
