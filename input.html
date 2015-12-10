@@ -60,25 +60,25 @@
                         <tr>
                             <th>ラジオボタン</th>
                             <td>
-                                <input type="radio" name="ラジオボタン" value="項目1" id="radio1" {$checked.ラジオボタン.項目1} {$checked.default}>
-                                <label for="radio1">項目1</label>
+                                <label><input type="radio" name="ラジオボタン" value="項目1" {$checked.ラジオボタン.項目1} {$checked.default}>
+                                    項目1</label>
                                 &nbsp;
-                                <input type="radio" name="ラジオボタン" value="項目2" id="radio2" {$checked.ラジオボタン.項目2}>
-                                <label for="radio2">項目2</label>
+                                <label><input type="radio" name="ラジオボタン" value="項目2" {$checked.ラジオボタン.項目2}>
+                                    項目2</label>
                                 &nbsp;
-                                <input type="radio" name="ラジオボタン" value="項目3" id="radio3" {$checked.ラジオボタン.項目3}>
-                                <label for="radio3">項目3</label>
+                                <label><input type="radio" name="ラジオボタン" value="項目3" {$checked.ラジオボタン.項目3}>
+                                    項目3</label>
                             </td>
                         </tr>
                         <tr>
                             <th>チェックボックス</th>
                             <td>
-                                <input type="checkbox" name="チェックボックス[]" value="項目1" id="checkbox1" {$checked.チェックボックス.項目1} {$checked.default}>
-                                <label for="checkbox1">項目1</label><br>
-                                <input type="checkbox" name="チェックボックス[]" value="項目2" id="checkbox2" {$checked.チェックボックス.項目2}>
-                                <label for="checkbox2">項目2</label><br>
-                                <input type="checkbox" name="チェックボックス[]" value="項目3" id="checkbox3" {$checked.チェックボックス.項目3}>
-                                <label for="checkbox3">項目3</label>
+                                <label><input type="checkbox" name="チェックボックス[]" value="項目1" {$checked.チェックボックス.項目1} {$checked.default}>
+                                    項目1</label><br>
+                                <label><input type="checkbox" name="チェックボックス[]" value="項目2" {$checked.チェックボックス.項目2}>
+                                    項目2</label><br>
+                                <label><input type="checkbox" name="チェックボックス[]" value="項目3" {$checked.チェックボックス.項目3}>
+                                    項目3</label>
                             </td>
                         </tr>
                         <tr>
@@ -105,8 +105,8 @@
                             <th>ファイル1（500KB以下のGIF、JPG、PNG）</th>
                             <td>
                                 {if:$ファイル1.tmp_name}
-                                <input type="checkbox" name="file_remove[]" value="{$ファイル1.tmp_name}" id="file-remove">
-                                <label for="file-remove">このファイルを削除する</label>
+                                <label><input type="checkbox" name="file_remove[]" value="{$ファイル1.tmp_name}">
+                                    このファイルを削除する</label>
                                 <p><img src="index.php?file={$ファイル1.tmp_name}" alt="{$ファイル1.name}" width="300"><br>
                                     <a href="index.php?file={$ファイル1.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
                                 <input type="hidden" name="file[ファイル1][tmp_name]" value="{$ファイル1.tmp_name}">
@@ -122,8 +122,8 @@
                             <th>ファイル2（500KB以下のGIF、JPG、PNG）</th>
                             <td>
                                 {if:$ファイル2.tmp_name}
-                                <input type="checkbox" name="file_remove[]" value="{$ファイル2.tmp_name}" id="file-remove">
-                                <label for="file-remove">このファイルを削除する</label>
+                                <label><input type="checkbox" name="file_remove[]" value="{$ファイル2.tmp_name}">
+                                    このファイルを削除する</label>
                                 <p><img src="index.php?file={$ファイル2.tmp_name}" alt="{$ファイル2.name}" width="300"><br>
                                     <a href="index.php?file={$ファイル2.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
                                 <input type="hidden" name="file[ファイル2][tmp_name]" value="{$ファイル2.tmp_name}">
@@ -361,8 +361,8 @@
                                 （500KB以下のGIF、JPG、PNG）</th>
                             <td>
                                 {if:$ファイルの入力必須.tmp_name}
-                                <input type="checkbox" name="file_remove[]" value="ファイルの入力必須" id="file-remove">
-                                <label for="file-remove">このファイルを削除する</label>
+                                <label><input type="checkbox" name="file_remove[]" value="ファイルの入力必須">
+                                    このファイルを削除する</label>
                                 <p><img src="index.php?file={$ファイルの入力必須.tmp_name}" alt="{$ファイルの入力必須.name}" width="300"><br>
                                     <a href="index.php?file={$ファイルの入力必須.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
                                 <input type="hidden" name="file[ファイルの入力必須][tmp_name]" value="{$ファイルの入力必須.tmp_name}">
