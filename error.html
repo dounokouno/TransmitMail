@@ -1,45 +1,40 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-<meta http-equiv="content-style-type" content="text/css" />
-<meta http-equiv="content-script-type" content="text/javascript" />
+<meta charset="utf-8">
 <title>エラー | TransmitMail サンプル</title>
-<!--<meta name="keywords" content="" />
-<meta name="description" content="" />-->
-<meta name="copyright" content="Copyright (c) dounokouno. All rights reserved." />
-<link rel="stylesheet" type="text/css" href="http://etc.dounokouno.com/ttXHTMLTemplate/css/screen.css" media="screen,print" />
+<link rel="stylesheet" href="http://etc.dounokouno.com/ttXHTMLTemplate/css/screen.css">
 </head>
 <body class="home">
 <div id="header">
-	<div class="container">
-		<h1>TransmitMail サンプル</h1>
-	</div>
+    <div class="container">
+        <h1>TransmitMail サンプル</h1>
+    </div>
 </div>
 <div id="content">
-	<div class="container">
-		<div class="section">
-			<h2>エラーが発生しました</h2>
-			<p>お手数をおかけしますが、再度、お問い合わせフォームからお問い合わせいただくか、下記メールアドレスよりお問い合わせください。</p>
-			<h3>お問い合わせフォームへ戻る</h3>
-			<p><a href="index.php" class="arrow">お問い合わせフォームへ戻る</a></p>			
-			<h3>メールで問い合わせする</h3>
-			<p>メールアドレス：<a href="mailto:info@example.jp">info@example.jp</a></p>
-			{if:$global_error_flag}
-			<ul>
-				{loop:$global_error}
-				<li><em>{$global_error[]}</em></li>
-				{/loop:$global_error}
-			</ul>
-			{/if:$global_error_flag}
-		</div>
-		<div class="section">
-			<p><a href="mailto:info@example.jp">info@example.jp</a></p>
-		</div>
-		<div class="section">
-			<p><a href="index.php">メールフォームへ戻る</a></p>
-		</div>
-	</div>
+    <div class="container">
+        <div class="section">
+            <h2>エラーが発生しました</h2>
+            <p>お手数をおかけしますが、再度、お問い合わせフォームからお問い合わせいただくか、下記メールアドレスよりお問い合わせください。</p>
+            {if:$global_errors}
+            <div class="section">
+              <ul>
+                  {loop:$global_errors}
+                  <li><em>{$global_errors[]}</em></li>
+                  {/loop:$global_errors}
+              </ul>
+            </div>
+            {/if:$global_errors}
+            <div class="section">
+                <h3>お問い合わせフォームへ戻る</h3>
+                <p><a href="index.php" class="arrow">お問い合わせフォームへ戻る</a></p>
+            </div>
+            <div class="section">
+                <h3>メールで問い合わせする</h3>
+                <p>メールアドレス：<a href="mailto:info@example.com">info@example.com</a></p>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

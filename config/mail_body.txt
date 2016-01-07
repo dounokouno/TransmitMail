@@ -7,8 +7,8 @@
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-IP : {$_SERVER.REMOTE_ADDR}
-HOST : {$_SERVER.REMOTE_HOST}
-USER_AGENT : {$_SERVER.HTTP_USER_AGENT}
+IP: {$_SERVER.REMOTE_ADDR}
+HOST: {$_SERVER.REMOTE_HOST}
+USER_AGENT: {$_SERVER.HTTP_USER_AGENT}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

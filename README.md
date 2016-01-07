@@ -1,45 +1,54 @@
-#TransmitMail
+# TransmitMail
 
-Copyright表示不要のPHP製汎用メールフォームシステム
+[Readme in English is here](https://github.com/dounokouno/TransmitMail/blob/master/README_en.md)
 
-##概要
+Copyright 表示不要の PHP 製汎用メールフォームシステム
 
-PHPで動作するシンプルな汎用メールフォームシステムです。
-MITライセンスで公開していますので、改変、再配布はご自由にどうぞ。
-Copyright表示、リンク、ご連絡等は一切必要ありません。
+## 概要
 
-##ライセンス
+- PHP 5.4 以上で動作するシンプルな汎用メールフォームシステムです。
+- MIT ライセンスで公開していますので、改変、再配布はご自由にどうぞ。
+- Copyright 表示、リンク、ご連絡等は一切必要ありません。
+
+## ライセンス
 
 MIT license
 
-##使い方
+## デモ
 
-Wikiにマニュアルをまとめました。
+[http://etc.dounokouno.com/TransmitMail/demo/](http://etc.dounokouno.com/TransmitMail/demo/)
 
-<https://github.com/dounokouno/TransmitMail/wiki>
+## 使い方
 
-##お問い合わせ
+Wiki にマニュアルをまとめました。
 
-バグ、不具合報告、カスタマイズのご要望、設置代行等の各種お問い合わせは、下記メールアドレスまたは掲示板（GitHub）へご連絡ください。
+[https://github.com/dounokouno/TransmitMail/wiki](https://github.com/dounokouno/TransmitMail/wiki)
 
-* dounokouno[at]gmail.com
-* [Issues - dounokouno/TransmitMail - GitHub](https://github.com/dounokouno/TransmitMail/issues)
+## お問い合わせ
 
-##免責事項
+バグ、不具合、カスタマイズ方法等は、 GitHub issue へご連絡ください。
+
+[Issues - dounokouno/TransmitMail - GitHub](https://github.com/dounokouno/TransmitMail/issues)
+
+## 免責事項
 
 当システムをご利用、もしくはご利用になれないことにより生じるいかなるトラブルや損害には、当方は一切の責任を負いません。
 
-##Special Thanks
+## Special Thanks
 
 下記テンプレートエンジンを改変して利用させていただきました。
 
 * [firegoby » tinyTemplate](http://firegoby.theta.ne.jp/download/tinytemplate)
 
-メール送信にQdmail、Qdsmtpを利用させていただきました。
+メール送信に Qdmail 、 Qdsmtp を利用させていただきました。
 
 * [PHP高機能日本語メール送信ライブラリ・文字化けフリー - Qdmail - PHP::Mail Library , Quick and Detailed for Multibyte](http://hal456.net/qdmail/)
 * [Qdsmtpとは - Qdsmtp-Simple SMTP Mailer for PHP](http://hal456.net/qdsmtp/)
 
-##Copyright
+## Author
+
+[@dounokouno](https://twitter.com/dounokouno)
+
+## Copyright
 
 Copyright (c) 2011 TAGAWA Takao, dounokouno@gmail.com

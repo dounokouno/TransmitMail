@@ -8,50 +8,59 @@
 if (!class_exists('tinyTemplate')) {
 class tinyTemplate {
     // Configuration variables
-    var $base_path = '';
-    var $reset_vars = TRUE;
+    private $base_path = '';
+    private $reset_vars = false;
+
+    // Default Modifier
+    public $default_modifier = null;
 
     // Delimeters for regular tags
-    var $ldelim = '{';
-    var $rdelim = '}';
+    private $ldelim = '{';
+    private $rdelim = '}';
 
     // Delimeters for beginnings of loops
-    var $BAldelim = '{';
-    var $BArdelim = '}';
+    private $BAldelim = '{';
+    private $BArdelim = '}';
 
     // Delimeters for ends of loops
-    var $EAldelim = '{/';
-    var $EArdelim = '}';
+    private $EAldelim = '{/';
+    private $EArdelim = '}';
 
     // Internal privateiables
-    var $scalars = array();
-    var $arrays  = array();
-    var $carrays = array();
-    var $ifs     = array();
+    private $scalars = array();
+    private $arrays  = array();
+    private $carrays = array();
+    private $ifs     = array();
 
 
 //
 // Simply sets the base path (if you don't set the default).
 //
-    function __construct($base_path = NULL, $reset_vars = TRUE)
+    function __construct($base_path = null, $reset_vars = false)
     {
         if($base_path) $this->base_path = $base_path;
         $this->reset_vars = $reset_vars;
+        $this->default_modifier = array($this, 'modifier');
     }
 
 
 //
 // Sets all types of variables (scalar, loop, hash).
 //
-    //function set($tag, $var)
-    function set($tag, $var)
+    public function set($tag, $var, $modifier = false)
     {
         if(is_array($var)) {
+            if ($modifier) {
+                array_walk_recursive($var, $this->default_modifier);
+            }
             $this->arrays[$tag] = $var;
             $result = $var ? TRUE : FALSE;
             $this->ifs[] = $tag;
             $this->scalars[$tag] = $result;
         } else {
+            if ($modifier) {
+                call_user_func_array($this->default_modifier, array(&$var));
+            }
             $this->scalars[$tag] = $var;
             $this->ifs[] = $tag;
         }
@@ -61,7 +70,7 @@ class tinyTemplate {
 //
 //  Returns the parsed contents of the specified template.
 //
-    function fetch($file_name)
+    public function fetch($file_name)
     {
         $file = $this->base_path . $file_name;
 
@@ -72,9 +81,9 @@ class tinyTemplate {
 
         $contents = $this->parse($contents);
 
-        $contents = preg_replace('/\{\$.*\}/', '', $contents);
-        $contents = preg_replace('/\{if.*?}.*?\{\/if.*?\}/s', '', $contents);
-        $contents = preg_replace('/\{loop.*?}.*?\{\/loop.*?\}/s', '', $contents);
+        $contents = preg_replace('/\{\$.*?\}/', '', $contents);
+        $contents = preg_replace('/\{if.*?\}.*?\{\/if.*?\}/s', '', $contents);
+        $contents = preg_replace('/\{loop.*?\}.*?\{\/loop.*?\}/s', '', $contents);
 
         return $contents;
     }
@@ -83,7 +92,7 @@ class tinyTemplate {
 //
 // Parses all variables into the template.
 //
-    function parse($contents)
+    public function parse($contents)
     {
         // Process the ifs
         if(!empty($this->ifs)) {
@@ -108,14 +117,29 @@ class tinyTemplate {
         }
 
         // Reset the arrays
-        //if($this->reset_vars) $this->reset_vars(FALSE, TRUE, TRUE, FALSE);
+        if($this->reset_vars) $this->reset_vars(false, true, true, false);
 
         // Return the contents
         return $contents;
     }
 
 
-    function set_cloop($tag, $array, $cases)
+//
+// Set filter function for template output
+//
+    public function setModifier($modifier)
+    {
+        if (is_array($modifier)) {
+            if (method_exists($modifier[0], $modifier[1])) {
+                $this->default_modifier = $modifier;
+            }
+        } elseif(function_exists($modifier)) {
+            $this->default_modifier = $modifier;
+        }
+    }
+
+
+    private function set_cloop($tag, $array, $cases)
     {
         $this->carrays[$tag] = array(
             'array' => $array,
@@ -123,7 +147,7 @@ class tinyTemplate {
     }
 
 
-    function reset_vars($scalars, $arrays, $carrays, $ifs)
+    private function reset_vars($scalars, $arrays, $carrays, $ifs)
     {
         if($scalars) $this->scalars = array();
         if($arrays)  $this->arrays  = array();
@@ -132,7 +156,7 @@ class tinyTemplate {
     }
 
 
-    function get_tags($tag, $directive)
+    private function get_tags($tag, $directive)
     {
         $tags['b'] = $this->BAldelim . $directive . $tag . $this->BArdelim;
         $tags['e'] = $this->EAldelim . $directive . $tag . $this->EArdelim;
@@ -140,12 +164,12 @@ class tinyTemplate {
     }
 
 
-    function get_tag($tag) {
+    private function get_tag($tag) {
         return $this->ldelim . '$' . $tag . $this->rdelim;
     }
 
 
-    function get_statement($t, &$contents) {
+    private function get_statement($t, &$contents) {
         // Locate the statement
         $tag_length = strlen($t['b']);
         $fpos = strpos($contents, $t['b']) + $tag_length;
@@ -157,7 +181,7 @@ class tinyTemplate {
     }
 
 
-    function parse_if($tag, $contents)
+    private function parse_if($tag, $contents)
     {
         // Get the tags
         $t = $this->get_tags($tag, 'if:$');
@@ -194,7 +218,7 @@ class tinyTemplate {
     }
 
 
-    function parse_loop($tag, $array, $contents)
+    private function parse_loop($tag, $array, $contents)
     {
         // Get the tags & loop
         $t = $this->get_tags($tag, 'loop:$');
@@ -232,7 +256,7 @@ class tinyTemplate {
     }
 
 
-    function parse_cloop($tag, $array, $contents)
+    private function parse_cloop($tag, $array, $contents)
     {
         // Get the tags & loop
         $t = $this->get_tags($tag, 'cloop:');
@@ -273,7 +297,12 @@ class tinyTemplate {
     }
 
 
-
+    private function modifier(&$str)
+    {
+        $str = htmlentities($str, ENT_QUOTES, mb_internal_encoding());
+        $str = trim($str);
+        return $str;
+    }
 }
 }
 ?>
