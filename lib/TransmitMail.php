@@ -1653,7 +1653,7 @@ class TransmitMail
                         $this->config['charaset']);
                     $csv_lines[$csv_key] = $csv_value;
                 } else {
-                    $csv_lines[$k] = $value;
+                    $csv_lines[$key] = $value;
                 }
             }
         }
