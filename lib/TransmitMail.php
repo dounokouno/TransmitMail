@@ -802,10 +802,6 @@ class TransmitMail
                                     $this->tpl->set("file.$key", $file_error);
                                 }
                             }
-                        } else {
-                            if (!isset($this->files[$key])) {
-                                $this->files[$key] = false;
-                            }
                         }
                     }
                 }
