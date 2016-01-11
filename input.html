@@ -105,7 +105,7 @@
                             <th>ファイル1（500KB以下のGIF、JPG、PNG）</th>
                             <td>
                                 {if:$ファイル1.tmp_name}
-                                <label><input type="checkbox" name="file_remove[]" value="{$ファイル1.tmp_name}">
+                                <label><input type="checkbox" name="file_remove[]" value="ファイル1">
                                     このファイルを削除する</label>
                                 <p><img src="index.php?file={$ファイル1.tmp_name}" alt="{$ファイル1.name}" width="300"><br>
                                     <a href="index.php?file={$ファイル1.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
@@ -122,7 +122,7 @@
                             <th>ファイル2（500KB以下のGIF、JPG、PNG）</th>
                             <td>
                                 {if:$ファイル2.tmp_name}
-                                <label><input type="checkbox" name="file_remove[]" value="{$ファイル2.tmp_name}">
+                                <label><input type="checkbox" name="file_remove[]" value="ファイル2">
                                     このファイルを削除する</label>
                                 <p><img src="index.php?file={$ファイル2.tmp_name}" alt="{$ファイル2.name}" width="300"><br>
                                     <a href="index.php?file={$ファイル2.tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></p>
