@@ -694,10 +694,9 @@ class TransmitMail
             if (isset($this->post['file_remove'])) {
                 foreach ($this->post['file_remove'] as $value) {
                     $tmp_name = $this->post['file'][$value]['tmp_name'];
+                    $file_path = $this->config['tmp_dir'] . basename($tmp_name);
 
-                    if (is_file($this->config['tmp_dir'] . $tmp_name) &&
-                        (unlink($this->config['tmp_dir'] . $tmp_name)))
-                    {
+                    if (is_file($file_path) && unlink($file_path)) {
                         $this->post['file'][$value]['tmp_name'] = '';
                         $this->post['file'][$value]['name'] = '';
                     } else {
@@ -711,7 +710,7 @@ class TransmitMail
                 foreach ($this->post['file'] as $key => $value) {
                     if (isset($value['tmp_name'])) {
                         // single の場合
-                        if (is_file($this->config['tmp_dir'] . $value['tmp_name'])) {
+                        if (is_file($this->config['tmp_dir'] . basename($value['tmp_name']))) {
                             $this->tpl->set("$key.tmp_name", $this->h($value['tmp_name']));
                             $this->tpl->set("$key.name", $this->h($value['name']));
                             $this->files[$key] = array(
