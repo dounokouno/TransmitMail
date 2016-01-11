@@ -696,15 +696,10 @@ class TransmitMail
                     $tmp_name = $this->post['file'][$value]['tmp_name'];
 
                     if (is_file($this->config['tmp_dir'] . $tmp_name) &&
-                        preg_match('/\A' . $this->config['file_name_prefix'] . '/', $tmp_name) &&
-                        $this->isAllowFileExtension($tmp_name))
+                        (unlink($this->config['tmp_dir'] . $tmp_name)))
                     {
-                        if (unlink($this->config['tmp_dir'] . $tmp_name)) {
-                            $this->post['file'][$value]['tmp_name'] = '';
-                            $this->post['file'][$value]['name'] = '';
-                        } else {
-                            $this->global_errors[] = $this->h($tmp_name . $this->config['error_file_remove']);
-                        }
+                        $this->post['file'][$value]['tmp_name'] = '';
+                        $this->post['file'][$value]['name'] = '';
                     } else {
                         $this->global_errors[] = $this->h($tmp_name . $this->config['error_file_remove']);
                     }
