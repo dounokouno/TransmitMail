@@ -791,8 +791,8 @@ class TransmitMail
                                     );
                                 } else {
                                     // アップロードに失敗した場合
-                                    $file_error[] = $this->h($key . ERROR_FILE_UPLOAD);
-                                    $this->global_errors[] = $this->h($key . ERROR_FILE_UPLOAD);
+                                    $file_error[] = $this->h($key . $this->config['error_file_upload']);
+                                    $this->global_errors[] = $this->h($key . $this->config['error_file_upload']);
                                     $this->tpl->set("file.$key", $file_error);
                                 }
                             }
