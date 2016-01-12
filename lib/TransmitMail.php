@@ -820,7 +820,7 @@ class TransmitMail
         // $page_name の判別
         if ($this->deny_flag) {
             // アクセス拒否
-            $this->page_name === 'deny';
+            $this->page_name = 'deny';
         } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
             // チェックモード
             $this->page_name = 'checkmode';
