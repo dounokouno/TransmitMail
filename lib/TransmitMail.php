@@ -349,8 +349,8 @@ class TransmitMail
         if (!empty($this->config['deny_host'])) {
             $pattern = '/\A' . $this->config['deny_host'] . '\z/';
 
-            if (preg_match($pattern, $this->servers['REMOTE_ADDR']) ||
-                preg_match($pattern, $this->servers['REMOTE_HOST'])) {
+            if (preg_match($pattern, $this->server['REMOTE_ADDR']) ||
+                preg_match($pattern, $this->server['REMOTE_HOST'])) {
                 $this->deny_flag = true;
             }
         }
