@@ -67,6 +67,7 @@ class TransmitMail
     // 設定の初期値
     private $default_config = array(
         // 基本的な設定
+        'return_path' => '',
         'to_email' => '',
         'cc_email' => '',
         'bcc_email' => '',
@@ -1097,21 +1098,21 @@ class TransmitMail
                 $from_email = $this->config['to_email'];
             }
 
-
-            // Return-Path
-            if(isset($this->config['return_path']) && !empty($this->config['return_path'])){
-                $return_path = $this->config['return_path'];
-            }else{
-                $return_path = $this->config['to_email'];
-            }
-            $this->mail->mtaOption('-f '.$return_path);
-
             // $config['auto_reply_name'] の設定がある場合
             if (!empty($this->config['auto_reply_name'])) {
                 $this->mail->from($from_email, $this->config['auto_reply_name']);
             } else {
                 $this->mail->from($from_email);
             }
+
+            // Return-Path
+            if (!empty($this->config['return_path'])) {
+                $return_path = $this->config['return_path'];
+            } else {
+                $return_path = $this->config['to_email'];
+            }
+
+            $this->mail->mtaOption('-f '.$return_path);
         } else {
             // 宛先
             $to_email = $this->config['to_email'];
