@@ -462,9 +462,10 @@ class QdsmtpBase extends QdsmtpError{
 		);
 
 	function sayHello(){
+		$host = preg_replace( '/^ssl:\/\/|^tls:\/\//', '', $this->smtp_param['HOST'] );
 		$items = array(
-			array( 'EHLO' , $this->smtp_param['HOST'] ),
-			array( 'HELO' , $this->smtp_param['HOST'] ),
+			array( 'EHLO' , $host ),
+			array( 'HELO' , $host ),
 			);
 		if( !$this->tryUntilSuccess( $items ) ){
 			return $this->errorGather('HOST:'.$this->smtp_param['HOST'].' say no HELLO',__LINE__);
