@@ -462,8 +462,7 @@ class QdsmtpBase extends QdsmtpError{
 		);
 
 	function sayHello(){
-		$host = str_replace('ssl://', '', $this->smtp_param['HOST']);
-		$host = str_replace('tls://', '', $host);
+		$host = preg_replace( '/^ssl:\/\/|^tls:\/\//', '', $this->smtp_param['HOST'] );
 		$items = array(
 			array( 'EHLO' , $host ),
 			array( 'HELO' , $host ),
