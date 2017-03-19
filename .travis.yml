@@ -8,6 +8,8 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
   - java -jar selenium-server-standalone-2.53.1.jar > /tmp/selenium.log 2> /tmp/selenium.error &
+install:
+  - composer install
 before_script:
   - sudo apt-get update
   - sudo apt-get install apache2 libapache2-mod-fastcgi
