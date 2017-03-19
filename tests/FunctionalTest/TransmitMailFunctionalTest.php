@@ -162,7 +162,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     /**
      * テスト失敗時にスクリーンショット画像を保存する
      */
-    public function onNotSuccessfulTest(Exception $e)
+    public function onNotSuccessfulTest($e)
     {
         if ($e instanceof PHPUnit_Framework_AssertionFailedError) {
             $listener = new PHPUnit_Extensions_Selenium2TestCase_ScreenshotListener('tmp/screenshot');
