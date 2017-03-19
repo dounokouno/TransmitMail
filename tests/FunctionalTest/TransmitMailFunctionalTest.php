@@ -137,10 +137,9 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     {
         // MEMO: PhantomJS 2.0 ではファイルアップロードのテストができないため、 Firefox を指定している
         // MEMO: PhantomJS 2.1 では直るらしいので、 2.1 が出たら PhantomJS を試す
+        // MEMO: PhantomJS 2.1 で上記件は直っているが、 Travic CI の PhantomJS のバージョンが低いため、 Travic CI では Firefox を利用する
         //$this->setBrowser('phantomjs');
         $this->setBrowser('firefox');
-
-        // MEMO: 開発環境の場合は http://localhost:8000/ に変更する
         $this->setBrowserUrl('http://localhost/');
     }
 
