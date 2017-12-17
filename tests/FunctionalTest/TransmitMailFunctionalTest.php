@@ -136,7 +136,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     protected function setUp()
     {
         $this->setBrowser('phantomjs');
-        $this->setBrowserUrl('http://localhost/');
+        $this->setBrowserUrl('http://localhost:8000/');
     }
 
     /**
