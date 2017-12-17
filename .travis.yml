@@ -4,12 +4,13 @@ php:
   - 7.0
   - 7.1
   - 7.2
+sudo: false
+dist: trusty
 before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - wget http://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
   - java -jar selenium-server-standalone-2.53.1.jar > /tmp/selenium.log 2> /tmp/selenium.error &
-install:
-  - composer install
+install: composer install
 before_script: php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
 script: vendor/bin/phpunit --configuration tests/phpunit.xml
