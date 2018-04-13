@@ -71,6 +71,7 @@ class TransmitMail
         'to_email' => '',
         'cc_email' => '',
         'bcc_email' => '',
+        'from_email' => '',
         'to_subject' => '',
         'auto_reply' => true,
         'auto_reply_email' => 'メールアドレス',
@@ -1125,7 +1126,9 @@ class TransmitMail
             $body = $this->hd($body);
 
             // メール送信元
-            if (!empty($this->post[$this->config['auto_reply_email']])) {
+            if (!empty($this->config['from_email'])) {
+                $from_email = $this->config['from_email'];
+            } elseif (!empty($this->post[$this->config['auto_reply_email']])) {
                 $from_email = $this->post[$this->config['auto_reply_email']];
             } else {
                 $from_email = $to_email;
