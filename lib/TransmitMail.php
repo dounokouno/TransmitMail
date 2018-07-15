@@ -76,8 +76,10 @@ class TransmitMail
         'to_subject' => '',
         'auto_reply' => true,
         'auto_reply_email' => 'メールアドレス',
-        'auto_reply_subject' => '',
+        'auto_reply_cc_email' => '',
+        'auto_reply_bcc_email' => '',
         'auto_reply_from_email' => '',
+        'auto_reply_subject' => '',
         'auto_reply_name' => '',
 
         // ファイルアップロード
@@ -1133,6 +1135,16 @@ class TransmitMail
                 $this->mail->from($from_email);
             }
 
+            // CC メールアドレスの設定がある場合
+            if (!empty($this->config['auto_reply_cc_email'])) {
+                $this->mail->cc($this->config['auto_reply_cc_email']);
+            }
+
+            // BCC メールアドレスの設定がある場合
+            if (!empty($this->config['auto_reply_bcc_email'])) {
+                $this->mail->bcc($this->config['auto_reply_bcc_email']);
+            }
+            
             // Return-Path
             if (!empty($this->config['return_path'])) {
                 $return_path = $this->config['return_path'];
