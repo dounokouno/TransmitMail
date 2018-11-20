@@ -115,7 +115,7 @@ class TransmitMail
 
         // 言語
         'language' => 'ja',
-        'charaset' => 'UTF-8',
+        'charset' => 'UTF-8',
         'reg_option' => 'u',
 
         // タイムゾーン
@@ -213,7 +213,7 @@ class TransmitMail
 
         // 言語設定など
         mb_language($this->config['language']);
-        mb_internal_encoding($this->config['charaset']);
+        mb_internal_encoding($this->config['charset']);
 
         // タイムゾーン
         if (function_exists('date_default_timezone_set')) {
@@ -1647,13 +1647,13 @@ class TransmitMail
                 }
 
                 // エンコード変換
-                if ($this->config['csv_encode'] !== $this->config['charaset']) {
+                if ($this->config['csv_encode'] !== $this->config['charset']) {
                     $csv_key = mb_convert_encoding($key,
                         $this->config['csv_encode'],
-                        $this->config['charaset']);
+                        $this->config['charset']);
                     $csv_value = mb_convert_encoding($value,
                         $this->config['csv_encode'],
-                        $this->config['charaset']);
+                        $this->config['charset']);
                     $csv_lines[$csv_key] = $csv_value;
                 } else {
                     $csv_lines[$key] = $value;
@@ -1771,7 +1771,7 @@ class TransmitMail
         if (is_array($string)) {
             return array_map(array($this, 'h'), $string);
         }
-        return htmlentities($string, ENT_QUOTES, $this->config['charaset']);
+        return htmlentities($string, ENT_QUOTES, $this->config['charset']);
     }
 
     /**
@@ -1785,7 +1785,7 @@ class TransmitMail
         if (is_array($string)) {
             return array_map(array($this, 'hd'), $string);
         }
-        return html_entity_decode($string, ENT_QUOTES, $this->config['charaset']);
+        return html_entity_decode($string, ENT_QUOTES, $this->config['charset']);
     }
 
     /**
