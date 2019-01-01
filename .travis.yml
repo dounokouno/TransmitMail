@@ -14,4 +14,4 @@ before_install:
   - java -jar selenium-server-standalone-2.53.1.jar > /tmp/selenium.log 2> /tmp/selenium.error &
 install: composer install
 before_script: php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
-script: vendor/bin/phpunit --configuration tests/phpunit.xml
+script: vendor/bin/phpunit -c tests/phpunit.xml
