@@ -30,6 +30,7 @@
             </div>
             {/if:$global_errors}
             <form method="post" action="index.php" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{$csrf_token}">
                 <div class="section">
                     <h3>GET値の取得、表示</h3>
                     <table width="100%" class="alpha">
