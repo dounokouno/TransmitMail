@@ -18,7 +18,6 @@
             </div>
             {/if:$global_errors}
             <form method="post" enctype="multipart/form-data">
-                <input type="hidden" name="csrf_token" value="{$csrf_token}">
                 <div class="section">
                     <h3>GET値の取得、表示</h3>
                     <table width="100%" class="alpha">
@@ -397,6 +396,17 @@
                             <th width="300">abcdefghijklnmopqrstuvwxyz</th>
                             <td>
                                 <input type="text" name="abcdefghijklnmopqrstuvwxyz" value="{$abcdefghijklnmopqrstuvwxyz}" class="middle">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section">
+                    <h3>テスト用</h3>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">CSRF トークン</th>
+                            <td>
+                                <input type="text" name="csrf_token" value="{$csrf_token}">
                             </td>
                         </tr>
                     </table>
