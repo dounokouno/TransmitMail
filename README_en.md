@@ -6,7 +6,7 @@ A general-purpose email form system
 
 ## Description
 
-- It is a simple general-purpose email form system to work with PHP 5.4 above.
+- It is a simple general-purpose email form system to work with PHP 5.6 above.
 - Are published under MIT license.
 - Copyright display, link, contact, etc. does not require any.
 

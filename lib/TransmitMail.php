@@ -12,7 +12,7 @@ class TransmitMail
 {
     // システム情報
     const SYSTEM_NAME = 'TransmitMail';
-    const VERSION = '2.1.0';
+    const VERSION = '2.2.0';
 
     // グローバルエラー
     public $global_errors = array();
@@ -61,7 +61,8 @@ class TransmitMail
         "num_range",
         "file",
         "file_remove",
-        "file_required"
+        "file_required",
+        "csrf_token"
     ]';
 
     // 設定の初期値
@@ -98,6 +99,10 @@ class TransmitMail
         // セッションによる多重送信防止
         'session' => true,
 
+        // CSRF 対策
+        'csrf' => true,
+        'csrf_token_length' => 32,
+
         // チェックモード
         // 0 => 無効
         // 1 => 簡易モード
@@ -117,7 +122,7 @@ class TransmitMail
 
         // 言語
         'language' => 'ja',
-        'charaset' => 'UTF-8',
+        'charset' => 'UTF-8',
         'reg_option' => 'u',
 
         // タイムゾーン
@@ -159,6 +164,7 @@ class TransmitMail
         'error_file_over_the_period' => 'は一時保存期間を超えました。',
         'error_file_required' => 'は入力必須です。',
         'error_deny' => 'お使いのホストからのアクセスは管理者によって拒否されています。',
+        'error_csrf' => 'CSRFトークンが無効です。',
         'error_failure_send_mail' => 'メールの送信に失敗しました。',
         'error_failure_send_mail_auto_reply' => '自動返信メールの送信に失敗しました。',
 
@@ -215,7 +221,7 @@ class TransmitMail
 
         // 言語設定など
         mb_language($this->config['language']);
-        mb_internal_encoding($this->config['charaset']);
+        mb_internal_encoding($this->config['charset']);
 
         // タイムゾーン
         if (function_exists('date_default_timezone_set')) {
@@ -231,6 +237,8 @@ class TransmitMail
             if (!isset($_SESSION)) {
                 session_start();
             }
+
+            session_regenerate_id(true);
         }
     }
 
@@ -805,6 +813,16 @@ class TransmitMail
                 }
             }
         }
+
+        // CSRF トークンチェック
+        if ($this->config['session'] && $this->config['csrf'] && (count($this->post) > 0)) {
+            if (!isset($this->post['csrf_token']) ||
+              !isset($_SESSION['csrf_token']) ||
+              ($this->post['csrf_token'] !== $_SESSION['csrf_token'])) {
+                $this->tpl->set('csrf', $this->h($this->config['error_csrf']));
+                $this->global_errors[] = $this->h($this->config['error_csrf']);
+            }
+        }
     }
 
     /**
@@ -924,6 +942,15 @@ class TransmitMail
             }
 
             $this->tpl->set('files', $array);
+        }
+
+        // CSRF トークン
+        if ($this->config['session'] && $this->config['csrf']) {
+            if (!isset($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = $this->generateToken();
+            }
+            $this->tpl->set('csrf_token', $_SESSION['csrf_token']);
+            $hiddens[] = $this->getInputHidden('csrf_token', $_SESSION['csrf_token']);
         }
 
         $this->tpl->set('params', $params);
@@ -1588,6 +1615,14 @@ class TransmitMail
     }
 
     /**
+     * トークン生成
+     */
+    public function generateToken()
+    {
+        return bin2hex(openssl_random_pseudo_bytes($this->config['csrf_token_length'] / 2));
+    }
+
+    /**
      * ログ出力
      *
      * @param string $data
@@ -1659,13 +1694,13 @@ class TransmitMail
                 }
 
                 // エンコード変換
-                if ($this->config['csv_encode'] !== $this->config['charaset']) {
+                if ($this->config['csv_encode'] !== $this->config['charset']) {
                     $csv_key = mb_convert_encoding($key,
                         $this->config['csv_encode'],
-                        $this->config['charaset']);
+                        $this->config['charset']);
                     $csv_value = mb_convert_encoding($value,
                         $this->config['csv_encode'],
-                        $this->config['charaset']);
+                        $this->config['charset']);
                     $csv_lines[$csv_key] = $csv_value;
                 } else {
                     $csv_lines[$key] = $value;
@@ -1783,7 +1818,7 @@ class TransmitMail
         if (is_array($string)) {
             return array_map(array($this, 'h'), $string);
         }
-        return htmlentities($string, ENT_QUOTES, $this->config['charaset']);
+        return htmlentities($string, ENT_QUOTES, $this->config['charset']);
     }
 
     /**
@@ -1797,7 +1832,7 @@ class TransmitMail
         if (is_array($string)) {
             return array_map(array($this, 'hd'), $string);
         }
-        return html_entity_decode($string, ENT_QUOTES, $this->config['charaset']);
+        return html_entity_decode($string, ENT_QUOTES, $this->config['charset']);
     }
 
     /**
