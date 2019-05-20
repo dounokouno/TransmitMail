@@ -75,7 +75,7 @@ class TransmitMail
         'from_email' => '',
         'subject' => '',
         'auto_reply' => true,
-        'auto_reply_email' => 'メールアドレス',
+        'auto_reply_email_input_name' => 'メールアドレス',
         'auto_reply_cc_email' => '',
         'auto_reply_bcc_email' => '',
         'auto_reply_from_email' => '',
@@ -580,16 +580,16 @@ class TransmitMail
             }
         }
 
-        // 自動返信メールの宛先（ $this->post[$this->config['auto_reply_email']] ）のメールアドレスチェック
-        if (!empty($this->post[$this->config['auto_reply_email']])) {
-            $this->post[$this->config['auto_reply_email']] = mb_convert_kana($this->post[$this->config['auto_reply_email']], 'a');
-            $this->post[$this->config['auto_reply_email']] = $this->deleteCrlf($this->post[$this->config['auto_reply_email']]);
+        // 自動返信メールの宛先（ $this->post[$this->config['auto_reply_email_input_name']] ）のメールアドレスチェック
+        if (!empty($this->post[$this->config['auto_reply_email_input_name']])) {
+            $this->post[$this->config['auto_reply_email_input_name']] = mb_convert_kana($this->post[$this->config['auto_reply_email_input_name']], 'a');
+            $this->post[$this->config['auto_reply_email_input_name']] = $this->deleteCrlf($this->post[$this->config['auto_reply_email_input_name']]);
 
-            if (!$this->isEmail($this->post[$this->config['auto_reply_email']])) {
-                $this->tpl->set("email.$this->config['auto_reply_email']", $this->h($this->config['auto_reply_email'] . $this->config['error_email']));
+            if (!$this->isEmail($this->post[$this->config['auto_reply_email_input_name']])) {
+                $this->tpl->set("email.$this->config['auto_reply_email_input_name']", $this->h($this->config['auto_reply_email_input_name'] . $this->config['error_email']));
 
-                if (!in_array($this->h($this->config['auto_reply_email'] . $this->config['error_email']), $this->global_errors, true)) {
-                    $this->global_errors[] = $this->h($this->config['auto_reply_email'] . $this->config['error_email']);
+                if (!in_array($this->h($this->config['auto_reply_email_input_name'] . $this->config['error_email']), $this->global_errors, true)) {
+                    $this->global_errors[] = $this->h($this->config['auto_reply_email_input_name'] . $this->config['error_email']);
                 }
             }
         }
@@ -1008,7 +1008,7 @@ class TransmitMail
             $this->sendMail();
 
             // 自動返信メール送信
-            if ($this->config['auto_reply'] && !empty($this->post[$this->config['auto_reply_email']])) {
+            if ($this->config['auto_reply'] && !empty($this->post[$this->config['auto_reply_email_input_name']])) {
                 $this->sendMail(true);
             }
 
@@ -1104,8 +1104,8 @@ class TransmitMail
             // 自動返信メールの場合
 
             // 宛先
-            if (!empty($this->post[$this->config['auto_reply_email']])) {
-                $email = $this->post[$this->config['auto_reply_email']];
+            if (!empty($this->post[$this->config['auto_reply_email_input_name']])) {
+                $email = $this->post[$this->config['auto_reply_email_input_name']];
             } else {
                 $email = $this->config['email'];
             }
@@ -1167,8 +1167,8 @@ class TransmitMail
             // メール送信元
             if (!empty($this->config['from_email'])) {
                 $from_email = $this->config['from_email'];
-            } elseif (!empty($this->post[$this->config['auto_reply_email']])) {
-                $from_email = $this->post[$this->config['auto_reply_email']];
+            } elseif (!empty($this->post[$this->config['auto_reply_email_input_name']])) {
+                $from_email = $this->post[$this->config['auto_reply_email_input_name']];
             } else {
                 $from_email = $email;
             }
