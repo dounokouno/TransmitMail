@@ -73,7 +73,7 @@ class TransmitMail
         'cc_email' => '',
         'bcc_email' => '',
         'from_email' => '',
-        'to_subject' => '',
+        'subject' => '',
         'auto_reply' => true,
         'auto_reply_email' => 'メールアドレス',
         'auto_reply_cc_email' => '',
@@ -1111,10 +1111,10 @@ class TransmitMail
             }
 
             // 件名
-            $to_subject = $this->config['auto_reply_subject'];
+            $subject = $this->config['auto_reply_subject'];
 
-            if (empty($to_subject)) {
-                $to_subject = $this->config['to_subject'];
+            if (empty($subject)) {
+                $subject = $this->config['subject'];
             }
 
             // メール本文
@@ -1158,7 +1158,7 @@ class TransmitMail
             $email = $this->config['email'];
 
             // 件名
-            $to_subject = $this->config['to_subject'];
+            $subject = $this->config['subject'];
 
             // メール本文
             $body = $this->tpl->fetch($this->config['mail_body']);
@@ -1188,7 +1188,7 @@ class TransmitMail
 
         // メール送信内容
         $this->mail->to($email);
-        $this->mail->subject($to_subject);
+        $this->mail->subject($subject);
         $this->mail->text($body);
 
         // 添付ファイル機能を利用する場合
@@ -1247,7 +1247,7 @@ class TransmitMail
                 "【宛先】\n" .
                 $email . "\n\n" .
                 "【件名】\n" .
-                $to_subject . "\n\n" .
+                $subject . "\n\n" .
                 "【本文】\n" .
                 $body;
 
