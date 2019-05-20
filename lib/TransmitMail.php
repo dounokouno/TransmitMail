@@ -586,7 +586,7 @@ class TransmitMail
             $this->post[$this->config['auto_reply_email']] = $this->deleteCrlf($this->post[$this->config['auto_reply_email']]);
 
             if (!$this->isEmail($this->post[$this->config['auto_reply_email']])) {
-                $this->tpl->set("email." . $this->config['auto_reply_email'], $this->h($this->config['auto_reply_email'] . $this->config['error_email']));
+                $this->tpl->set("email.$this->config['auto_reply_email']", $this->h($this->config['auto_reply_email'] . $this->config['error_email']));
 
                 if (!in_array($this->h($this->config['auto_reply_email'] . $this->config['error_email']), $this->global_errors, true)) {
                     $this->global_errors[] = $this->h($this->config['auto_reply_email'] . $this->config['error_email']);
@@ -1152,7 +1152,7 @@ class TransmitMail
                 $return_path = $this->config['to_email'];
             }
 
-            $this->mail->mtaOption('-f '.$return_path);
+            $this->mail->mtaOption('-f ' . $return_path);
         } else {
             // 宛先
             $to_email = $this->config['to_email'];
