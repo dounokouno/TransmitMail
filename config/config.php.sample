@@ -3,7 +3,7 @@
  * TransmitMail設定ファイル PHP版
  */
 
-$config['to_email'] = 'info@example.com';
-$config['to_subject'] = '［株式会社テスト］お問い合わせ';
+$config['email'] = 'info@example.com';
+$config['subject'] = '［株式会社テスト］お問い合わせ';
 $config['auto_reply_subject'] = '［株式会社テスト］お問い合わせありがとうございます';
 $config['auto_reply_name'] = '株式会社テスト';
