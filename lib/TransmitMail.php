@@ -69,7 +69,7 @@ class TransmitMail
     private $default_config = array(
         // 基本的な設定
         'return_path' => '',
-        'to_email' => '',
+        'email' => '',
         'cc_email' => '',
         'bcc_email' => '',
         'from_email' => '',
@@ -1105,9 +1105,9 @@ class TransmitMail
 
             // 宛先
             if (!empty($this->post[$this->config['auto_reply_email']])) {
-                $to_email = $this->post[$this->config['auto_reply_email']];
+                $email = $this->post[$this->config['auto_reply_email']];
             } else {
-                $to_email = $this->config['to_email'];
+                $email = $this->config['email'];
             }
 
             // 件名
@@ -1125,7 +1125,7 @@ class TransmitMail
             $from_email = $this->config['auto_reply_from_email'];
 
             if (empty($from_email)) {
-                $from_email = $this->config['to_email'];
+                $from_email = $this->config['email'];
             }
 
             // $config['auto_reply_name'] の設定がある場合
@@ -1149,13 +1149,13 @@ class TransmitMail
             if (!empty($this->config['return_path'])) {
                 $return_path = $this->config['return_path'];
             } else {
-                $return_path = $this->config['to_email'];
+                $return_path = $this->config['email'];
             }
 
             $this->mail->mtaOption('-f ' . $return_path);
         } else {
             // 宛先
-            $to_email = $this->config['to_email'];
+            $email = $this->config['email'];
 
             // 件名
             $to_subject = $this->config['to_subject'];
@@ -1170,7 +1170,7 @@ class TransmitMail
             } elseif (!empty($this->post[$this->config['auto_reply_email']])) {
                 $from_email = $this->post[$this->config['auto_reply_email']];
             } else {
-                $from_email = $to_email;
+                $from_email = $email;
             }
 
             $this->mail->from($from_email);
@@ -1187,7 +1187,7 @@ class TransmitMail
         }
 
         // メール送信内容
-        $this->mail->to($to_email);
+        $this->mail->to($email);
         $this->mail->subject($to_subject);
         $this->mail->text($body);
 
@@ -1245,7 +1245,7 @@ class TransmitMail
             $data .= "\n\n" .
                 "--\n\n" .
                 "【宛先】\n" .
-                $to_email . "\n\n" .
+                $email . "\n\n" .
                 "【件名】\n" .
                 $to_subject . "\n\n" .
                 "【本文】\n" .
