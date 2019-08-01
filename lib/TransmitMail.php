@@ -187,9 +187,9 @@ class TransmitMail
     private $config_file = array();
 
     /**
-     * コンストラクタ
+     * 各種初期設定
      */
-    public function __construct()
+    public function init()
     {
         // 設定の初期値を $config に代入
         $this->config = $this->default_config;

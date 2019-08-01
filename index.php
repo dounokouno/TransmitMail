@@ -9,5 +9,6 @@
  */
 
 require_once 'lib/TransmitMail.php';
-$tm = new TransmitMail('config/config.yml');
+$tm = new TransmitMail();
+$tm->init('config/config.yml');
 $tm->run();
