@@ -1563,6 +1563,7 @@ class TransmitMail
                 $this->global_errors[] = $this->h($file . $this->config['error_file_over_the_period']);
             } else {
                 // ファイルを表示
+                ob_end_clean();
                 header('Content-type: ' . $this->getMimeType($file));
                 readfile($file_path);
                 exit;
@@ -1577,6 +1578,7 @@ class TransmitMail
         $this->tpl->set('global_errors', $this->global_errors);
 
         // HTMLを表示
+        ob_end_clean();
         echo $this->tpl->fetch($this->config['tpl_error']);
         exit;
     }
@@ -2038,6 +2040,7 @@ EOL;
         $html .= '</body>';
         $html .= '</html>';
 
+        ob_end_clean();
         echo $html;
         exit;
     }
