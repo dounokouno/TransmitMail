@@ -237,6 +237,8 @@ class TransmitMail
 
         if (isset($this->get['file'])) {
             $this->displayTmpFile($this->get['file']);
+        } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
+            $this->displayCheckmode();
         } else {
             // セッションの開始
             if ($this->config['session']) {
@@ -843,9 +845,6 @@ class TransmitMail
         if ($this->deny_flag) {
             // アクセス拒否
             $this->page_name = 'deny';
-        } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
-            // チェックモード
-            $this->page_name = 'checkmode';
         } elseif (!$this->session_flag) {
             // セッションが無い場合 入力画面
             $this->page_name = '';
@@ -973,9 +972,6 @@ class TransmitMail
 
             // HTML を表示
             echo $this->tpl->fetch($this->config['tpl_error']);
-        } elseif ($this->page_name === 'checkmode') {
-            // チェックモードを表示
-            echo $this->getCheckmode();
         } elseif ($this->page_name === 'finish') {
             // メール送信
             $this->sendMail();
@@ -1842,11 +1838,9 @@ class TransmitMail
     }
 
     /**
-     * チェックモードを取得
-     *
-     * @return string
+     * チェックモードを表示
      */
-    public function getCheckmode()
+    public function displayCheckmode()
     {
         // 変数
         $html = '';
@@ -2046,6 +2040,7 @@ EOL;
         $html .= '</body>';
         $html .= '</html>';
 
-        return $html;
+        echo $html;
+        exit;
     }
 }
