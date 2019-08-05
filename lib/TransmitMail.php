@@ -109,8 +109,10 @@ class TransmitMail
         // 2 => 詳細モード
         'checkmode' => 0,
 
-        // エラー表示
+        // エラーログ
         'display_error' => false,
+        'error_log_file_name' => 'error.log',
+        'qdmail_error_log_file_name' => 'qdmail_error.log',
 
         // SMTP
         'smtp' => false,
@@ -217,7 +219,7 @@ class TransmitMail
         }
 
         // エラーログの出力先
-        ini_set('error_log', $this->config['log_dir'] . 'error.log');
+        ini_set('error_log', $this->config['log_dir'] . $this->config['error_log_file_name']);
 
         // 言語設定など
         mb_language($this->config['language']);
@@ -1071,7 +1073,7 @@ class TransmitMail
         $this->mail->errorDisplay(false);
         $this->mail->errorlogPath($this->config['log_dir']);
         $this->mail->errorlogLevel(3);
-        $this->mail->errorlogFilename('qdmail_error.log');
+        $this->mail->errorlogFilename($this->config['qdmail_error_log_file_name']);
         $this->mail->smtpObject()->error_display = false;
 
         // Qdsmpt の設定
