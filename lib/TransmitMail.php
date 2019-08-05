@@ -231,24 +231,6 @@ class TransmitMail
         // tinyTemplate を読み込む
         require_once dirname(__FILE__) . '/tinyTemplate.php';
         $this->tpl = new tinyTemplate();
-
-        // リクエストを取得
-        $this->getRequest();
-
-        if (isset($this->get['file'])) {
-            $this->displayTmpFile($this->get['file']);
-        } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
-            $this->displayCheckmode();
-        } else {
-            // セッションの開始
-            if ($this->config['session']) {
-                if (!isset($_SESSION)) {
-                    session_start();
-                }
-
-                session_regenerate_id(true);
-            }
-        }
     }
 
     /**
@@ -256,6 +238,22 @@ class TransmitMail
      */
     public function run()
     {
+        // リクエストを取得
+        $this->getRequest();
+
+        if (method_exists($this, 'afterGetRequest')) {
+            $this->afterGetRequest();
+        }
+
+        // ファイルの場合とチェックモードの場合とそれ以外の場合
+        if (isset($this->get['file'])) {
+            $this->displayTmpFile($this->get['file']);
+        } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
+            $this->displayCheckmode();
+        } else {
+            $this->startSession();
+        }
+
         // アクセス拒否ホストを判別
         $this->checkDenyHost();
 
@@ -350,6 +348,20 @@ class TransmitMail
 
         if (empty($this->server['REMOTE_HOST'])) {
             $this->server['REMOTE_HOST'] = gethostbyaddr($this->server['REMOTE_ADDR']);
+        }
+    }
+
+    /**
+     * セッションの開始
+     */
+    public function startSession()
+    {
+        if ($this->config['session']) {
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+
+            session_regenerate_id(true);
         }
     }
 
