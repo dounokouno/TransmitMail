@@ -253,8 +253,6 @@ class TransmitMail
 
     /**
      * 実行
-     *
-     * @return boolean
      */
     public function run()
     {
