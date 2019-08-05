@@ -232,13 +232,20 @@ class TransmitMail
         require_once dirname(__FILE__) . '/tinyTemplate.php';
         $this->tpl = new tinyTemplate();
 
-        // セッションの開始
-        if ($this->config['session']) {
-            if (!isset($_SESSION)) {
-                session_start();
-            }
+        // リクエストを取得
+        $this->getRequest();
 
-            session_regenerate_id(true);
+        if (isset($this->get['file'])) {
+            $this->displayTmpFile($this->get['file']);
+        } else {
+            // セッションの開始
+            if ($this->config['session']) {
+                if (!isset($_SESSION)) {
+                    session_start();
+                }
+
+                session_regenerate_id(true);
+            }
         }
     }
 
@@ -249,13 +256,6 @@ class TransmitMail
      */
     public function run()
     {
-        // リクエストを取得
-        $this->getRequest();
-
-        if (method_exists($this, 'afterGetRequest')) {
-            $this->afterGetRequest();
-        }
-
         // アクセス拒否ホストを判別
         $this->checkDenyHost();
 
@@ -846,9 +846,6 @@ class TransmitMail
         } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
             // チェックモード
             $this->page_name = 'checkmode';
-        } elseif (isset($this->get['file'])) {
-            // ファイル表示
-            $this->page_name = 'file';
         } elseif (!$this->session_flag) {
             // セッションが無い場合 入力画面
             $this->page_name = '';
@@ -979,30 +976,6 @@ class TransmitMail
         } elseif ($this->page_name === 'checkmode') {
             // チェックモードを表示
             echo $this->getCheckmode();
-        } elseif ($this->page_name === 'file') {
-            // ファイル表示
-            $file_path = $this->config['tmp_dir'] . basename($this->get['file']);
-
-            if (is_file($file_path)) {
-                if ((filemtime($file_path) + $this->config['file_retention_period']) < time()) {
-                    // 保存期間を超えている場合
-                    $this->global_errors[] = $this->h($this->get['file'] . $this->config['error_file_over_the_period']);
-                } else {
-                    // ファイルを表示
-                    header('Content-type: ' . $this->getMimeType($this->get['file']));
-                    readfile($file_path);
-                    exit();
-                }
-            } else {
-                // ファイルが存在しない
-                $this->global_errors[] = $this->h($this->get['file'] . $this->config['error_file_not_exist']);
-            }
-
-            // エラー内容をテンプレートプロパティにセット
-            $this->tpl->set('global_errors', $this->global_errors);
-
-            // HTMLを表示
-            echo $this->tpl->fetch($this->config['tpl_error']);
         } elseif ($this->page_name === 'finish') {
             // メール送信
             $this->sendMail();
@@ -1579,6 +1552,39 @@ class TransmitMail
         } else {
             return round($bytes / 1208925819614629174706176, 2) . 'YB';
         }
+    }
+
+    /**
+     * 一時ファイルの表示
+     */
+    public function displayTmpFile($file)
+    {
+        // ファイル表示
+        $file_path = $this->config['tmp_dir'] . basename($file);
+
+        if (is_file($file_path)) {
+            if ((filemtime($file_path) + $this->config['file_retention_period']) < time()) {
+                // 保存期間を超えている場合
+                header('HTTP', true, 403);
+                $this->global_errors[] = $this->h($file . $this->config['error_file_over_the_period']);
+            } else {
+                // ファイルを表示
+                header('Content-type: ' . $this->getMimeType($file));
+                readfile($file_path);
+                exit;
+            }
+        } else {
+            // ファイルが存在しない
+            header('HTTP', true, 404);
+            $this->global_errors[] = $this->h($file . $this->config['error_file_not_exist']);
+        }
+
+        // エラー内容をテンプレートプロパティにセット
+        $this->tpl->set('global_errors', $this->global_errors);
+
+        // HTMLを表示
+        echo $this->tpl->fetch($this->config['tpl_error']);
+        exit;
     }
 
     /**
