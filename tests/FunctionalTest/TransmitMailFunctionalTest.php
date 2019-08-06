@@ -27,6 +27,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
         parent::__construct($name, $data, $dataName);
 
         $this->tm = new TransmitMail();
+        $this->tm->init();
 
         // 入力パターン
         $this->inputPatterns['kanji'] = '漢字';
