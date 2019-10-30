@@ -14,6 +14,9 @@ class TransmitMail
     const SYSTEM_NAME = 'TransmitMail';
     const VERSION = '2.4.0';
 
+    // 表示モード
+    public $mode = null;
+
     // グローバルエラー
     public $global_errors = array();
 
@@ -233,6 +236,18 @@ class TransmitMail
         // tinyTemplate を読み込む
         require_once dirname(__FILE__) . '/tinyTemplate.php';
         $this->tpl = new tinyTemplate();
+
+        // リクエストを取得
+        $this->getRequest();
+
+        // 表示モードの判別
+        if (isset($this->get['file'])) {
+            $this->mode = 'file';
+        } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
+            $this->mode = 'check';
+        } else {
+            $this->startSession();
+        }
     }
 
     /**
@@ -240,20 +255,11 @@ class TransmitMail
      */
     public function run()
     {
-        // リクエストを取得
-        $this->getRequest();
-
-        if (method_exists($this, 'afterGetRequest')) {
-            $this->afterGetRequest();
-        }
-
-        // ファイルの場合とチェックモードの場合とそれ以外の場合
-        if (isset($this->get['file'])) {
+        // 表示モードによる表示の切り替え
+        if ($this->mode === 'file') {
             $this->displayTmpFile($this->get['file']);
-        } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
+        } elseif ($this->mode === 'check') {
             $this->displayCheckmode();
-        } else {
-            $this->startSession();
         }
 
         // アクセス拒否ホストを判別
