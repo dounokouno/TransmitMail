@@ -65,7 +65,8 @@ class TransmitMail
         "file",
         "file_remove",
         "file_required",
-        "csrf_token"
+        "csrf_token",
+        "g-recaptcha-response"
     ]';
 
     // 設定の初期値
@@ -105,6 +106,13 @@ class TransmitMail
         // CSRF 対策
         'csrf' => true,
         'csrf_token_length' => 32,
+
+        // reCAPTCHA
+        // recaptcha_site => サイトキー
+        // recaptcha_secret => シークレットキー
+        'recaptcha' => false,
+        'recaptcha_site' => '',
+        'recaptcha_secret' => '',
 
         // チェックモード
         // 0 => 無効
@@ -170,6 +178,7 @@ class TransmitMail
         'error_file_required' => 'は入力必須です。',
         'error_deny' => 'お使いのホストからのアクセスは管理者によって拒否されています。',
         'error_csrf' => 'CSRFトークンが無効です。',
+        'error_recaptcha' => 'CAPTCHAの認証に失敗しました。',
         'error_failure_send_mail' => 'メールの送信に失敗しました。',
         'error_failure_send_mail_auto_reply' => '自動返信メールの送信に失敗しました。',
 
@@ -843,6 +852,32 @@ class TransmitMail
                 $this->global_errors[] = $this->h($this->config['error_csrf']);
             }
         }
+
+        // reCAPTCHAチェック
+        if ($this->config['recaptcha'] && $this->post['page'] == 'finish') {
+            if(isset($this->post['g-recaptcha-response']) && !empty($this->post['g-recaptcha-response']) && is_string($this->post['g-recaptcha-response'])){
+                // APIリクエストURL
+                $endpoint = "https://www.google.com/recaptcha/api/siteverify";
+                $post_data = array('secret' => $this->config['recaptcha_secret'], 'response' => $this->post['g-recaptcha-response']);
+                $ch = curl_init($endpoint);
+                // CURLの結果を出力しない
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                // POSTリクエストを送信
+                curl_setopt($ch, CURLOPT_POST, true);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($post_data));
+                // CURL実行
+                $verifyResponse = curl_exec($ch);
+                curl_close($ch);
+                $responseData = json_decode($verifyResponse);
+                // reCAPTCHAの認証に失敗した場合
+                if($responseData->success != true){
+                    $this->global_errors[] = $this->h($this->config['error_recaptcha']);
+                }
+            }else{
+                // reCAPTCHAのトークンが送信されなかった場合
+                $this->global_errors[] = $this->h($this->config['error_recaptcha']);
+            }
+        }
     }
 
     /**
@@ -965,6 +1000,11 @@ class TransmitMail
             }
             $this->tpl->set('csrf_token', $_SESSION['csrf_token']);
             $hiddens[] = $this->getInputHidden('csrf_token', $_SESSION['csrf_token']);
+        }
+
+        // reCAPTCHA
+        if ($this->config['recaptcha'] && $this->page_name === 'confirm') {
+            $this->tpl->set('recaptcha_site', $this->config['recaptcha_site']);
         }
 
         $this->tpl->set('params', $params);
