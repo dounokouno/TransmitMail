@@ -996,7 +996,7 @@ class TransmitMail
             $this->tpl->set('global_errors', $this->global_errors);
 
             // HTML を表示
-            echo $this->tpl->fetch($this->config['tpl_error']);
+            $this->viewTemplate('tpl_error');
         } elseif ($this->page_name === 'finish') {
             // メール送信
             $this->sendMail();
@@ -1043,20 +1043,20 @@ class TransmitMail
                 $this->tpl->set('global_errors', $this->global_errors);
 
                 // HTML を表示
-                echo $this->tpl->fetch($this->config['tpl_error']);
+                $this->viewTemplate('tpl_error');
             } else {
                 // エラーがない場合
                 $this->tpl->set('page_title', $this->h($this->config['page_title']['finish']));
 
                 // 完了画面を表示
-                echo $this->tpl->fetch($this->config['tpl_finish']);
+                $this->viewTemplate('tpl_finish');
             }
         } elseif ($this->page_name === 'confirm') {
             // 確認画面
             $this->tpl->set('page_title', $this->h($this->config['page_title']['confirm']));
 
             // HTML を表示
-            echo $this->tpl->fetch($this->config['tpl_confirm']);
+            $this->viewTemplate('tpl_confirm');
         } else {
             // 入力画面 or 入力エラー画面
             $this->tpl->set('page_title', $this->h($this->config['page_title']['input']));
@@ -1070,8 +1070,16 @@ class TransmitMail
             $this->tpl->set('global_errors', $this->global_errors);
 
             // HTMLを表示
-            echo $this->tpl->fetch($this->config['tpl_input']);
+            $this->viewTemplate('tpl_input');
         }
+    }
+
+    /**
+     * テンプレートの出力処理
+     */
+    public function viewTemplate($template_type)
+    {
+        echo $this->tpl->fetch($this->config[$template_type]);
     }
 
     /**
@@ -1611,7 +1619,7 @@ class TransmitMail
         // HTMLを表示
         ob_end_clean();
         $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
-        echo $this->tpl->fetch($this->config['tpl_error']);
+        $this->viewTemplate('tpl_error');
         exit;
     }
 
