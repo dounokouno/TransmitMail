@@ -2,6 +2,7 @@
 /*--------------------------------------------------------------*\
     Description:    HTML template class based on bTemplate.
     Author:         Takayuki Miyauchi (miya@theta.ne.jp)
+    Modified by:    TAGAWA Takao (dounokouno@gmail.com)
     License:        MIT License
     Version:        0.1
 \*--------------------------------------------------------------*/
