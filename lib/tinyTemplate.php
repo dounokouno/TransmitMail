@@ -81,10 +81,7 @@ class tinyTemplate {
         fclose($fp);
 
         $contents = $this->parse($contents);
-
-        $contents = preg_replace('/\{\$.*?\}/', '', $contents);
-        $contents = preg_replace('/\{if.*?\}.*?\{\/if.*?\}/s', '', $contents);
-        $contents = preg_replace('/\{loop.*?\}.*?\{\/loop.*?\}/s', '', $contents);
+        $contents = $this->deleteUnusedTags($contents);
 
         return $contents;
     }
@@ -298,6 +295,24 @@ class tinyTemplate {
         $str = htmlentities($str, ENT_QUOTES, mb_internal_encoding());
         $str = trim($str);
         return $str;
+    }
+
+
+    private function deleteUnusedTags($contents)
+    {
+        $multiline_tags = ['if', 'loop'];
+        $regex_start = '/' . preg_quote($this->BAldelim, '/');
+        $regex_middle = '.*?' . preg_quote($this->BArdelim, '/') . '.*?' . preg_quote($this->EAldelim, '/');
+        $regex_end = '.*?' . preg_quote($this->EArdelim, '/') . '/s';
+
+        foreach ($multiline_tags as $tag) {
+            $regex = $regex_start . $tag . $regex_middle . $tag . $regex_end;
+            $contents = preg_replace($regex, '', $contents);
+        }
+        $regex = '/' . preg_quote($this->ldelim, '/') . '\$.*?' . preg_quote($this->rdelim, '/') . '/';
+        $contents = preg_replace($regex, '', $contents);
+
+        return $contents;
     }
 }
 }
