@@ -117,6 +117,13 @@ class tinyTemplate {
             $contents = $this->parse_cloop($key, $array, $contents);
         }
 
+        // Process the includes
+        $regex = '/' . preg_quote($this->ldelim, '/') . 'include:(.*)' . preg_quote($this->rdelim, '/') . '/';
+        preg_match_all($regex, $contents, $matches);
+        foreach ($matches[1] as $index => $value) {
+            $contents = str_replace($matches[0][$index], rtrim($this->fetch($value)), $contents);
+        }
+
         // Reset the arrays
         if ($this->reset_vars) $this->reset_vars(false, true, true, false);
 
