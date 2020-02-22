@@ -147,15 +147,6 @@ class tinyTemplate {
     }
 
 
-    private function set_cloop($tag, $array, $cases)
-    {
-        $this->carrays[$tag] = [
-            'array' => $array,
-            'cases' => $cases
-        ];
-    }
-
-
     private function reset_vars($scalars, $arrays, $carrays, $ifs)
     {
         if ($scalars) $this->scalars = [];
