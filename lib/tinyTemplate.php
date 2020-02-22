@@ -4,7 +4,7 @@
     Author:         Takayuki Miyauchi (miya@theta.ne.jp)
     Modified by:    TAGAWA Takao (dounokouno@gmail.com)
     License:        MIT License
-    Version:        0.1
+    Version:        0.1.1
 \*--------------------------------------------------------------*/
 if (!class_exists('tinyTemplate')) {
 class tinyTemplate {
