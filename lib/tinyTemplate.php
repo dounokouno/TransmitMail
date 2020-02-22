@@ -28,10 +28,10 @@ class tinyTemplate {
     private $EArdelim = '}';
 
     // Internal privateiables
-    private $scalars = array();
-    private $arrays  = array();
-    private $carrays = array();
-    private $ifs     = array();
+    private $scalars = [];
+    private $arrays  = [];
+    private $carrays = [];
+    private $ifs     = [];
 
 
 //
@@ -41,7 +41,7 @@ class tinyTemplate {
     {
         if ($base_path) $this->base_path = $base_path;
         $this->reset_vars = $reset_vars;
-        $this->default_modifier = array($this, 'modifier');
+        $this->default_modifier = [$this, 'modifier'];
     }
 
 
@@ -60,7 +60,7 @@ class tinyTemplate {
             $this->scalars[$tag] = $result;
         } else {
             if ($modifier) {
-                call_user_func_array($this->default_modifier, array(&$var));
+                call_user_func_array($this->default_modifier, [&$var]);
             }
             $this->scalars[$tag] = $var;
             $this->ifs[] = $tag;
@@ -142,18 +142,19 @@ class tinyTemplate {
 
     private function set_cloop($tag, $array, $cases)
     {
-        $this->carrays[$tag] = array(
+        $this->carrays[$tag] = [
             'array' => $array,
-            'cases' => $cases);
+            'cases' => $cases
+        ];
     }
 
 
     private function reset_vars($scalars, $arrays, $carrays, $ifs)
     {
-        if($scalars) $this->scalars = array();
-        if($arrays)  $this->arrays  = array();
-        if($carrays) $this->carrays = array();
-        if($ifs)     $this->ifs     = array();
+        if ($scalars) $this->scalars = [];
+        if ($arrays)  $this->arrays  = [];
+        if ($carrays) $this->carrays = [];
+        if ($ifs)     $this->ifs     = [];
     }
 
 
@@ -261,7 +262,7 @@ class tinyTemplate {
 
         // Set up the cases
         $array['cases'][] = 'default';
-        $case_content = array();
+        $case_content = [];
         $parsed = null;
 
         // Get the case strings
