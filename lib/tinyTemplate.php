@@ -39,7 +39,7 @@ class tinyTemplate {
 //
     function __construct($base_path = null, $reset_vars = false)
     {
-        if($base_path) $this->base_path = $base_path;
+        if ($base_path) $this->base_path = $base_path;
         $this->reset_vars = $reset_vars;
         $this->default_modifier = array($this, 'modifier');
     }
@@ -50,7 +50,7 @@ class tinyTemplate {
 //
     public function set($tag, $var, $modifier = false)
     {
-        if(is_array($var)) {
+        if (is_array($var)) {
             if ($modifier) {
                 array_walk_recursive($var, $this->default_modifier);
             }
@@ -76,7 +76,7 @@ class tinyTemplate {
         $file = $this->base_path . $file_name;
 
         $fp = fopen($file, 'rb');
-        if(!$fp) return FALSE;
+        if (!$fp) return FALSE;
         $contents = fread($fp, filesize($file));
         fclose($fp);
 
@@ -96,29 +96,29 @@ class tinyTemplate {
     public function parse($contents)
     {
         // Process the ifs
-        if(!empty($this->ifs)) {
-            foreach($this->ifs as $value) {
+        if (!empty($this->ifs)) {
+            foreach ($this->ifs as $value) {
                 $contents = $this->parse_if($value, $contents);
             }
         }
 
         // Process the scalars
-        foreach($this->scalars as $key => $value) {
+        foreach ($this->scalars as $key => $value) {
             $contents = str_replace($this->get_tag($key), $value, $contents);
         }
 
         // Process the arrays
-        foreach($this->arrays as $key => $array) {
+        foreach ($this->arrays as $key => $array) {
             $contents = $this->parse_loop($key, $array, $contents);
         }
 
         // Process the carrays
-        foreach($this->carrays as $key => $array) {
+        foreach ($this->carrays as $key => $array) {
             $contents = $this->parse_cloop($key, $array, $contents);
         }
 
         // Reset the arrays
-        if($this->reset_vars) $this->reset_vars(false, true, true, false);
+        if ($this->reset_vars) $this->reset_vars(false, true, true, false);
 
         // Return the contents
         return $contents;
@@ -134,7 +134,7 @@ class tinyTemplate {
             if (method_exists($modifier[0], $modifier[1])) {
                 $this->default_modifier = $modifier;
             }
-        } elseif(function_exists($modifier)) {
+        } elseif (function_exists($modifier)) {
             $this->default_modifier = $modifier;
         }
     }
@@ -195,14 +195,13 @@ class tinyTemplate {
         $tags['e'] = $this->BAldelim . 'else:$' . $tag . $this->BArdelim;
 
         // See if there's an else statement
-        if(($else = strpos($entire_statement, $tags['e']))) {        
+        if (($else = strpos($entire_statement, $tags['e']))) {
             // Get the if statement
             $if = $this->get_statement($tags, $entire_statement);
 
             // Get the else statement
             $else = substr($entire_statement, $else + strlen($tags['e']));
-        }
-        else {
+        } else {
             $else = NULL;
             $if = $entire_statement;
         }
@@ -227,29 +226,26 @@ class tinyTemplate {
         $parsed = NULL;
 
         // Process the loop
-        foreach($array as $key => $value) {
-            if(is_numeric($key) && is_array($value)) {
+        foreach ($array as $key => $value) {
+            if (is_numeric($key) && is_array($value)) {
                 $i = $loop;
-                foreach($value as $key2 => $value2) {
-                    if(!is_array($value2)) {
+                foreach ($value as $key2 => $value2) {
+                    if (!is_array($value2)) {
                         // Replace associative array tags
                         $i = str_replace($this->get_tag($tag . '[].' . $key2), $value2, $i);
-                    }
-                    else {
+                    } else {
                         // Check to see if it's a nested loop
                         $i = $this->parse_loop($tag . '[].' . $key2, $value2, $i);
                     }
                 }
-            }
-            elseif(is_string($key) && !is_array($value)) {
+            } elseif (is_string($key) && !is_array($value)) {
                 $contents = str_replace($this->get_tag($tag . '.' . $key), $value, $contents);
-            }
-            elseif(!is_array($value)) {
+            } elseif(!is_array($value)) {
                 $i = str_replace($this->get_tag($tag . '[]'), $value, $loop);
             }
 
             // Add the parsed iteration
-            if(isset($i)) $parsed .= rtrim($i);
+            if (isset($i)) $parsed .= rtrim($i);
         }
 
         // Parse & return the final loop
@@ -269,22 +265,22 @@ class tinyTemplate {
         $parsed = NULL;
 
         // Get the case strings
-        foreach($array['cases'] as $case) {
+        foreach ($array['cases'] as $case) {
             $ctags[$case] = $this->get_tags($case, 'case:');
             $case_content[$case] = $this->get_statement($ctags[$case], $loop);
         }
 
         // Process the loop
-        foreach($array['array'] as $key => $value) {
-            if(is_numeric($key) && is_array($value)) {
+        foreach ($array['array'] as $key => $value) {
+            if (is_numeric($key) && is_array($value)) {
                 // Set up the cases
-                if(isset($value['case'])) $current_case = $value['case'];
+                if (isset($value['case'])) $current_case = $value['case'];
                 else $current_case = 'default';
                 unset($value['case']);
                 $i = $case_content[$current_case];
 
                 // Loop through each value
-                foreach($value as $key2 => $value2) {
+                foreach ($value as $key2 => $value2) {
                     $i = str_replace($this->get_tag($tag . '[].' . $key2), $value2, $i);
                 }
             }
