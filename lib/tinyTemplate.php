@@ -186,19 +186,19 @@ class tinyTemplate {
     {
         // Get the tags
         $t = $this->get_tags($tag, 'if:$');
-        
+
         // Get the entire statement
         $entire_statement = $this->get_statement($t, $contents);
-        
+
         // Get the else tag
         $tags['b'] = NULL;
-        $tags['e'] = $this->BAldelim . 'else:$' . $tag . $this->BArdelim;        
-        
+        $tags['e'] = $this->BAldelim . 'else:$' . $tag . $this->BArdelim;
+
         // See if there's an else statement
         if(($else = strpos($entire_statement, $tags['e']))) {        
             // Get the if statement
             $if = $this->get_statement($tags, $entire_statement);
-        
+
             // Get the else statement
             $else = substr($entire_statement, $else + strlen($tags['e']));
         }
@@ -206,7 +206,7 @@ class tinyTemplate {
             $else = NULL;
             $if = $entire_statement;
         }
-        
+
         // Process the if statement
         $this->scalars[$tag] ? $replace = $if : $replace = $else;
 
