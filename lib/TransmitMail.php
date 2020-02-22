@@ -1131,7 +1131,7 @@ class TransmitMail
             if (!empty($this->config['auto_reply_bcc_email'])) {
                 $this->mail->bcc($this->config['auto_reply_bcc_email']);
             }
-            
+
             // Return-Path
             if (!empty($this->config['return_path'])) {
                 $return_path = $this->config['return_path'];
