@@ -55,7 +55,7 @@ class tinyTemplate {
                 array_walk_recursive($var, $this->default_modifier);
             }
             $this->arrays[$tag] = $var;
-            $result = $var ? TRUE : FALSE;
+            $result = $var ? true : false;
             $this->ifs[] = $tag;
             $this->scalars[$tag] = $result;
         } else {
@@ -76,7 +76,7 @@ class tinyTemplate {
         $file = $this->base_path . $file_name;
 
         $fp = fopen($file, 'rb');
-        if (!$fp) return FALSE;
+        if (!$fp) return false;
         $contents = fread($fp, filesize($file));
         fclose($fp);
 
@@ -191,7 +191,7 @@ class tinyTemplate {
         $entire_statement = $this->get_statement($t, $contents);
 
         // Get the else tag
-        $tags['b'] = NULL;
+        $tags['b'] = null;
         $tags['e'] = $this->BAldelim . 'else:$' . $tag . $this->BArdelim;
 
         // See if there's an else statement
@@ -202,7 +202,7 @@ class tinyTemplate {
             // Get the else statement
             $else = substr($entire_statement, $else + strlen($tags['e']));
         } else {
-            $else = NULL;
+            $else = null;
             $if = $entire_statement;
         }
 
@@ -223,7 +223,7 @@ class tinyTemplate {
         // Get the tags & loop
         $t = $this->get_tags($tag, 'loop:$');
         $loop = $this->get_statement($t, $contents);
-        $parsed = NULL;
+        $parsed = null;
 
         // Process the loop
         foreach ($array as $key => $value) {
@@ -262,7 +262,7 @@ class tinyTemplate {
         // Set up the cases
         $array['cases'][] = 'default';
         $case_content = array();
-        $parsed = NULL;
+        $parsed = null;
 
         // Get the case strings
         foreach ($array['cases'] as $case) {
