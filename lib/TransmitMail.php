@@ -12,7 +12,7 @@ class TransmitMail
 {
     // システム情報
     const SYSTEM_NAME = 'TransmitMail';
-    const VERSION = '2.4.1';
+    const VERSION = '2.5.0';
 
     // 表示モード
     public $mode = null;
