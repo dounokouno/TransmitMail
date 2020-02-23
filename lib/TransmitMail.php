@@ -18,7 +18,7 @@ class TransmitMail
     public $mode = null;
 
     // グローバルエラー
-    public $global_errors = array();
+    public $global_errors = [];
 
     // アクセス拒否フラグ
     public $deny_flag = false;
@@ -30,10 +30,10 @@ class TransmitMail
     public $page_name = '';
 
     // リクエスト値
-    public $get = array();
-    public $post = array();
-    public $server = array();
-    public $files = array();
+    public $get = [];
+    public $post = [];
+    public $server = [];
+    public $files = [];
 
     // テンプレート
     public $tpl = null;
@@ -69,7 +69,7 @@ class TransmitMail
     ]';
 
     // 設定の初期値
-    private $default_config = array(
+    private $default_config = [
         // 基本的な設定
         'return_path' => '',
         'email' => '',
@@ -143,12 +143,12 @@ class TransmitMail
         'tpl_error' => 'error.html',
         'mail_body' => 'config/mail_body.txt',
         'mail_auto_reply_body' => 'config/mail_auto_reply_body.txt',
-        'page_title' => array(
+        'page_title' => [
             'input' => '',
             'confirm' => '入力内容の確認',
             'finish' => 'お問い合わせいただきありがとうございます',
             'error' => 'エラー'
-        ),
+        ],
 
         // エラーメッセージ
         'error_required' => 'は入力必須です。',
@@ -186,16 +186,16 @@ class TransmitMail
         'log_dir' => 'log/',
         'tmp_dir' => 'tmp/',
         'file_name_prefix' => 'file_'
-    );
+    ];
 
     // 読み込まれた設定情報
-    private $loaded_config = array();
+    private $loaded_config = [];
 
     // 設定情報
-    public $config = array();
+    public $config = [];
 
     // 設定ファイル
-    private $config_file = array();
+    private $config_file = [];
 
     /**
      * 各種初期設定
@@ -751,10 +751,10 @@ class TransmitMail
                         if (is_file($this->config['tmp_dir'] . basename($value['tmp_name']))) {
                             $this->tpl->set("$key.tmp_name", $this->h($value['tmp_name']));
                             $this->tpl->set("$key.name", $this->h($value['name']));
-                            $this->files[$key] = array(
+                            $this->files[$key] = [
                                 'tmp_name' => $this->h($value['tmp_name']),
                                 'name' => $this->h($value['name'])
-                            );
+                            ];
                         }
                     }
                 }
@@ -778,7 +778,7 @@ class TransmitMail
             // ファイルのアップロード
             if (isset($_FILES)) {
                 foreach ($_FILES as $key => $value) {
-                    $file_error = array();
+                    $file_error = [];
                     $this->tpl->set("file.$key", false);
 
                     if (!is_array($value['tmp_name'])) {
@@ -823,10 +823,10 @@ class TransmitMail
                                 if (move_uploaded_file($value['tmp_name'], $file_path)) {
                                     $this->tpl->set("$key.tmp_name", $this->h($tmp_name));
                                     $this->tpl->set("$key.name", $this->h($value['name']));
-                                    $this->files[$key] = array(
+                                    $this->files[$key] = [
                                         'tmp_name' => $this->h($tmp_name),
                                         'name' => $this->h($value['name'])
-                                    );
+                                    ];
                                 } else {
                                     // アップロードに失敗した場合
                                     $file_error[] = $this->h($key . $this->config['error_file_upload']);
@@ -900,8 +900,8 @@ class TransmitMail
      */
     public function setTemplateProperty()
     {
-        $params = array();
-        $hiddens = array();
+        $params = [];
+        $hiddens = [];
 
         if (empty($this->page_name)) {
             // 入力画面 or 入力エラー画面
@@ -913,7 +913,7 @@ class TransmitMail
             foreach ($this->post as $key => $value1) {
                 if (!preg_match($this->exclusion_item_pattern(), $key)) {
                     if (is_array($value1)) {
-                        $this->tpl->set("$key.array", array_map(array($this, 'h'), $value1));
+                        $this->tpl->set("$key.array", array_map([$this, 'h'], $value1));
                         $value2 = implode(', ', $value1);
                     } else {
                         $value2 = $value1;
@@ -924,12 +924,12 @@ class TransmitMail
                     $this->tpl->set("$key.value", $this->h($value2));
                     $this->tpl->set("$key.value.nl2br", nl2br($this->h($value2)));
                     $this->tpl->set("$key.hidden", $hidden);
-                    $params[] = array(
+                    $params[] = [
                         'key' => $this->h($key),
                         'value' => $this->h($value2),
                         'value.nl2br' => nl2br($this->h($value2)),
                         'hidden' => $hidden
-                    );
+                    ];
                     $hiddens[] = $hidden;
                 }
             }
@@ -937,7 +937,7 @@ class TransmitMail
 
         // $_FILES
         if ($this->config['file']) {
-            $array = array();
+            $array = [];
 
             foreach ($this->files as $key => $value) {
                 if (isset($value['tmp_name'])) {
@@ -949,13 +949,13 @@ class TransmitMail
                     $this->tpl->set("$key.name", $this->h($value['name']));
                     $this->tpl->set("$key.hidden_tmp_name", $hidden_tmp_name);
                     $this->tpl->set("$key.hidden_name", $hidden_name);
-                    $array[] = array(
+                    $array[] = [
                         'key' => $this->h($key),
                         'tmp_name' => $this->h($value['tmp_name']),
                         'name' => $this->h($value['name']),
                         'hidden_tmp_name' => $hidden_tmp_name,
                         'hidden_name' => $hidden_name
-                    );
+                    ];
                     $hiddens[] = $hidden_tmp_name;
                     $hiddens[] = $hidden_name;
                 }
@@ -1030,7 +1030,7 @@ class TransmitMail
                     );
                 }
 
-                $_SESSION = array();
+                $_SESSION = [];
                 session_destroy();
             }
 
@@ -1192,10 +1192,10 @@ class TransmitMail
         // 添付ファイル機能を利用する場合
         if ($this->config['file']) {
             foreach ($this->files as $file) {
-                $attach[] = array(
+                $attach[] = [
                     'PATH' => $this->config['tmp_dir'] . $file['tmp_name'],
                     'NAME' => $file['name']
-                );
+                ];
             }
 
             if (isset($attach)) {
@@ -1207,14 +1207,14 @@ class TransmitMail
         if ($this->config['smtp']) {
             $this->mail->smtp(true);
             $this->mail->smtpServer(
-                array(
+                [
                     'host' => $this->config['smtp_host'],
                     'port' => $this->config['smtp_port'],
                     'protocol' => $this->config['smtp_protocol'],
                     'user' => $this->config['smtp_user'],
                     'pass' => $this->config['smtp_password'],
                     'from' => $from_email
-                )
+                ]
             );
         }
 
@@ -1631,16 +1631,16 @@ class TransmitMail
             foreach ($value as $value2) {
                 if (!is_array($value2)) {
                     $result .= preg_replace(
-                        array('/{key}/', '/{value}/'),
-                        array($this->h($key) . '[]', $this->h($value2)),
+                        ['/{key}/', '/{value}/'],
+                        [$this->h($key) . '[]', $this->h($value2)],
                         $hidden
                     );
                 }
             }
         } else {
             $result .= preg_replace(
-                array('/{key}/', '/{value}/'),
-                array($this->h($key), $this->h($value)),
+                ['/{key}/', '/{value}/'],
+                [$this->h($key), $this->h($value)],
                 $hidden
             );
         }
@@ -1719,7 +1719,7 @@ class TransmitMail
      */
     public function putCsv($values)
     {
-        $csv_lines = array();
+        $csv_lines = [];
 
         foreach ($values as $key => $value) {
             if (!preg_match($this->exclusion_item_pattern(), $key)) {
@@ -1790,7 +1790,7 @@ class TransmitMail
     public function deleteNullbyte($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'deleteNullbyte'), $string);
+            return array_map([$this, 'deleteNullbyte'], $string);
         }
         return str_replace("\0", '', $string);
     }
@@ -1805,7 +1805,7 @@ class TransmitMail
     {
         if (get_magic_quotes_gpc()) {
             if (is_array($string)) {
-                return array_map(array($this, 'safeStripSlashes'), $string);
+                return array_map([$this, 'safeStripSlashes'], $string);
             } else {
                 return stripslashes($string);
             }
@@ -1822,7 +1822,7 @@ class TransmitMail
     public function deleteBlank($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'deleteBlank'), $string);
+            return array_map([$this, 'deleteBlank'], $string);
         }
         return preg_replace('/\s/' . $this->config['reg_option'], '', $string);
     }
@@ -1836,7 +1836,7 @@ class TransmitMail
     public function deleteCrlf($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'deleteCrlf'), $string);
+            return array_map([$this, 'deleteCrlf'], $string);
         }
         return preg_replace('/\r|\n/' . $this->config['reg_option'], '', $string);
     }
@@ -1850,7 +1850,7 @@ class TransmitMail
     public function h($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'h'), $string);
+            return array_map([$this, 'h'], $string);
         }
         return htmlentities($string, ENT_QUOTES, $this->config['charset']);
     }
@@ -1864,7 +1864,7 @@ class TransmitMail
     public function hd($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'hd'), $string);
+            return array_map([$this, 'hd'], $string);
         }
         return html_entity_decode($string, ENT_QUOTES, $this->config['charset']);
     }
