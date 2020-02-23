@@ -911,7 +911,7 @@ class TransmitMail
         } elseif ($this->page_name === 'confirm' || $this->page_name === 'finish') {
             // 確認画面 or 完了画面
             foreach ($this->post as $key => $value1) {
-                if (!preg_match($this->exclusion_item_pattern(), $key)) {
+                if (!preg_match($this->exclusionItemPattern(), $key)) {
                     if (is_array($value1)) {
                         $this->tpl->set("$key.array", array_map([$this, 'h'], $value1));
                         $value2 = implode(', ', $value1);
@@ -1275,7 +1275,7 @@ class TransmitMail
     /**
      * $this->EXCLUSION_ITEM を正規表現形式に変換した文字列を返す
      */
-    public function exclusion_item_pattern() {
+    public function exclusionItemPattern() {
         $array = json_decode($this->exclusion_item);
         $array = array_map(function($string) {
             return '\A' . $string . '\z';
@@ -1722,7 +1722,7 @@ class TransmitMail
         $csv_lines = [];
 
         foreach ($values as $key => $value) {
-            if (!preg_match($this->exclusion_item_pattern(), $key)) {
+            if (!preg_match($this->exclusionItemPattern(), $key)) {
                 if (is_array($value)) {
                     $value = implode(' / ', $value);
                 }
