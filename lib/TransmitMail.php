@@ -20,11 +20,11 @@ class TransmitMail
     // グローバルエラー
     public $global_errors = [];
 
-    // アクセス拒否フラグ
-    public $deny_flag = false;
+    // アクセス拒否の判別
+    public $is_denied = false;
 
-    // セッションによる多重送信防止フラグ
-    public $session_flag = false;
+    // セッションによる多重送信防止の判別
+    public $has_correct_session = false;
 
     // ページ名
     public $page_name = '';
@@ -389,7 +389,7 @@ class TransmitMail
 
             if (preg_match($pattern, $this->server['REMOTE_ADDR']) ||
                 preg_match($pattern, $this->server['REMOTE_HOST'])) {
-                $this->deny_flag = true;
+                $this->is_denied = true;
             }
         }
     }
@@ -859,17 +859,17 @@ class TransmitMail
         // セッションの判別
         if ($this->config['session']) {
             if (isset($_SESSION['transmit_mail_input']) && $_SESSION['transmit_mail_input']) {
-                $this->session_flag = true;
+                $this->has_correct_session = true;
             }
         } else {
-            $this->session_flag = true;
+            $this->has_correct_session = true;
         }
 
         // $page_name の判別
-        if ($this->deny_flag) {
+        if ($this->is_denied) {
             // アクセス拒否
             $this->page_name = 'deny';
-        } elseif (!$this->session_flag) {
+        } elseif (!$this->has_correct_session) {
             // セッションが無い場合 入力画面
             $this->page_name = '';
         } elseif (!empty(($this->post))) {
