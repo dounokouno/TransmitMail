@@ -403,7 +403,7 @@ class TransmitMail
         $this->tpl->set('checked.default', $this->config['attr_checked']);
         $this->tpl->set('selected.default', $this->config['attr_selected']);
 
-        if (count($this->post) > 0) {
+        if (!empty($this->post)) {
             $this->tpl->set('checked.default', '');
             $this->tpl->set('selected.default', '');
         }
@@ -778,7 +778,7 @@ class TransmitMail
             // ファイルのアップロード
             if (isset($_FILES)) {
                 foreach ($_FILES as $key => $value) {
-                    $file_error = [];
+                    $file_errors = [];
                     $this->tpl->set("file.$key", false);
 
                     if (!is_array($value['tmp_name'])) {
@@ -788,19 +788,19 @@ class TransmitMail
                             if (!empty($this->config['file_allow_extension']) &&
                                 !$this->isAllowFileExtension($value['name']))
                             {
-                                $file_error[] = $this->h($key . $this->config['error_file_extension']);
+                                $file_errors[] = $this->h($key . $this->config['error_file_extension']);
                                 $this->global_errors[] = $this->h($key . $this->config['error_file_extension']);
                             }
 
                             // 空ファイルのチェック
                             if ($value['size'] === 0) {
-                                $file_error[] = $this->h($key . $this->config['error_file_empty']);
+                                $file_errors[] = $this->h($key . $this->config['error_file_empty']);
                                 $this->global_errors[] = $this->h($key . $this->config['error_file_empty']);
                             }
 
                             // ファイルサイズのチェック
                             if ($value['size'] > $this->config['file_max_size']) {
-                                $file_error[] = $this->h($key . str_replace(
+                                $file_errors[] = $this->h($key . str_replace(
                                     '{ファイルサイズ}',
                                     $this->getFormatedBytes($this->config['file_max_size']),
                                     $this->config['error_file_max_size']));
@@ -811,9 +811,9 @@ class TransmitMail
                             }
 
                             // エラーを判別
-                            if (count($file_error) > 0) {
+                            if (!empty($file_errors)) {
                                 // エラーがある場合、エラーメッセージをセット
-                                $this->tpl->set("file.$key", $file_error);
+                                $this->tpl->set("file.$key", $file_errors);
                             } else {
                                 // エラーが無い場合、ファイルを$config['tmp_dir']に移動
                                 $tmp_name = $this->config['file_name_prefix'] . uniqid(rand()) .
@@ -829,9 +829,9 @@ class TransmitMail
                                     ];
                                 } else {
                                     // アップロードに失敗した場合
-                                    $file_error[] = $this->h($key . $this->config['error_file_upload']);
+                                    $file_errors[] = $this->h($key . $this->config['error_file_upload']);
                                     $this->global_errors[] = $this->h($key . $this->config['error_file_upload']);
-                                    $this->tpl->set("file.$key", $file_error);
+                                    $this->tpl->set("file.$key", $file_errors);
                                 }
                             }
                         }
@@ -841,7 +841,7 @@ class TransmitMail
         }
 
         // CSRF トークンチェック
-        if ($this->config['session'] && $this->config['csrf'] && (count($this->post) > 0)) {
+        if ($this->config['session'] && $this->config['csrf'] && (!empty($this->post))) {
             if (!isset($this->post['csrf_token']) ||
               !isset($_SESSION['csrf_token']) ||
               ($this->post['csrf_token'] !== $_SESSION['csrf_token'])) {
@@ -872,7 +872,7 @@ class TransmitMail
         } elseif (!$this->session_flag) {
             // セッションが無い場合 入力画面
             $this->page_name = '';
-        } elseif (count($this->post) > 0) {
+        } elseif (!empty(($this->post))) {
             if ($this->global_errors) {
                 // エラーがある場合 入力エラー画面
                 $this->page_name = '';
