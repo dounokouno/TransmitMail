@@ -12,28 +12,28 @@ class TransmitMail
 {
     // システム情報
     const SYSTEM_NAME = 'TransmitMail';
-    const VERSION = '2.4.1';
+    const VERSION = '2.5.0';
 
     // 表示モード
     public $mode = null;
 
     // グローバルエラー
-    public $global_errors = array();
+    public $global_errors = [];
 
-    // アクセス拒否フラグ
-    public $deny_flag = false;
+    // アクセス拒否の判別
+    public $is_denied = false;
 
-    // セッションによる多重送信防止フラグ
-    public $session_flag = false;
+    // セッションによる多重送信防止の判別
+    public $has_correct_session = false;
 
     // ページ名
     public $page_name = '';
 
     // リクエスト値
-    public $get = array();
-    public $post = array();
-    public $server = array();
-    public $files = array();
+    public $get = [];
+    public $post = [];
+    public $server = [];
+    public $files = [];
 
     // テンプレート
     public $tpl = null;
@@ -69,7 +69,7 @@ class TransmitMail
     ]';
 
     // 設定の初期値
-    private $default_config = array(
+    private $default_config = [
         // 基本的な設定
         'return_path' => '',
         'email' => '',
@@ -143,6 +143,12 @@ class TransmitMail
         'tpl_error' => 'error.html',
         'mail_body' => 'config/mail_body.txt',
         'mail_auto_reply_body' => 'config/mail_auto_reply_body.txt',
+        'page_title' => [
+            'input' => '',
+            'confirm' => '入力内容の確認',
+            'finish' => 'お問い合わせいただきありがとうございます',
+            'error' => 'エラー'
+        ],
 
         // エラーメッセージ
         'error_required' => 'は入力必須です。',
@@ -180,16 +186,16 @@ class TransmitMail
         'log_dir' => 'log/',
         'tmp_dir' => 'tmp/',
         'file_name_prefix' => 'file_'
-    );
+    ];
 
     // 読み込まれた設定情報
-    private $loaded_config = array();
+    private $loaded_config = [];
 
     // 設定情報
-    public $config = array();
+    public $config = [];
 
     // 設定ファイル
-    private $config_file = array();
+    private $config_file = [];
 
     /**
      * 各種初期設定
@@ -383,7 +389,7 @@ class TransmitMail
 
             if (preg_match($pattern, $this->server['REMOTE_ADDR']) ||
                 preg_match($pattern, $this->server['REMOTE_HOST'])) {
-                $this->deny_flag = true;
+                $this->is_denied = true;
             }
         }
     }
@@ -397,7 +403,7 @@ class TransmitMail
         $this->tpl->set('checked.default', $this->config['attr_checked']);
         $this->tpl->set('selected.default', $this->config['attr_selected']);
 
-        if (count($this->post) > 0) {
+        if (!empty($this->post)) {
             $this->tpl->set('checked.default', '');
             $this->tpl->set('selected.default', '');
         }
@@ -745,10 +751,10 @@ class TransmitMail
                         if (is_file($this->config['tmp_dir'] . basename($value['tmp_name']))) {
                             $this->tpl->set("$key.tmp_name", $this->h($value['tmp_name']));
                             $this->tpl->set("$key.name", $this->h($value['name']));
-                            $this->files[$key] = array(
+                            $this->files[$key] = [
                                 'tmp_name' => $this->h($value['tmp_name']),
                                 'name' => $this->h($value['name'])
-                            );
+                            ];
                         }
                     }
                 }
@@ -772,7 +778,7 @@ class TransmitMail
             // ファイルのアップロード
             if (isset($_FILES)) {
                 foreach ($_FILES as $key => $value) {
-                    $file_error = array();
+                    $file_errors = [];
                     $this->tpl->set("file.$key", false);
 
                     if (!is_array($value['tmp_name'])) {
@@ -782,19 +788,19 @@ class TransmitMail
                             if (!empty($this->config['file_allow_extension']) &&
                                 !$this->isAllowFileExtension($value['name']))
                             {
-                                $file_error[] = $this->h($key . $this->config['error_file_extension']);
+                                $file_errors[] = $this->h($key . $this->config['error_file_extension']);
                                 $this->global_errors[] = $this->h($key . $this->config['error_file_extension']);
                             }
 
                             // 空ファイルのチェック
                             if ($value['size'] === 0) {
-                                $file_error[] = $this->h($key . $this->config['error_file_empty']);
+                                $file_errors[] = $this->h($key . $this->config['error_file_empty']);
                                 $this->global_errors[] = $this->h($key . $this->config['error_file_empty']);
                             }
 
                             // ファイルサイズのチェック
                             if ($value['size'] > $this->config['file_max_size']) {
-                                $file_error[] = $this->h($key . str_replace(
+                                $file_errors[] = $this->h($key . str_replace(
                                     '{ファイルサイズ}',
                                     $this->getFormatedBytes($this->config['file_max_size']),
                                     $this->config['error_file_max_size']));
@@ -805,9 +811,9 @@ class TransmitMail
                             }
 
                             // エラーを判別
-                            if (count($file_error) > 0) {
+                            if (!empty($file_errors)) {
                                 // エラーがある場合、エラーメッセージをセット
-                                $this->tpl->set("file.$key", $file_error);
+                                $this->tpl->set("file.$key", $file_errors);
                             } else {
                                 // エラーが無い場合、ファイルを$config['tmp_dir']に移動
                                 $tmp_name = $this->config['file_name_prefix'] . uniqid(rand()) .
@@ -817,15 +823,15 @@ class TransmitMail
                                 if (move_uploaded_file($value['tmp_name'], $file_path)) {
                                     $this->tpl->set("$key.tmp_name", $this->h($tmp_name));
                                     $this->tpl->set("$key.name", $this->h($value['name']));
-                                    $this->files[$key] = array(
+                                    $this->files[$key] = [
                                         'tmp_name' => $this->h($tmp_name),
                                         'name' => $this->h($value['name'])
-                                    );
+                                    ];
                                 } else {
                                     // アップロードに失敗した場合
-                                    $file_error[] = $this->h($key . $this->config['error_file_upload']);
+                                    $file_errors[] = $this->h($key . $this->config['error_file_upload']);
                                     $this->global_errors[] = $this->h($key . $this->config['error_file_upload']);
-                                    $this->tpl->set("file.$key", $file_error);
+                                    $this->tpl->set("file.$key", $file_errors);
                                 }
                             }
                         }
@@ -835,7 +841,7 @@ class TransmitMail
         }
 
         // CSRF トークンチェック
-        if ($this->config['session'] && $this->config['csrf'] && (count($this->post) > 0)) {
+        if ($this->config['session'] && $this->config['csrf'] && (!empty($this->post))) {
             if (!isset($this->post['csrf_token']) ||
               !isset($_SESSION['csrf_token']) ||
               ($this->post['csrf_token'] !== $_SESSION['csrf_token'])) {
@@ -853,20 +859,20 @@ class TransmitMail
         // セッションの判別
         if ($this->config['session']) {
             if (isset($_SESSION['transmit_mail_input']) && $_SESSION['transmit_mail_input']) {
-                $this->session_flag = true;
+                $this->has_correct_session = true;
             }
         } else {
-            $this->session_flag = true;
+            $this->has_correct_session = true;
         }
 
         // $page_name の判別
-        if ($this->deny_flag) {
+        if ($this->is_denied) {
             // アクセス拒否
             $this->page_name = 'deny';
-        } elseif (!$this->session_flag) {
+        } elseif (!$this->has_correct_session) {
             // セッションが無い場合 入力画面
             $this->page_name = '';
-        } elseif (count($this->post) > 0) {
+        } elseif (!empty(($this->post))) {
             if ($this->global_errors) {
                 // エラーがある場合 入力エラー画面
                 $this->page_name = '';
@@ -894,8 +900,8 @@ class TransmitMail
      */
     public function setTemplateProperty()
     {
-        $params = array();
-        $hiddens = array();
+        $params = [];
+        $hiddens = [];
 
         if (empty($this->page_name)) {
             // 入力画面 or 入力エラー画面
@@ -905,9 +911,9 @@ class TransmitMail
         } elseif ($this->page_name === 'confirm' || $this->page_name === 'finish') {
             // 確認画面 or 完了画面
             foreach ($this->post as $key => $value1) {
-                if (!preg_match($this->exclusion_item_pattern(), $key)) {
+                if (!preg_match($this->exclusionItemPattern(), $key)) {
                     if (is_array($value1)) {
-                        $this->tpl->set("$key.array", array_map(array($this, 'h'), $value1));
+                        $this->tpl->set("$key.array", array_map([$this, 'h'], $value1));
                         $value2 = implode(', ', $value1);
                     } else {
                         $value2 = $value1;
@@ -918,12 +924,12 @@ class TransmitMail
                     $this->tpl->set("$key.value", $this->h($value2));
                     $this->tpl->set("$key.value.nl2br", nl2br($this->h($value2)));
                     $this->tpl->set("$key.hidden", $hidden);
-                    $params[] = array(
+                    $params[] = [
                         'key' => $this->h($key),
                         'value' => $this->h($value2),
                         'value.nl2br' => nl2br($this->h($value2)),
                         'hidden' => $hidden
-                    );
+                    ];
                     $hiddens[] = $hidden;
                 }
             }
@@ -931,7 +937,7 @@ class TransmitMail
 
         // $_FILES
         if ($this->config['file']) {
-            $array = array();
+            $array = [];
 
             foreach ($this->files as $key => $value) {
                 if (isset($value['tmp_name'])) {
@@ -943,13 +949,13 @@ class TransmitMail
                     $this->tpl->set("$key.name", $this->h($value['name']));
                     $this->tpl->set("$key.hidden_tmp_name", $hidden_tmp_name);
                     $this->tpl->set("$key.hidden_name", $hidden_name);
-                    $array[] = array(
+                    $array[] = [
                         'key' => $this->h($key),
                         'tmp_name' => $this->h($value['tmp_name']),
                         'name' => $this->h($value['name']),
                         'hidden_tmp_name' => $hidden_tmp_name,
                         'hidden_name' => $hidden_name
-                    );
+                    ];
                     $hiddens[] = $hidden_tmp_name;
                     $hiddens[] = $hidden_name;
                 }
@@ -981,6 +987,7 @@ class TransmitMail
         // $page を判別
         if ($this->page_name === 'deny') {
             // アクセス拒否画面
+            $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
 
             // エラーメッセージ
             $this->global_errors[] = $this->h($this->config['error_deny']);
@@ -1023,13 +1030,14 @@ class TransmitMail
                     );
                 }
 
-                $_SESSION = array();
+                $_SESSION = [];
                 session_destroy();
             }
 
             // エラー判別
             if ($this->global_errors) {
                 // エラーの場合
+                $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
 
                 // エラー内容をテンプレートプロパティにセット
                 $this->tpl->set('global_errors', $this->global_errors);
@@ -1038,17 +1046,20 @@ class TransmitMail
                 $this->viewTemplate('tpl_error');
             } else {
                 // エラーがない場合
+                $this->tpl->set('page_title', $this->h($this->config['page_title']['finish']));
 
                 // 完了画面を表示
                 $this->viewTemplate('tpl_finish');
             }
         } elseif ($this->page_name === 'confirm') {
             // 確認画面
+            $this->tpl->set('page_title', $this->h($this->config['page_title']['confirm']));
 
             // HTML を表示
             $this->viewTemplate('tpl_confirm');
         } else {
             // 入力画面 or 入力エラー画面
+            $this->tpl->set('page_title', $this->h($this->config['page_title']['input']));
 
             // セッションによる多重送信防止機能
             if ($this->config['session']) {
@@ -1139,7 +1150,7 @@ class TransmitMail
             if (!empty($this->config['auto_reply_bcc_email'])) {
                 $this->mail->bcc($this->config['auto_reply_bcc_email']);
             }
-            
+
             // Return-Path
             if (!empty($this->config['return_path'])) {
                 $return_path = $this->config['return_path'];
@@ -1189,10 +1200,10 @@ class TransmitMail
         // 添付ファイル機能を利用する場合
         if ($this->config['file']) {
             foreach ($this->files as $file) {
-                $attach[] = array(
+                $attach[] = [
                     'PATH' => $this->config['tmp_dir'] . $file['tmp_name'],
                     'NAME' => $file['name']
-                );
+                ];
             }
 
             if (isset($attach)) {
@@ -1204,14 +1215,14 @@ class TransmitMail
         if ($this->config['smtp']) {
             $this->mail->smtp(true);
             $this->mail->smtpServer(
-                array(
+                [
                     'host' => $this->config['smtp_host'],
                     'port' => $this->config['smtp_port'],
                     'protocol' => $this->config['smtp_protocol'],
                     'user' => $this->config['smtp_user'],
                     'pass' => $this->config['smtp_password'],
                     'from' => $from_email
-                )
+                ]
             );
         }
 
@@ -1272,7 +1283,7 @@ class TransmitMail
     /**
      * $this->EXCLUSION_ITEM を正規表現形式に変換した文字列を返す
      */
-    public function exclusion_item_pattern() {
+    public function exclusionItemPattern() {
         $array = json_decode($this->exclusion_item);
         $array = array_map(function($string) {
             return '\A' . $string . '\z';
@@ -1607,6 +1618,7 @@ class TransmitMail
 
         // HTMLを表示
         ob_end_clean();
+        $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
         $this->viewTemplate('tpl_error');
         exit;
     }
@@ -1627,16 +1639,16 @@ class TransmitMail
             foreach ($value as $value2) {
                 if (!is_array($value2)) {
                     $result .= preg_replace(
-                        array('/{key}/', '/{value}/'),
-                        array($this->h($key) . '[]', $this->h($value2)),
+                        ['/{key}/', '/{value}/'],
+                        [$this->h($key) . '[]', $this->h($value2)],
                         $hidden
                     );
                 }
             }
         } else {
             $result .= preg_replace(
-                array('/{key}/', '/{value}/'),
-                array($this->h($key), $this->h($value)),
+                ['/{key}/', '/{value}/'],
+                [$this->h($key), $this->h($value)],
                 $hidden
             );
         }
@@ -1715,10 +1727,10 @@ class TransmitMail
      */
     public function putCsv($values)
     {
-        $csv_lines = array();
+        $csv_lines = [];
 
         foreach ($values as $key => $value) {
-            if (!preg_match($this->exclusion_item_pattern(), $key)) {
+            if (!preg_match($this->exclusionItemPattern(), $key)) {
                 if (is_array($value)) {
                     $value = implode(' / ', $value);
                 }
@@ -1786,7 +1798,7 @@ class TransmitMail
     public function deleteNullbyte($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'deleteNullbyte'), $string);
+            return array_map([$this, 'deleteNullbyte'], $string);
         }
         return str_replace("\0", '', $string);
     }
@@ -1801,7 +1813,7 @@ class TransmitMail
     {
         if (get_magic_quotes_gpc()) {
             if (is_array($string)) {
-                return array_map(array($this, 'safeStripSlashes'), $string);
+                return array_map([$this, 'safeStripSlashes'], $string);
             } else {
                 return stripslashes($string);
             }
@@ -1818,7 +1830,7 @@ class TransmitMail
     public function deleteBlank($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'deleteBlank'), $string);
+            return array_map([$this, 'deleteBlank'], $string);
         }
         return preg_replace('/\s/' . $this->config['reg_option'], '', $string);
     }
@@ -1832,7 +1844,7 @@ class TransmitMail
     public function deleteCrlf($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'deleteCrlf'), $string);
+            return array_map([$this, 'deleteCrlf'], $string);
         }
         return preg_replace('/\r|\n/' . $this->config['reg_option'], '', $string);
     }
@@ -1846,7 +1858,7 @@ class TransmitMail
     public function h($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'h'), $string);
+            return array_map([$this, 'h'], $string);
         }
         return htmlentities($string, ENT_QUOTES, $this->config['charset']);
     }
@@ -1860,7 +1872,7 @@ class TransmitMail
     public function hd($string)
     {
         if (is_array($string)) {
-            return array_map(array($this, 'hd'), $string);
+            return array_map([$this, 'hd'], $string);
         }
         return html_entity_decode($string, ENT_QUOTES, $this->config['charset']);
     }

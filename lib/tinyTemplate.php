@@ -2,8 +2,9 @@
 /*--------------------------------------------------------------*\
     Description:    HTML template class based on bTemplate.
     Author:         Takayuki Miyauchi (miya@theta.ne.jp)
+    Modified by:    TAGAWA Takao (dounokouno@gmail.com)
     License:        MIT License
-    Version:        0.1
+    Version:        0.1.2
 \*--------------------------------------------------------------*/
 if (!class_exists('tinyTemplate')) {
 class tinyTemplate {
@@ -27,10 +28,10 @@ class tinyTemplate {
     private $EArdelim = '}';
 
     // Internal privateiables
-    private $scalars = array();
-    private $arrays  = array();
-    private $carrays = array();
-    private $ifs     = array();
+    private $scalars = [];
+    private $arrays  = [];
+    private $carrays = [];
+    private $ifs     = [];
 
 
 //
@@ -38,9 +39,9 @@ class tinyTemplate {
 //
     function __construct($base_path = null, $reset_vars = false)
     {
-        if($base_path) $this->base_path = $base_path;
+        if ($base_path) $this->base_path = $base_path;
         $this->reset_vars = $reset_vars;
-        $this->default_modifier = array($this, 'modifier');
+        $this->default_modifier = [$this, 'modifier'];
     }
 
 
@@ -49,17 +50,17 @@ class tinyTemplate {
 //
     public function set($tag, $var, $modifier = false)
     {
-        if(is_array($var)) {
+        if (is_array($var)) {
             if ($modifier) {
                 array_walk_recursive($var, $this->default_modifier);
             }
             $this->arrays[$tag] = $var;
-            $result = $var ? TRUE : FALSE;
+            $result = $var ? true : false;
             $this->ifs[] = $tag;
             $this->scalars[$tag] = $result;
         } else {
             if ($modifier) {
-                call_user_func_array($this->default_modifier, array(&$var));
+                call_user_func_array($this->default_modifier, [&$var]);
             }
             $this->scalars[$tag] = $var;
             $this->ifs[] = $tag;
@@ -75,15 +76,12 @@ class tinyTemplate {
         $file = $this->base_path . $file_name;
 
         $fp = fopen($file, 'rb');
-        if(!$fp) return FALSE;
+        if (!$fp) return false;
         $contents = fread($fp, filesize($file));
         fclose($fp);
 
         $contents = $this->parse($contents);
-
-        $contents = preg_replace('/\{\$.*?\}/', '', $contents);
-        $contents = preg_replace('/\{if.*?\}.*?\{\/if.*?\}/s', '', $contents);
-        $contents = preg_replace('/\{loop.*?\}.*?\{\/loop.*?\}/s', '', $contents);
+        $contents = $this->deleteUnusedTags($contents);
 
         return $contents;
     }
@@ -95,29 +93,36 @@ class tinyTemplate {
     public function parse($contents)
     {
         // Process the ifs
-        if(!empty($this->ifs)) {
-            foreach($this->ifs as $value) {
+        if (!empty($this->ifs)) {
+            foreach ($this->ifs as $value) {
                 $contents = $this->parse_if($value, $contents);
             }
         }
 
         // Process the scalars
-        foreach($this->scalars as $key => $value) {
+        foreach ($this->scalars as $key => $value) {
             $contents = str_replace($this->get_tag($key), $value, $contents);
         }
 
         // Process the arrays
-        foreach($this->arrays as $key => $array) {
+        foreach ($this->arrays as $key => $array) {
             $contents = $this->parse_loop($key, $array, $contents);
         }
 
         // Process the carrays
-        foreach($this->carrays as $key => $array) {
+        foreach ($this->carrays as $key => $array) {
             $contents = $this->parse_cloop($key, $array, $contents);
         }
 
+        // Process the includes
+        $regex = '/' . preg_quote($this->ldelim, '/') . 'include:(.*)' . preg_quote($this->rdelim, '/') . '/';
+        preg_match_all($regex, $contents, $matches);
+        foreach ($matches[1] as $index => $value) {
+            $contents = str_replace($matches[0][$index], rtrim($this->fetch($value)), $contents);
+        }
+
         // Reset the arrays
-        if($this->reset_vars) $this->reset_vars(false, true, true, false);
+        if ($this->reset_vars) $this->reset_vars(false, true, true, false);
 
         // Return the contents
         return $contents;
@@ -133,26 +138,18 @@ class tinyTemplate {
             if (method_exists($modifier[0], $modifier[1])) {
                 $this->default_modifier = $modifier;
             }
-        } elseif(function_exists($modifier)) {
+        } elseif (function_exists($modifier)) {
             $this->default_modifier = $modifier;
         }
     }
 
 
-    private function set_cloop($tag, $array, $cases)
-    {
-        $this->carrays[$tag] = array(
-            'array' => $array,
-            'cases' => $cases);
-    }
-
-
     private function reset_vars($scalars, $arrays, $carrays, $ifs)
     {
-        if($scalars) $this->scalars = array();
-        if($arrays)  $this->arrays  = array();
-        if($carrays) $this->carrays = array();
-        if($ifs)     $this->ifs     = array();
+        if ($scalars) $this->scalars = [];
+        if ($arrays)  $this->arrays  = [];
+        if ($carrays) $this->carrays = [];
+        if ($ifs)     $this->ifs     = [];
     }
 
 
@@ -185,27 +182,26 @@ class tinyTemplate {
     {
         // Get the tags
         $t = $this->get_tags($tag, 'if:$');
-        
+
         // Get the entire statement
         $entire_statement = $this->get_statement($t, $contents);
-        
+
         // Get the else tag
-        $tags['b'] = NULL;
-        $tags['e'] = $this->BAldelim . 'else:$' . $tag . $this->BArdelim;        
-        
+        $tags['b'] = null;
+        $tags['e'] = $this->BAldelim . 'else:$' . $tag . $this->BArdelim;
+
         // See if there's an else statement
-        if(($else = strpos($entire_statement, $tags['e']))) {        
+        if (($else = strpos($entire_statement, $tags['e']))) {
             // Get the if statement
             $if = $this->get_statement($tags, $entire_statement);
-        
+
             // Get the else statement
             $else = substr($entire_statement, $else + strlen($tags['e']));
-        }
-        else {
-            $else = NULL;
+        } else {
+            $else = null;
             $if = $entire_statement;
         }
-        
+
         // Process the if statement
         $this->scalars[$tag] ? $replace = $if : $replace = $else;
 
@@ -223,32 +219,29 @@ class tinyTemplate {
         // Get the tags & loop
         $t = $this->get_tags($tag, 'loop:$');
         $loop = $this->get_statement($t, $contents);
-        $parsed = NULL;
+        $parsed = null;
 
         // Process the loop
-        foreach($array as $key => $value) {
-            if(is_numeric($key) && is_array($value)) {
+        foreach ($array as $key => $value) {
+            if (is_numeric($key) && is_array($value)) {
                 $i = $loop;
-                foreach($value as $key2 => $value2) {
-                    if(!is_array($value2)) {
+                foreach ($value as $key2 => $value2) {
+                    if (!is_array($value2)) {
                         // Replace associative array tags
                         $i = str_replace($this->get_tag($tag . '[].' . $key2), $value2, $i);
-                    }
-                    else {
+                    } else {
                         // Check to see if it's a nested loop
                         $i = $this->parse_loop($tag . '[].' . $key2, $value2, $i);
                     }
                 }
-            }
-            elseif(is_string($key) && !is_array($value)) {
+            } elseif (is_string($key) && !is_array($value)) {
                 $contents = str_replace($this->get_tag($tag . '.' . $key), $value, $contents);
-            }
-            elseif(!is_array($value)) {
+            } elseif(!is_array($value)) {
                 $i = str_replace($this->get_tag($tag . '[]'), $value, $loop);
             }
 
             // Add the parsed iteration
-            if(isset($i)) $parsed .= rtrim($i);
+            if (isset($i)) $parsed .= rtrim($i);
         }
 
         // Parse & return the final loop
@@ -264,26 +257,26 @@ class tinyTemplate {
 
         // Set up the cases
         $array['cases'][] = 'default';
-        $case_content = array();
-        $parsed = NULL;
+        $case_content = [];
+        $parsed = null;
 
         // Get the case strings
-        foreach($array['cases'] as $case) {
+        foreach ($array['cases'] as $case) {
             $ctags[$case] = $this->get_tags($case, 'case:');
             $case_content[$case] = $this->get_statement($ctags[$case], $loop);
         }
 
         // Process the loop
-        foreach($array['array'] as $key => $value) {
-            if(is_numeric($key) && is_array($value)) {
+        foreach ($array['array'] as $key => $value) {
+            if (is_numeric($key) && is_array($value)) {
                 // Set up the cases
-                if(isset($value['case'])) $current_case = $value['case'];
+                if (isset($value['case'])) $current_case = $value['case'];
                 else $current_case = 'default';
                 unset($value['case']);
                 $i = $case_content[$current_case];
 
                 // Loop through each value
-                foreach($value as $key2 => $value2) {
+                foreach ($value as $key2 => $value2) {
                     $i = str_replace($this->get_tag($tag . '[].' . $key2), $value2, $i);
                 }
             }
@@ -303,6 +296,23 @@ class tinyTemplate {
         $str = trim($str);
         return $str;
     }
+
+
+    private function deleteUnusedTags($contents)
+    {
+        $multiline_tags = ['if', 'loop'];
+        $regex_start = '/' . preg_quote($this->BAldelim, '/');
+        $regex_middle = '.*?' . preg_quote($this->BArdelim, '/') . '.*?' . preg_quote($this->EAldelim, '/');
+        $regex_end = '.*?' . preg_quote($this->EArdelim, '/') . '/s';
+
+        foreach ($multiline_tags as $tag) {
+            $regex = $regex_start . $tag . $regex_middle . $tag . $regex_end;
+            $contents = preg_replace($regex, '', $contents);
+        }
+        $regex = '/' . preg_quote($this->ldelim, '/') . '\$.*?' . preg_quote($this->rdelim, '/') . '/';
+        $contents = preg_replace($regex, '', $contents);
+
+        return $contents;
+    }
 }
 }
-?>
