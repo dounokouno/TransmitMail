@@ -38,10 +38,6 @@ class TransmitMail
     // テンプレート
     public $tpl = null;
 
-    // メール
-    public $mail = null;
-    public $smtp = null;
-
     // 入力情報として除外する項目
     public $exclusion_item = '[
         "x",
@@ -1094,17 +1090,17 @@ class TransmitMail
         require_once dirname(__FILE__) . '/qdsmtp.php';
 
         // Qdmail の設定
-        $this->mail = new Qdmail();
-        $this->mail->errorDisplay(false);
-        $this->mail->errorlogPath($this->config['log_dir']);
-        $this->mail->errorlogLevel(3);
-        $this->mail->errorlogFilename($this->config['qdmail_error_log_file_name']);
-        $this->mail->smtpObject()->error_display = false;
+        $mail = new Qdmail();
+        $mail->errorDisplay(false);
+        $mail->errorlogPath($this->config['log_dir']);
+        $mail->errorlogLevel(3);
+        $mail->errorlogFilename($this->config['qdmail_error_log_file_name']);
+        $mail->smtpObject()->error_display = false;
 
         // Qdsmpt の設定
-        $this->smtp = new QdSmtp();
-        $this->smtp->pop3TimeFilename($this->config['tmp_dir'] . 'qdsmtp.time');
-        $this->mail->setSmtpObject($smtp);
+        $smtp = new QdSmtp();
+        $smtp->pop3TimeFilename($this->config['tmp_dir'] . 'qdsmtp.time');
+        $mail->setSmtpObject($smtp);
 
         if ($is_auto_reply) {
             // 自動返信メールの場合
@@ -1136,19 +1132,19 @@ class TransmitMail
 
             // $config['auto_reply_name'] の設定がある場合
             if (!empty($this->config['auto_reply_name'])) {
-                $this->mail->from($from_email, $this->config['auto_reply_name']);
+                $mail->from($from_email, $this->config['auto_reply_name']);
             } else {
-                $this->mail->from($from_email);
+                $mail->from($from_email);
             }
 
             // CC メールアドレスの設定がある場合
             if (!empty($this->config['auto_reply_cc_email'])) {
-                $this->mail->cc($this->config['auto_reply_cc_email']);
+                $mail->cc($this->config['auto_reply_cc_email']);
             }
 
             // BCC メールアドレスの設定がある場合
             if (!empty($this->config['auto_reply_bcc_email'])) {
-                $this->mail->bcc($this->config['auto_reply_bcc_email']);
+                $mail->bcc($this->config['auto_reply_bcc_email']);
             }
 
             // Return-Path
@@ -1158,7 +1154,7 @@ class TransmitMail
                 $return_path = $this->config['email'];
             }
 
-            $this->mail->mtaOption('-f ' . $return_path);
+            $mail->mtaOption('-f ' . $return_path);
         } else {
             // 宛先
             $email = $this->config['email'];
@@ -1179,23 +1175,23 @@ class TransmitMail
                 $from_email = $email;
             }
 
-            $this->mail->from($from_email);
+            $mail->from($from_email);
 
             // CC メールアドレスの設定がある場合
             if (!empty($this->config['cc_email'])) {
-                $this->mail->cc($this->config['cc_email']);
+                $mail->cc($this->config['cc_email']);
             }
 
             // BCC メールアドレスの設定がある場合
             if (!empty($this->config['bcc_email'])) {
-                $this->mail->bcc($this->config['bcc_email']);
+                $mail->bcc($this->config['bcc_email']);
             }
         }
 
         // メール送信内容
-        $this->mail->to($email);
-        $this->mail->subject($subject);
-        $this->mail->text($body);
+        $mail->to($email);
+        $mail->subject($subject);
+        $mail->text($body);
 
         // 添付ファイル機能を利用する場合
         if ($this->config['file']) {
@@ -1207,14 +1203,14 @@ class TransmitMail
             }
 
             if (isset($attach)) {
-                $this->mail->attach($attach);
+                $mail->attach($attach);
             }
         }
 
         // 外部SMTPを利用する場合
         if ($this->config['smtp']) {
-            $this->mail->smtp(true);
-            $this->mail->smtpServer(
+            $mail->smtp(true);
+            $mail->smtpServer(
                 [
                     'host' => $this->config['smtp_host'],
                     'port' => $this->config['smtp_port'],
@@ -1227,7 +1223,7 @@ class TransmitMail
         }
 
         // メール送信
-        $result = $this->mail->send();
+        $result = $mail->send();
 
         // 送信できなかった場合
         if (!$result) {
