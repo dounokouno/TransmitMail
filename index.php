@@ -11,4 +11,7 @@
 require_once 'lib/TransmitMail.php';
 $tm = new TransmitMail();
 $tm->init('config/config.yml');
+
+include 'header.php';
 $tm->run();
+include 'footer.php';
