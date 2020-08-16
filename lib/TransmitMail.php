@@ -46,7 +46,7 @@ class TransmitMail
     public $exclusion_item = '[
         "x",
         "y",
-        "page",
+        "page_name",
         "required",
         "hankaku",
         "hankaku_eisu",
@@ -282,7 +282,7 @@ class TransmitMail
             $this->afterCheckInput();
         }
 
-        // 表示画面を判別、$page にセット
+        // 表示画面を判別、$page_name にセット
         $this->setPageName();
 
         if (method_exists($this, 'afterSetPageName')) {
@@ -852,7 +852,7 @@ class TransmitMail
     }
 
     /**
-     * 表示画面を判別、$pageにセット
+     * 表示画面を判別、 $page_name にセット
      */
     public function setPageName()
     {
@@ -876,14 +876,14 @@ class TransmitMail
             if ($this->global_errors) {
                 // エラーがある場合 入力エラー画面
                 $this->page_name = '';
-            } elseif (isset($this->post['page']) &&
-                ($this->post['page'] === 'input') &&
+            } elseif (isset($this->post['page_name']) &&
+                ($this->post['page_name'] === 'input') &&
                 !$this->global_errors)
             {
                 // 再入力画面
                 $this->page_name = '';
-            } elseif (isset($this->post['page']) &&
-                ($this->post['page'] === 'finish') &&
+            } elseif (isset($this->post['page_name']) &&
+                ($this->post['page_name'] === 'finish') &&
                 !$this->global_errors)
             {
                 // 完了画面
@@ -980,11 +980,11 @@ class TransmitMail
     }
 
     /**
-     * $page にあわせてHTMLを出力、メール送信
+     * $page_name にあわせてHTMLを出力、メール送信
      */
     public function setTemplateAndSendMail()
     {
-        // $page を判別
+        // $page_name を判別
         if ($this->page_name === 'deny') {
             // アクセス拒否画面
             $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
