@@ -264,7 +264,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
      */
     public function returnInputPage()
     {
-        $this->byCssSelector('input[type="hidden"][name="page"][value="input"]')->submit();
+        $this->byCssSelector('input[type="hidden"][name="page_name"][value="input"]')->submit();
     }
 
     /**
