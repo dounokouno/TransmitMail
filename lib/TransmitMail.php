@@ -356,10 +356,6 @@ class TransmitMail
         $this->post = $this->deleteNullbyte($this->post);
         $this->server = $this->deleteNullbyte($this->server);
 
-        $this->get = $this->safeStripSlashes($this->get);
-        $this->post = $this->safeStripSlashes($this->post);
-        $this->server = $this->safeStripSlashes($this->server);
-
         if (empty($this->server['REMOTE_HOST'])) {
             $this->server['REMOTE_HOST'] = gethostbyaddr($this->server['REMOTE_ADDR']);
         }
@@ -1793,24 +1789,6 @@ class TransmitMail
             return array_map(array($this, 'deleteNullbyte'), $string);
         }
         return str_replace("\0", '', $string);
-    }
-
-    /**
-     * magic_quotes_gpc が on の場合、バックスラッシュ（ \ ）を削除
-     *
-     * @param string $string
-     * @return string
-     */
-    public function safeStripSlashes($string)
-    {
-        if (get_magic_quotes_gpc()) {
-            if (is_array($string)) {
-                return array_map(array($this, 'safeStripSlashes'), $string);
-            } else {
-                return stripslashes($string);
-            }
-        }
-        return $string;
     }
 
     /**
