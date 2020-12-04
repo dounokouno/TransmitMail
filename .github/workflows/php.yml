@@ -1,0 +1,40 @@
+- name: Setup PHP Action
+  uses: shivammathur/setup-php@2.9.0
+  # with:
+    # Setup PHP version.
+    # php-version: # default is 8.0
+    # Setup PHP extensions.
+    # extensions: # optional
+    # Add values to php.ini.
+    # ini-values: # optional
+    # Setup code coverage driver.
+    # coverage: # optional
+    # Setup popular tools globally.
+    # tools: # optional
+
+on:
+  push:
+    branches: [ add_functional_test ]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest]
+        php-versions: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        # extensions: mbstring, intl
+        extensions: mbstring
+        # ini-values: post_max_size=256M, max_execution_time=180
+        # coverage: xdebug        
+        # tools: php-cs-fixer, phpunit
+        tools: phpunit
