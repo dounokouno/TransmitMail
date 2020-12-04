@@ -1,20 +1,20 @@
 - name: Setup PHP Action
   uses: shivammathur/setup-php@2.9.0
-  # with:
-    # Setup PHP version.
-    # php-version: # default is 8.0
-    # Setup PHP extensions.
-    # extensions: # optional
-    # Add values to php.ini.
-    # ini-values: # optional
-    # Setup code coverage driver.
-    # coverage: # optional
-    # Setup popular tools globally.
-    # tools: # optional
+#  # with:
+#    # Setup PHP version.
+#    # php-version: # default is 8.0
+#    # Setup PHP extensions.
+#    # extensions: # optional
+#    # Add values to php.ini.
+#    # ini-values: # optional
+#    # Setup code coverage driver.
+#    # coverage: # optional
+#    # Setup popular tools globally.
+#    # tools: # optional
 
-on:
-  push:
-    branches: [ add_functional_test ]
+# on:
+#  push:
+#    branches: [ add_functional_test ]
 
 jobs:
   run:
