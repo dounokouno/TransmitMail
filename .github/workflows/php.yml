@@ -14,12 +14,12 @@ uses: shivammathur/setup-php@2.9.0
 #    # tools: # optional
 
 on:
- push:
-   branches:
-     - add_functional_test
- pull_request:
-   branches:
-     - add_functional_test
+  push:
+    branches:
+      - add_functional_test
+  pull_request:
+    branches:
+      - add_functional_test
 
 jobs:
   run:
