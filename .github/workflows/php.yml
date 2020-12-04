@@ -1,5 +1,4 @@
 name: Setup PHP Action
-uses: shivammathur/setup-php@2.9.0
 
 on:
   push:
