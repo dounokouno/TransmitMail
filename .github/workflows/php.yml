@@ -19,7 +19,7 @@ on:
      - add_functional_test
  pull_request:
    branches:
-    - add_functional_test
+     - add_functional_test
 
 jobs:
   run:
