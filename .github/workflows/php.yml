@@ -1,5 +1,5 @@
-- name: Setup PHP Action
-  uses: shivammathur/setup-php@2.9.0
+name: Setup PHP Action
+uses: shivammathur/setup-php@2.9.0
 #  # with:
 #    # Setup PHP version.
 #    # php-version: # default is 8.0
@@ -12,9 +12,9 @@
 #    # Setup popular tools globally.
 #    # tools: # optional
 
-# on:
-#  push:
-#    branches: [ add_functional_test ]
+on:
+ push:
+   branches: [ add_functional_test ]
 
 jobs:
   run:
