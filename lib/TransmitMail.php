@@ -12,7 +12,7 @@ class TransmitMail
 {
     // システム情報
     const SYSTEM_NAME = 'TransmitMail';
-    const VERSION = '2.4.1';
+    const VERSION = '2.6.1';
 
     // 表示モード
     public $mode = null;
@@ -46,7 +46,7 @@ class TransmitMail
     public $exclusion_item = '[
         "x",
         "y",
-        "page",
+        "page_name",
         "required",
         "hankaku",
         "hankaku_eisu",
@@ -151,6 +151,12 @@ class TransmitMail
         'tpl_error' => 'error.html',
         'mail_body' => 'config/mail_body.txt',
         'mail_auto_reply_body' => 'config/mail_auto_reply_body.txt',
+        'page_title' => array(
+            'input' => '',
+            'confirm' => '入力内容の確認',
+            'finish' => 'お問い合わせいただきありがとうございます',
+            'error' => 'エラー'
+        ),
 
         // エラーメッセージ
         'error_required' => 'は入力必須です。',
@@ -285,7 +291,7 @@ class TransmitMail
             $this->afterCheckInput();
         }
 
-        // 表示画面を判別、$page にセット
+        // 表示画面を判別、$page_name にセット
         $this->setPageName();
 
         if (method_exists($this, 'afterSetPageName')) {
@@ -358,10 +364,6 @@ class TransmitMail
         $this->get = $this->deleteNullbyte($this->get);
         $this->post = $this->deleteNullbyte($this->post);
         $this->server = $this->deleteNullbyte($this->server);
-
-        $this->get = $this->safeStripSlashes($this->get);
-        $this->post = $this->safeStripSlashes($this->post);
-        $this->server = $this->safeStripSlashes($this->server);
 
         if (empty($this->server['REMOTE_HOST'])) {
             $this->server['REMOTE_HOST'] = gethostbyaddr($this->server['REMOTE_ADDR']);
@@ -881,7 +883,7 @@ class TransmitMail
     }
 
     /**
-     * 表示画面を判別、$pageにセット
+     * 表示画面を判別、 $page_name にセット
      */
     public function setPageName()
     {
@@ -905,14 +907,14 @@ class TransmitMail
             if ($this->global_errors) {
                 // エラーがある場合 入力エラー画面
                 $this->page_name = '';
-            } elseif (isset($this->post['page']) &&
-                ($this->post['page'] === 'input') &&
+            } elseif (isset($this->post['page_name']) &&
+                ($this->post['page_name'] === 'input') &&
                 !$this->global_errors)
             {
                 // 再入力画面
                 $this->page_name = '';
-            } elseif (isset($this->post['page']) &&
-                ($this->post['page'] === 'finish') &&
+            } elseif (isset($this->post['page_name']) &&
+                ($this->post['page_name'] === 'finish') &&
                 !$this->global_errors)
             {
                 // 完了画面
@@ -1014,13 +1016,14 @@ class TransmitMail
     }
 
     /**
-     * $page にあわせてHTMLを出力、メール送信
+     * $page_name にあわせてHTMLを出力、メール送信
      */
     public function setTemplateAndSendMail()
     {
-        // $page を判別
+        // $page_name を判別
         if ($this->page_name === 'deny') {
             // アクセス拒否画面
+            $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
 
             // エラーメッセージ
             $this->global_errors[] = $this->h($this->config['error_deny']);
@@ -1070,6 +1073,7 @@ class TransmitMail
             // エラー判別
             if ($this->global_errors) {
                 // エラーの場合
+                $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
 
                 // エラー内容をテンプレートプロパティにセット
                 $this->tpl->set('global_errors', $this->global_errors);
@@ -1078,17 +1082,20 @@ class TransmitMail
                 echo $this->tpl->fetch($this->config['tpl_error']);
             } else {
                 // エラーがない場合
+                $this->tpl->set('page_title', $this->h($this->config['page_title']['finish']));
 
                 // 完了画面を表示
                 echo $this->tpl->fetch($this->config['tpl_finish']);
             }
         } elseif ($this->page_name === 'confirm') {
             // 確認画面
+            $this->tpl->set('page_title', $this->h($this->config['page_title']['confirm']));
 
             // HTML を表示
             echo $this->tpl->fetch($this->config['tpl_confirm']);
         } else {
             // 入力画面 or 入力エラー画面
+            $this->tpl->set('page_title', $this->h($this->config['page_title']['input']));
 
             // セッションによる多重送信防止機能
             if ($this->config['session']) {
@@ -1171,7 +1178,7 @@ class TransmitMail
             if (!empty($this->config['auto_reply_bcc_email'])) {
                 $this->mail->bcc($this->config['auto_reply_bcc_email']);
             }
-            
+
             // Return-Path
             if (!empty($this->config['return_path'])) {
                 $return_path = $this->config['return_path'];
@@ -1639,6 +1646,7 @@ class TransmitMail
 
         // HTMLを表示
         ob_end_clean();
+        $this->tpl->set('page_title', $this->h($this->config['page_title']['error']));
         echo $this->tpl->fetch($this->config['tpl_error']);
         exit;
     }
@@ -1821,24 +1829,6 @@ class TransmitMail
             return array_map(array($this, 'deleteNullbyte'), $string);
         }
         return str_replace("\0", '', $string);
-    }
-
-    /**
-     * magic_quotes_gpc が on の場合、バックスラッシュ（ \ ）を削除
-     *
-     * @param string $string
-     * @return string
-     */
-    public function safeStripSlashes($string)
-    {
-        if (get_magic_quotes_gpc()) {
-            if (is_array($string)) {
-                return array_map(array($this, 'safeStripSlashes'), $string);
-            } else {
-                return stripslashes($string);
-            }
-        }
-        return $string;
     }
 
     /**

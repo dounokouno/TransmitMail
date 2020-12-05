@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<title>入力内容の確認 | TransmitMail サンプル</title>
-<link rel="stylesheet" href="http://etc.dounokouno.com/ttXHTMLTemplate/css/screen.css">
-</head>
-<body class="home">
-<div id="header">
-    <div class="container">
-        <h1>TransmitMail サンプル</h1>
-    </div>
-</div>
+{include:header.html}
 <div id="content">
     <div class="container">
         <div class="section">
@@ -34,15 +22,15 @@
                 {/loop:$files}
             </table>
             <div class="center">
-                <form method="post" action="index.php" class="inline">
+                <form method="post" class="inline">
                     {$hiddens}
-                    <input type="hidden" name="page" value="input">
+                    <input type="hidden" name="page_name" value="input">
                     <input type="submit" value="入力画面に戻る">
                 </form>
                 &nbsp;
-                <form method="post" action="index.php" class="inline" id="submit_form">
+                <form method="post" class="inline" id="submit_form">
                     {$hiddens}
-                    <input type="hidden" name="page" value="finish">
+                    <input type="hidden" name="page_name" value="finish">
                     <input type="submit" value="送信する">
                     {if:$recaptcha_site}
                     <div class="g-recaptcha" data-sitekey="{$recaptcha_site}" data-callback="onSubmit" data-size="invisible"></div>
@@ -66,5 +54,4 @@
         </div>
     </div>
 </div>
-</body>
-</html>
+{include:footer.html}

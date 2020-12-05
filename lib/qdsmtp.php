@@ -180,6 +180,7 @@ class QdsmtpBase extends QdsmtpError{
 	var $always_notify_success = false;
 
 	function QdsmtpBase( $param = null ){
+		if( is_null( $param ) ) return;
 		if( !is_null( $param[0] ) && is_bool( $param[0] ) ){
 			$this->continue = $continue;
 		}
@@ -889,4 +890,4 @@ class QdsmtpComponent extends QdsmtpBase{
 		}
 		return;
 	}
-}?>
+}
