@@ -1,0 +1,124 @@
+version: 2.1
+executors:
+  php56:
+    docker:
+      - image: circleci/php:5.6-browsers-legacy
+  php70:
+    docker:
+      - image: circleci/php:7.0-browsers-legacy
+  php71:
+    docker:
+      - image: circleci/php:7.1-browsers-legacy
+  php72:
+    docker:
+      - image: circleci/php:7.2-browsers-legacy
+  php73:
+    docker:
+      - image: circleci/php:7.3-browsers-legacy
+  php74:
+    docker:
+      - image: circleci/php:7.4-browsers-legacy
+commands:
+  restore_caches:
+    steps:
+      - restore_cache:
+          keys:
+            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}
+            # NOTE: Fallback to using the latest cache if no exact match is found
+            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-
+            - composer-{{ .Environment.CIRCLE_STAGE }}-
+            - composer-
+      - restore_cache:
+          keys:
+            - selenium-server-standalone-2.53.1.jar
+  create_cache_key_files:
+    steps:
+      - run: echo $CIRCLECI_COMPORSER_CACHE_KEY
+      - run:
+          name: Write the composer cache key to a file
+          command: |
+            echo $CIRCLECI_COMPORSER_CACHE_KEY > _composer_cache_key
+            cat _composer_cache_key
+  install_selenium:
+    steps:
+      - run: java -version
+      - run: echo $SELENIUM_SERVER_FILE_NAME
+      - run: echo $SELENIUM_SERVER_FILE_URL
+      - run:
+          name: Download selenium-server-standalone
+          command: |
+            if [ ! -e $SELENIUM_SERVER_FILE_NAME ]; then
+              wget $SELENIUM_SERVER_FILE_URL
+            fi
+      - run: ls -la
+  save_caches:
+    steps:
+      - save_cache:
+          paths:
+            - selenium-server-standalone-2.53.1.jar
+          key: selenium-server-standalone-2.53.1.jar
+      - save_cache:
+          paths:
+            - vendor
+          key: composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}
+jobs:
+  test:
+    environment:
+      CIRCLECI_COMPORSER_CACHE_KEY: '2020122301'
+      SELENIUM_SERVER_FILE_NAME: selenium-server-standalone-2.53.1.jar
+      SELENIUM_SERVER_FILE_URL: https://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
+    parameters:
+      e:
+        type: executor
+      cache:
+        type: boolean
+        default: true
+    executor: << parameters.e >>
+    steps:
+      - checkout
+      - run:
+          name: parameters.cache
+          command: echo "<< parameters.cache >>"
+      - when:
+          condition: << parameters.cache >>
+          steps:
+            - create_cache_key_files
+            - restore_caches
+      - install_selenium
+      - run: php -v
+      - run: composer -V
+      - when:
+          condition: << parameters.cache >>
+          steps:
+            - save_caches
+      - run:
+          name: Run servers and test
+          command: |
+            java -jar $SELENIUM_SERVER_FILE_NAME > /tmp/selenium.log 2> /tmp/selenium.error &
+            tests/wait-for-it.sh localhost:4444 -t 0
+            php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
+            tests/wait-for-it.sh localhost:8000 -t 0
+            vendor/bin/phpunit -c tests/phpunit.xml
+workflows:
+  workflow:
+    jobs:
+      - test:
+          name: php56
+          e: php56
+          # NOTE: When there enable the cache, it doesn't work for some reason, so there disable it.
+          cache: false
+      - test:
+          name: php70
+          e: php70
+      - test:
+          name: php71
+          e: php71
+      - test:
+          name: php72
+          e: php72
+      - test:
+          name: php73
+          e: php73
+      - test:
+          name: php74
+          e: php74
