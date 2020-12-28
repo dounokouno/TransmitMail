@@ -39,12 +39,12 @@ class CsrfTest extends TransmitMailFunctionalTest
         $this->assertNotContains($this->errorMessage, $this->byCssSelector('#content')->text());
 
         // テストの実行（失敗する場合）
-        $this->inputErrorTest('');
-        $this->inputErrorTest(substr($this->getTargetValue(), -1, 1));
-        $this->inputErrorTest($this->tm->generateToken());
+        $this->inputErrorTestForCsrfTest('');
+        $this->inputErrorTestForCsrfTest(substr($this->getTargetValue(), -1, 1));
+        $this->inputErrorTestForCsrfTest($this->tm->generateToken());
 
         // テストの実行（成功する場合）
-        $this->inputSuccessTest($this->getTargetValue());
+        $this->inputSuccessTestForCsrfTest($this->getTargetValue());
     }
 
     /**
@@ -64,13 +64,13 @@ class CsrfTest extends TransmitMailFunctionalTest
         $this->assertInternalType('object', $this->byCssSelector($this->selector));
 
         // テストの実行
-        $this->inputSuccessTest($this->getTargetValue());
+        $this->inputSuccessTestForCsrfTest($this->getTargetValue());
     }
 
     /**
      * 入力エラーの場合のテスト
      */
-    public function inputErrorTest($value)
+    private function inputErrorTestForCsrfTest($value)
     {
         $this->url('');
         $element = $this->byCssSelector($this->selector);
@@ -85,7 +85,7 @@ class CsrfTest extends TransmitMailFunctionalTest
     /**
      * 入力エラーにならない場合のテスト
      */
-    public function inputSuccessTest($value)
+    private function inputSuccessTestForCsrfTest($value)
     {
         $hiddenFieldSelector = str_replace('[type="text"]', '[type="hidden"]', $this->selector);
         $this->url('');
