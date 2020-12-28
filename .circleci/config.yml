@@ -18,13 +18,17 @@ executors:
   php74:
     docker:
       - image: circleci/php:7.4-browsers-legacy
+  php80:
+    docker:
+      - image: circleci/php:8.0-browsers-legacy
 commands:
   restore_caches:
     steps:
       - restore_cache:
           keys:
-            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}
+            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}-{{ checksum "composer-php8.lock" }}
             # NOTE: Fallback to using the latest cache if no exact match is found
+            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}
             - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-
             - composer-{{ .Environment.CIRCLE_STAGE }}-
             - composer-
@@ -60,7 +64,7 @@ commands:
       - save_cache:
           paths:
             - vendor
-          key: composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}
+          key: composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}-{{ checksum "composer-php8.lock" }}
 jobs:
   test:
     environment:
@@ -73,12 +77,21 @@ jobs:
       cache:
         type: boolean
         default: true
+      composer_json:
+        type: string
+        default: composer.json
+      phpunit_xml:
+        type: string
+        default: phpunit.xml
     executor: << parameters.e >>
     steps:
       - checkout
       - run:
-          name: parameters.cache
-          command: echo "<< parameters.cache >>"
+          name: Check parameters
+          command: |
+            echo "parameters.cache: << parameters.cache >>"
+            echo "parameters.composer_json: << parameters.composer_json >>"
+            echo "parameters.phpunit_xml: << parameters.phpunit_xml >>"
       - when:
           condition: << parameters.cache >>
           steps:
@@ -87,6 +100,7 @@ jobs:
       - install_selenium
       - run: php -v
       - run: composer -V
+      - run: COMPOSER=<< parameters.composer_json >> composer install --prefer-dist
       - when:
           condition: << parameters.cache >>
           steps:
@@ -98,7 +112,7 @@ jobs:
             tests/wait-for-it.sh localhost:4444 -t 0
             php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
             tests/wait-for-it.sh localhost:8000 -t 0
-            vendor/bin/phpunit -c tests/phpunit.xml
+            vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >>
 workflows:
   workflow:
     jobs:
@@ -122,3 +136,8 @@ workflows:
       - test:
           name: php74
           e: php74
+      - test:
+          name: php80
+          e: php80
+          composer_json: composer-php8.json
+          phpunit_xml: phpunit-php8.xml
