@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="bootstrap-php8.php">
+    <testsuite name="FunctionalTest">
+        <directory>FunctionalTest</directory>
+        <exclude>FunctionalTest/TransmitMailFunctionalTest.php</exclude>
+    </testsuite>
+</phpunit>
