@@ -34,7 +34,7 @@ commands:
             - composer-
       - restore_cache:
           keys:
-            - selenium-server-standalone-2.53.1.jar
+            - "*selenium_server_file_name"
   create_cache_key_files:
     steps:
       - run: echo $CIRCLECI_COMPORSER_CACHE_KEY
@@ -59,8 +59,8 @@ commands:
     steps:
       - save_cache:
           paths:
-            - selenium-server-standalone-2.53.1.jar
-          key: selenium-server-standalone-2.53.1.jar
+            - "*selenium_server_file_name"
+          key: "*selenium_server_file_name"
       - save_cache:
           paths:
             - vendor
@@ -69,7 +69,7 @@ jobs:
   test:
     environment:
       CIRCLECI_COMPORSER_CACHE_KEY: '2020122301'
-      SELENIUM_SERVER_FILE_NAME: selenium-server-standalone-2.53.1.jar
+      SELENIUM_SERVER_FILE_NAME: &selenium_server_file_name selenium-server-standalone-2.53.1.jar
       SELENIUM_SERVER_FILE_URL: https://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
     parameters:
       e:
