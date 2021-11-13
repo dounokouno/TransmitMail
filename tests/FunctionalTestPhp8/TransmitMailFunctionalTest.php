@@ -9,14 +9,8 @@
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
-// use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
-// use BadMethodCallException;
 use PHPUnit\Extensions\Selenium2TestCase;
-// use PHPUnit\Extensions\Selenium2TestCase\Keys;
-// use PHPUnit\Extensions\Selenium2TestCase\SessionCommand\Click;
-// use PHPUnit\Extensions\Selenium2TestCase\WebDriverException;
-// use PHPUnit\Extensions\Selenium2TestCase\Window;
 use PHPUnit\Extensions\Selenium2TestCase\ScreenshotListener;
 
 abstract class TransmitMailFunctionalTest extends Selenium2TestCase
@@ -146,19 +140,19 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
      */
     protected function setUp(): void
     {
-        $this->setBrowser('phantomjs');
-        // $this->setBrowser('chrome');
-        // $this->setDesiredCapabilities(
-        //     [
-        //         'chromeOptions' => [
-        //             'args' => [
-        //                 'headless', 'disable-gpu'
-        //             ],
-        //             'w3c' => false
-        //         ]
-        //     ]
-        // );
-        // $this->setDesiredCapabilities(['chromeOptions' => ['w3c' => false]]);
+        $this->setBrowser('chrome');
+        $this->setDesiredCapabilities(
+            [
+                'chromeOptions' => [
+                    'args' => [
+                        'headless',
+                        'disable-gpu',
+                        'window-size=1024,768'
+                    ],
+                    'w3c' => false
+                ]
+            ]
+        );
         $this->setBrowserUrl('http://localhost:8000/');
     }
 
