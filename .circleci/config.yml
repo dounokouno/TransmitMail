@@ -1,26 +1,28 @@
 version: 2.1
+orbs:
+  browser-tools: circleci/browser-tools@1.2.3
 executors:
   php56:
     docker:
-      - image: circleci/php:5.6-browsers-legacy
+      - image: cimg/php:5.6-browsers
   php70:
     docker:
-      - image: circleci/php:7.0-browsers-legacy
+      - image: cimg/php:7.0-browsers
   php71:
     docker:
-      - image: circleci/php:7.1-browsers-legacy
+      - image: cimg/php:7.1-browsers
   php72:
     docker:
-      - image: circleci/php:7.2-browsers-legacy
+      - image: cimg/php:7.2-browsers
   php73:
     docker:
-      - image: circleci/php:7.3-browsers-legacy
+      - image: cimg/php:7.3-browsers
   php74:
     docker:
-      - image: circleci/php:7.4-browsers-legacy
+      - image: cimg/php:7.4-browsers
   php80:
     docker:
-      - image: circleci/php:8.0-browsers-legacy
+      - image: cimg/php:8.0-browsers
 commands:
   restore_caches:
     steps:
@@ -32,9 +34,6 @@ commands:
             - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-
             - composer-{{ .Environment.CIRCLE_STAGE }}-
             - composer-
-      - restore_cache:
-          keys:
-            - "*selenium_server_file_name"
   create_cache_key_files:
     steps:
       - run: echo $CIRCLECI_COMPORSER_CACHE_KEY
@@ -43,24 +42,8 @@ commands:
           command: |
             echo $CIRCLECI_COMPORSER_CACHE_KEY > _composer_cache_key
             cat _composer_cache_key
-  install_selenium:
-    steps:
-      - run: java -version
-      - run: echo $SELENIUM_SERVER_FILE_NAME
-      - run: echo $SELENIUM_SERVER_FILE_URL
-      - run:
-          name: Download selenium-server-standalone
-          command: |
-            if [ ! -e $SELENIUM_SERVER_FILE_NAME ]; then
-              wget $SELENIUM_SERVER_FILE_URL
-            fi
-      - run: ls -la
   save_caches:
     steps:
-      - save_cache:
-          paths:
-            - "*selenium_server_file_name"
-          key: "*selenium_server_file_name"
       - save_cache:
           paths:
             - vendor
@@ -69,8 +52,6 @@ jobs:
   test:
     environment:
       CIRCLECI_COMPORSER_CACHE_KEY: '2020122301'
-      SELENIUM_SERVER_FILE_NAME: &selenium_server_file_name selenium-server-standalone-2.53.1.jar
-      SELENIUM_SERVER_FILE_URL: https://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.1.jar
     parameters:
       e:
         type: executor
@@ -86,6 +67,8 @@ jobs:
     executor: << parameters.e >>
     steps:
       - checkout
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
       - run:
           name: Check parameters
           command: |
@@ -97,9 +80,11 @@ jobs:
           steps:
             - create_cache_key_files
             - restore_caches
-      - install_selenium
       - run: php -v
       - run: composer -V
+      - run: google-chrome --version
+      - run: chromedriver --version
+      - run: java -jar /usr/local/bin/selenium.jar --version
       - run: COMPOSER=<< parameters.composer_json >> composer install --prefer-dist
       - when:
           condition: << parameters.cache >>
@@ -108,7 +93,7 @@ jobs:
       - run:
           name: Run servers and test
           command: |
-            java -jar $SELENIUM_SERVER_FILE_NAME > /tmp/selenium.log 2> /tmp/selenium.error &
+            java -jar /usr/local/bin/selenium.jar > /tmp/selenium.log 2> /tmp/selenium.error &
             tests/wait-for-it.sh localhost:4444 -t 0
             php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
             tests/wait-for-it.sh localhost:8000 -t 0
