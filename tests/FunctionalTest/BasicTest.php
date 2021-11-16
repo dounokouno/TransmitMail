@@ -126,7 +126,7 @@ class BasicTest extends TransmitMailFunctionalTest
 
         // 入力フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selector)->value());
-        $this->assertInternalType('object', $this->byCssSelector($selector));
+        $this->assertIsObject($this->byCssSelector($selector));
 
         // テストの実行
         $element = $this->byCssSelector($selector);
@@ -134,7 +134,7 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->inputRequiredField();
         $this->submitInputForm();
         $this->assertEquals($this->confirmPageTitle, $this->title());
-        $this->assertContains($value, $this->byCssSelector('#content table')->text());
+        $this->assertStringContainsString($value, $this->byCssSelector('#content table')->text());
         $this->assertEquals($value, $this->byCssSelector($hiddenFieldSelector)->value());
 
         // 入力画面に戻る

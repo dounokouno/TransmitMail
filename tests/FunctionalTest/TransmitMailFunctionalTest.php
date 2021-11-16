@@ -228,7 +228,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
             $element->value($values[$i]);
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+            $this->assertStringContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
             $this->assertEquals($errorMessage, $this->byCssSelector('#content ul li')->text());
             $this->assertEquals($errorMessage, $this->byCssSelector('#content table tr td div.error')->text());
             $this->assertEquals($convertedValues[$i], $this->byCssSelector($selector)->value());
@@ -254,7 +254,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
             $this->inputRequiredField();
             $this->submitInputForm();
             $this->assertEquals($this->confirmPageTitle, $this->title());
-            $this->assertContains($convertedValues[$i], $this->byCssSelector('#content table')->text());
+            $this->assertStringContainsString($convertedValues[$i], $this->byCssSelector('#content table')->text());
             $this->assertEquals($convertedValues[$i], $this->byCssSelector($hiddenFieldSelector)->value());
 
             // 入力画面に戻る
@@ -277,6 +277,27 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     public function returnInputPage()
     {
         $this->byCssSelector('input[type="hidden"][name="page_name"][value="input"]')->submit();
+    }
+
+    /**
+     * assertIsObject for PHPUnit 5.7
+     */
+    public function assertIsObject($actual, $message = '') {
+        $this->assertInternalType('object', $actual, $message);
+    }
+
+    /**
+     * assertStringContainsString for PHPUnit 5.7
+     */
+    public function assertStringContainsString($needle, $haystack, $message = '') {
+        $this->assertContains($needle, $haystack, $message);
+    }
+
+    /**
+     * assertStringNotContainsString for PHPUnit 5.7
+     */
+    public function assertStringNotContainsString($needle, $haystack, $message = '') {
+        $this->assertNotContains($needle, $haystack, $message);
     }
 
     /**
