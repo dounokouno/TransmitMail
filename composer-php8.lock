@@ -769,16 +769,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.5.13",
+            "version": "8.5.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8e86be391a58104ef86037ba8a846524528d784e"
+                "reference": "bd5fc77c869e8dd65040dacbad170f074c13796c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8e86be391a58104ef86037ba8a846524528d784e",
-                "reference": "8e86be391a58104ef86037ba8a846524528d784e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/bd5fc77c869e8dd65040dacbad170f074c13796c",
+                "reference": "bd5fc77c869e8dd65040dacbad170f074c13796c",
                 "shasum": ""
             },
             "require": {
@@ -850,7 +850,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.13"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/8.5.18"
             },
             "funding": [
                 {
@@ -862,7 +862,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-12-01T04:53:52+00:00"
+            "time": "2021-07-19T06:13:17+00:00"
         },
         {
             "name": "phpunit/phpunit-selenium",
@@ -1861,5 +1861,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
