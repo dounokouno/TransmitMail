@@ -32,11 +32,11 @@ class CsrfTest extends TransmitMailFunctionalTest
 
         // 入力フィールドの確認
         $this->assertNotEquals('', $this->getTargetValue());
-        $this->assertInternalType('object', $this->byCssSelector($this->selector));
+        $this->assertIsObject($this->byCssSelector($this->selector));
 
         // エラーメッセージが表示されていないことの確認
-        $this->assertNotContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-        $this->assertNotContains($this->errorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringNotContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringNotContainsString($this->errorMessage, $this->byCssSelector('#content')->text());
 
         // テストの実行（失敗する場合）
         $this->inputErrorTestForCsrfTest('');
@@ -56,12 +56,12 @@ class CsrfTest extends TransmitMailFunctionalTest
         $this->url('');
 
         // エラーメッセージが表示されていないことの確認
-        $this->assertNotContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-        $this->assertNotContains($this->errorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringNotContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringNotContainsString($this->errorMessage, $this->byCssSelector('#content')->text());
 
         // 入力フィールドの確認
         $this->assertNotEquals('', $this->getTargetValue());
-        $this->assertInternalType('object', $this->byCssSelector($this->selector));
+        $this->assertIsObject($this->byCssSelector($this->selector));
 
         // テストの実行
         $this->inputSuccessTestForCsrfTest($this->getTargetValue());
@@ -78,7 +78,7 @@ class CsrfTest extends TransmitMailFunctionalTest
         $element->value($value);
         $this->inputRequiredField();
         $this->submitInputForm();
-        $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
         $this->assertEquals($this->errorMessage, $this->byCssSelector('#content ul li')->text());
     }
 

@@ -232,7 +232,7 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
             $element->value($values[$i]);
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+            $this->assertStringContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
             $this->assertEquals($errorMessage, $this->byCssSelector('#content ul li')->text());
             $this->assertEquals($errorMessage, $this->byCssSelector('#content table tr td div.error')->text());
             $this->assertEquals($convertedValues[$i], $this->byCssSelector($selector)->value());
@@ -258,7 +258,7 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
             $this->inputRequiredField();
             $this->submitInputForm();
             $this->assertEquals($this->confirmPageTitle, $this->title());
-            $this->assertContains($convertedValues[$i], $this->byCssSelector('#content table')->text());
+            $this->assertStringContainsString($convertedValues[$i], $this->byCssSelector('#content table')->text());
             $this->assertEquals($convertedValues[$i], $this->byCssSelector($hiddenFieldSelector)->value());
 
             // 入力画面に戻る

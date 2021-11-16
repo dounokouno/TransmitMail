@@ -43,13 +43,13 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // 入力必須とするフィールドを確認
         $this->assertEquals('', $this->byCssSelector($selectors['text']['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['text']['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['text']['option']));
         $this->assertEquals('', $this->byCssSelector($selectors['file']['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['file']['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['file']['option']));
 
         // エラーの場合
         $this->submitInputForm();
-        $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
         $this->assertEquals($errorMessages['text'], $this->byCssSelector('#content ul li:first-child')->text());
         $this->assertEquals($errorMessages['file'], $this->byCssSelector('#content ul li:last-child')->text());
         $this->assertEquals($errorMessages['text'], $this->byCssSelector('#content table tr td div.error')->text());
@@ -60,8 +60,8 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         $this->byCssSelector($selectors['file']['target'])->value($this->file($validValues['file']));
         $this->submitInputForm();
         $this->assertEquals($this->confirmPageTitle, $this->title());
-        $this->assertContains($validValues['text'], $this->byCssSelector('#content table')->text());
-        $this->assertContains(basename($validValues['file']), $this->byCssSelector('#content table')->text());
+        $this->assertStringContainsString($validValues['text'], $this->byCssSelector('#content table')->text());
+        $this->assertStringContainsString(basename($validValues['file']), $this->byCssSelector('#content table')->text());
     }
 
     /**
@@ -96,7 +96,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // 入力フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputErrorTest($invalidValues, $selectors['target'], $errorMessage);
@@ -137,7 +137,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hankaku');
@@ -169,7 +169,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hankaku_eisu');
@@ -197,7 +197,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hankaku_eiji');
@@ -225,7 +225,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'num');
@@ -255,7 +255,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'num_hyphen');
@@ -284,7 +284,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hiragana');
@@ -313,7 +313,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'zenkaku_katakana');
@@ -353,7 +353,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -389,7 +389,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -430,7 +430,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -463,7 +463,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -492,7 +492,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -525,7 +525,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -570,7 +570,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target1'])->value());
         $this->assertEquals('', $this->byCssSelector($selectors['target2'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // 入力エラーの場合のテスト
         foreach ($invalidValues as $values) {
@@ -582,7 +582,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             $elements[1]->value($values[1]);
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertContains($this->globalErrorMessage, $this->byCssSelector('#content')->text());
+            $this->assertStringContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
             $this->assertEquals($errorMessage, $this->byCssSelector('#content ul li')->text());
             $this->assertEquals($errorMessage, $this->byCssSelector('#content table tr td div.error')->text());
             $this->assertEquals($values[0], $this->byCssSelector($selectors['target1'])->value());
@@ -599,8 +599,8 @@ class InputOptionsTest extends TransmitMailFunctionalTest
             $this->inputRequiredField();
             $this->submitInputForm();
             $this->assertEquals($this->confirmPageTitle, $this->title());
-            $this->assertContains($values[0], $this->byCssSelector('#content table')->text());
-            $this->assertContains($values[1], $this->byCssSelector('#content table')->text());
+            $this->assertStringContainsString($values[0], $this->byCssSelector('#content table')->text());
+            $this->assertStringContainsString($values[1], $this->byCssSelector('#content table')->text());
 
             // 入力画面に戻る
             $this->returnInputPage();
@@ -647,7 +647,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->urlInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -678,7 +678,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -701,7 +701,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeNotNumberInputPatterns, array(), $selectors['target'], $errorMessage);
@@ -743,7 +743,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -766,7 +766,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeNotNumberInputPatterns, array(), $selectors['target'], $errorMessage);
@@ -794,7 +794,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -817,7 +817,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeNotNumberInputPatterns, array(), $selectors['target'], $errorMessage);
@@ -856,7 +856,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
@@ -879,7 +879,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
 
         // フィールドの確認
         $this->assertEquals('', $this->byCssSelector($selectors['target'])->value());
-        $this->assertInternalType('object', $this->byCssSelector($selectors['option']));
+        $this->assertIsObject($this->byCssSelector($selectors['option']));
 
         // テストの実行
         $this->inputTest($this->numRangeNotNumberInputPatterns, array(), $selectors['target'], $errorMessage);

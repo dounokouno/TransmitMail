@@ -23,6 +23,6 @@ class GetParameterTest extends TransmitMailFunctionalTest
         $this->inputRequiredField();
         $this->submitInputForm();
         $this->assertEquals($this->confirmPageTitle, $this->title());
-        $this->assertContains($getParameter, $this->byCssSelector('#content table')->text());
+        $this->assertStringContainsString($getParameter, $this->byCssSelector('#content table')->text());
     }
 }
