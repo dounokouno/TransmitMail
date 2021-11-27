@@ -68,6 +68,22 @@ class TransmitMail
         "csrf_token"
     ]';
 
+    // 文字参照に変換する文字（主にテンプレートエンジンで利用している文字）
+    public $character_references = array(
+        'start_delim' => array(
+            'character' => '{',
+            'reference' => '&#123;'
+        ),
+        'end_delim' => array(
+            'character' => '}',
+            'reference' => '&#125;'
+        ),
+        'var_symbol' => array(
+            'character' => '$',
+            'reference' => '&#36;'
+        )
+    );
+
     // 設定の初期値
     private $default_config = array(
         // 基本的な設定
@@ -1825,7 +1841,7 @@ class TransmitMail
     }
 
     /**
-     * htmlentities のショートハンド
+     * htmlentities + htmlentities で変換されない文字を参照文字に変換する
      *
      * @param string $string
      * @return string
@@ -1835,7 +1851,29 @@ class TransmitMail
         if (is_array($string)) {
             return array_map(array($this, 'h'), $string);
         }
-        return htmlentities($string, ENT_QUOTES, $this->config['charset']);
+        $string = htmlentities($string, ENT_QUOTES, $this->config['charset']);
+        $string = $this->convertCharacterReferences($string);
+
+        return $string;
+    }
+
+    /**
+     * htmlentities で変換されない文字を参照文字に変換する（正規表現は `/\{\$?.*\}/` ）
+     */
+    public function convertCharacterReferences($string)
+    {
+        $pattern = preg_quote($this->character_references['start_delim']['character'], '/');
+        $pattern .= preg_quote($this->character_references['var_symbol']['character'], '/');
+        $pattern .= '?.*';
+        $pattern .= preg_quote($this->character_references['end_delim']['character'], '/');
+        $searches = array_column($this->character_references, 'character');
+        $replaces = array_column($this->character_references, 'reference');
+
+        if (preg_match('/' . $pattern . '/', $string)) {
+            $string = str_replace($searches, $replaces, $string);
+        }
+
+        return $string;
     }
 
     /**
