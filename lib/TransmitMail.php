@@ -907,7 +907,7 @@ class TransmitMail
         } elseif ($this->page_name === 'confirm' || $this->page_name === 'finish') {
             // 確認画面 or 完了画面
             foreach ($this->post as $key => $value1) {
-                if (!preg_match($this->exclusion_item_pattern(), $key)) {
+                if ($this->isExcludedExclusionItem($key)) {
                     if (is_array($value1)) {
                         $this->tpl->set("$key.array", array_map(array($this, 'h'), $value1));
                         $value2 = implode(', ', $value1);
@@ -1269,15 +1269,20 @@ class TransmitMail
     }
 
     /**
-     * $this->EXCLUSION_ITEM を正規表現形式に変換した文字列を返す
+     * 除外項目が含まれているかを判別
      */
-    public function exclusion_item_pattern() {
+    public function isExcludedExclusionItem($string) {
         $array = json_decode($this->exclusion_item);
-        $array = array_map(function($string) {
-            return '\A' . $string . '\z';
+        $array = array_map(function($value) {
+            return '\A' . $value . '\z';
         }, $array);
+        $regex = '/' . implode('|', $array) . '/' . $this->config['reg_option'];
 
-        return '/' . implode('|', $array) . '/' . $this->config['reg_option'];
+        if (preg_match($regex, $string)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -1718,7 +1723,7 @@ class TransmitMail
         $csv_lines = array();
 
         foreach ($values as $key => $value) {
-            if (!preg_match($this->exclusion_item_pattern(), $key)) {
+            if ($this->isExcludedExclusionItem($key)) {
                 if (is_array($value)) {
                     $value = implode(' / ', $value);
                 }
