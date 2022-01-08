@@ -14,6 +14,7 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     public $tm;
     public $topPageTitle = 'TransmitMail サンプル';
     public $confirmPageTitle = '入力内容の確認 | TransmitMail サンプル';
+    public $errorPageTitle = 'エラー | TransmitMail サンプル';
     public $globalErrorMessage = '入力内容に誤りがあります';
     public $testimage = 'tests/FunctionalTest/testimage01.jpg';
     public $inputPatterns = array();
@@ -129,6 +130,34 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
         $this->numRangeNotNumberInputPatterns['-0.1'] = '0.1';
         $this->numRangeNotNumberInputPatterns['a'] = 'a';
         $this->numRangeNotNumberInputPatterns['あ'] = 'あ';
+
+        // テンプレート構文の入力パターン
+        $this->templateSyntaxInputPatterns = array(
+            '{include:header.html}',
+            '{include:header.html? }',
+            '{include:http://www.example.com/}',
+            '{include:http://www.example.com/? }',
+            '{include:ftp://username:password@www.example.com/public_html/index.html}',
+            '{include:ftp://username:password@www.example.com/public_html/index.html? }',
+            'dummy text {include:header.html}',
+            'dummy text {include:header.html? }',
+            'dummy text {http://www.example.com/}',
+            'dummy text {http://www.example.com/? }',
+            'dummy text {ftp://username:password@www.example.com/public_html/index.html}',
+            'dummy text {ftp://username:password@www.example.com/public_html/index.html? }',
+            'dummy text01 {include:header.html} dummy text02',
+            'dummy text01 {include:header.html? } dummy text02',
+            'dummy text01 {include:http://www.example.com/} dummy text02',
+            'dummy text01 {include:http://www.example.com/? } dummy text02',
+            'dummy text01 {include:ftp://username:password@www.example.com/public_html/index.html} dummy text02',
+            'dummy text01 {include:ftp://username:password@www.example.com/public_html/index.html? } dummy text02',
+            '{$variable}',
+            '{$variable }',
+            'dummy text {$variable}',
+            'dummy text {$variable }',
+            'dummy text 01 {$variable} dummy text02',
+            'dummy text 01 {$variable } dummy text02'
+        );
     }
 
     /**
@@ -245,7 +274,12 @@ abstract class TransmitMailFunctionalTest extends PHPUnit_Extensions_Selenium2Te
     public function inputSuccessTest($values, $selector, $convertMode = null)
     {
         $convertedValues = $this->convert($values, $convertMode);
-        $hiddenFieldSelector = str_replace('[type="text"]', '[type="hidden"]', $selector);
+        $hiddenFieldSelector = '';
+        if (strpos($selector, 'textarea') !== false) {
+            $hiddenFieldSelector = str_replace('textarea', 'input[type="hidden"]', $selector);
+        } else {
+            $hiddenFieldSelector = str_replace('[type="text"]', '[type="hidden"]', $selector);
+        }
 
         for ($i = 0, $size = count($values); $i < $size; ++$i) {
             $this->url('');
