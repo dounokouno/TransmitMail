@@ -17,7 +17,7 @@ class InputOptionsTest extends TransmitMailFunctionalTest
     public function testRequiredField()
     {
         $this->url('');
- 
+
         $selectors = array(
             'text' => array(
                 'target' => 'input[type="text"][name="入力必須"]',
