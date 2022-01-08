@@ -5,5 +5,6 @@
 /log/error.log
 /tests/.phpunit.result.cache
 /tmp/file_*
-/tmp/screenshot/*.png
+/tmp/screenshot/*
+!/tmp/screenshot/.gitkeep
 /vendor/
