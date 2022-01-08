@@ -141,4 +141,36 @@ class BasicTest extends TransmitMailFunctionalTest
         $this->returnInputPage();
         $this->assertEquals($value, $this->byCssSelector($selector)->value());
     }
+
+    /**
+     * テンプレートエンジンの構文の入力テスト
+     */
+    public function testTemplateSyntaxes()
+    {
+        $this->url('');
+
+        $selectors = array(
+            'text' => 'input[type="text"][name="シングルラインインプット"]',
+            'textarea' => 'textarea[name="マルチラインインプット"]'
+        );
+        $nameValues = array(
+            'text' => $this->byCssSelector($selectors['text'])->attribute('name'),
+            'textarea' => $this->byCssSelector($selectors['textarea'])->attribute('name')
+        );
+
+        // 入力エラーの場合
+        foreach ($this->templateSyntaxInputPatterns as $value) {
+            $this->byCssSelector($selectors['text'])->value($value);
+            $this->byCssSelector($selectors['textarea'])->value($value);
+            $this->submitInputForm();
+            $this->assertEquals($this->byCssSelector($selectors['text'])->value(), $value);
+            $this->assertEquals($this->byCssSelector($selectors['textarea'])->value(), $value);
+            $this->byCssSelector($selectors['text'])->clear();
+            $this->byCssSelector($selectors['textarea'])->clear();
+        }
+
+        // 成功の場合
+        $this->inputSuccessTest($this->templateSyntaxInputPatterns, $selectors['text']);
+        $this->inputSuccessTest($this->templateSyntaxInputPatterns, $selectors['textarea']);
+    }
 }
