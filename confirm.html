@@ -28,10 +28,27 @@
                     <input type="submit" value="入力画面に戻る">
                 </form>
                 &nbsp;
-                <form method="post" class="inline">
+                <form method="post" class="inline" id="submit_form">
                     {$hiddens}
                     <input type="hidden" name="page_name" value="finish">
                     <input type="submit" value="送信する">
+                    {if:$recaptcha_site}
+                    <div class="g-recaptcha" data-sitekey="{$recaptcha_site}" data-callback="onSubmit" data-size="invisible"></div>
+                    <script>
+                        var onSubmit = function(token) {
+                            document.getElementById("submit_form").submit();
+                        };
+                    
+                        var onloadCallback = function() {
+                            var form = document.getElementById("submit_form");
+                            form.addEventListener('submit', function (e) {
+                                e.preventDefault();
+                                grecaptcha.execute();
+                            });
+                        };
+                    </script>
+                    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback" async defer></script>
+                    {/if:$recaptcha_site}
                 </form>
             </div>
         </div>
