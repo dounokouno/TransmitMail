@@ -129,8 +129,8 @@ workflows:
           e: php80
           composer_json: composer-php8.json
           phpunit_xml: phpunit-php8.xml
-      # - test:
-      #     name: php81
-      #     e: php81
-      #     composer_json: composer-php8.json
-      #     phpunit_xml: phpunit-php8.xml
+      - test:
+          name: php81
+          e: php81
+          composer_json: composer-php8.json
+          phpunit_xml: phpunit-php8.xml
