@@ -3,38 +3,42 @@
  * Part of TransmitMail
  *
  * @package    TransmitMail
- * @subpackage PHPUnit with Selenium 2
+ * @subpackage PHPUnit with Symfony panther
  * @license    MIT License
  * @copyright  TransmitMail development team
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
-use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Extensions\Selenium2TestCase;
-use PHPUnit\Extensions\Selenium2TestCase\ScreenshotListener;
+namespace TransmitMail\Tests;
 
-abstract class TransmitMailFunctionalTest extends Selenium2TestCase
+use Facebook\WebDriver\WebDriverBy;
+use Symfony\Component\Panther\PantherTestCase;
+
+abstract class TransmitMailPantherTestCase extends PantherTestCase
 {
-    public $tm;
-    public $topPageTitle = 'TransmitMail サンプル';
-    public $confirmPageTitle = '入力内容の確認 | TransmitMail サンプル';
-    public $errorPageTitle = 'エラー | TransmitMail サンプル';
-    public $globalErrorMessage = '入力内容に誤りがあります';
-    public $testimage = 'tests/FunctionalTest/testimage01.jpg';
-    public $inputPatterns = array();
-    public $lenFieldInputPatterns = array();
+    protected $client;
+    protected $crawler;
+    protected $tm;
+    protected $topPageTitle = 'TransmitMail サンプル';
+    protected $confirmPageTitle = '入力内容の確認 | TransmitMail サンプル';
+    protected $errorPageTitle = 'エラー | TransmitMail サンプル';
+    protected $globalErrorMessage = '入力内容に誤りがあります';
+    // TODO: テスト画像を変更する
+    protected $testimage = __DIR__ . '/testimage01.jpg';
+    protected $configFile = __DIR__ . '/../../config/config.test.yml';
+    // TODO: confog.test.yml に tmpdir と logdir の設定を書く
+    protected $tmpDir = __DIR__ . '/../../tmp/tests';
+    protected $inputPatterns = [];
+    protected $lenFieldInputPatterns = [];
+    protected $urlInputPatterns = [];
+    protected $numRangeInputPatterns = [];
+    protected $numRangeNotNumberInputPatterns = [];
+    protected $templateSyntaxInputPatterns = [];
 
-    /**
-     * コンストラクタ
-     */
-    public function __construct($name = NULL, array $data = array(), $dataName = '')
+    protected function setUp(): void
     {
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
 
-        $this->tm = new TransmitMail();
-        $this->tm->init();
-
-        // 入力パターン
         $this->inputPatterns['kanji'] = '漢字';
         $this->inputPatterns['hiragana'] = 'ひらがな';
         $this->inputPatterns['katakana'] = 'カタカナ';
@@ -136,7 +140,7 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
         $this->numRangeNotNumberInputPatterns['あ'] = 'あ';
 
         // テンプレート構文の入力パターン
-        $this->templateSyntaxInputPatterns = array(
+        $this->templateSyntaxInputPatterns = [
             '{include:header.html}',
             '{include:header.html? }',
             '{include:http://www.example.com/}',
@@ -161,70 +165,150 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
             'dummy text {$variable }',
             'dummy text 01 {$variable} dummy text02',
             'dummy text 01 {$variable } dummy text02'
-        );
-    }
+        ];
 
-    /**
-     * セットアップ
-     */
-    protected function setUp(): void
-    {
-        $this->setBrowser('chrome');
-        $this->setDesiredCapabilities(
-            [
-                'chromeOptions' => [
-                    'args' => [
-                        'headless',
-                        'disable-gpu',
-                        'window-size=1024,768'
-                    ],
-                    'w3c' => false
-                ]
+        $clientOptions = [
+            'webServerDir' => __DIR__ . '/../../',
+            'router' => 'index.test.php',
+            'chrome_arguments' => [
+                '--headless',
+                '--no-sandbox',
+                '--disable-gpu',
+                '--disable-dev-shm-usage',
+                '--window-size=1280,720',
+                '--disable-extensions',
+                '--disable-background-networking',
+                '--disable-sync',
+                '--metrics-recording-only',
+                '--disable-default-apps',
+                '--mute-audio',
+                '--no-first-run',
+                '--remote-debugging-port=0'
             ]
-        );
-        $this->setBrowserUrl('http://localhost:8000/');
+        ];
+
+        $this->client = static::createPantherClient($clientOptions);
+
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        $this->tm = new \TransmitMail();
+        // TODO: tmpDir と logDir の設定を追加する
+        // $screenshotDir = __DIR__ . '/../../tmp/screenshot';
+        // $this->tm->init();
+        $this->tm->init($this->configFile);
+
+        $this->crawler = $this->client->request('GET', '/index.test.php');
+        // $this->crawler = $this->client->request('GET', '');
     }
 
-    /**
-     * ティアダウン
-     */
     protected function tearDown(): void
     {
-        $testimage = basename($this->testimage);
-        $tmp_files = scandir($this->tm->config['tmp_dir']);
+        $failed = false;
+        if (method_exists($this, 'status')) {
+            // PHPUnit 10
+            $status = $this->status();
+            $failed = $status->isFailure() || $status->isError();
+        } elseif (method_exists($this, 'hasFailed')) {
+            // PHPUnit 9
+            $failed = $this->hasFailed();
+        }
 
-        foreach ($tmp_files as $tmp_file) {
-            if (strpos($tmp_file, $testimage)) {
-                unlink($this->tm->config['tmp_dir'] . $tmp_file);
+        if ($failed) {
+            // Pantherクライアントが初期化されているか確認
+            if ($this->client !== null) {
+                try {
+                    $screenshotDir = $this->tmpDir . '/screenshot';
+                    // スクリーンショット保存ディレクトリが存在しない場合は作成
+                    if (!is_dir($screenshotDir)) {
+                        // 0777パーミッションで再帰的にディレクトリを作成
+                        mkdir($screenshotDir, 0777, true);
+                    }
+
+                    $className = (new \ReflectionClass($this))->getShortName();
+                    // PHPUnit 8.5では $this->getName(false) でデータセット名を除いたメソッド名を取得できる
+                    $methodName = $this->getName(false);
+
+                    $filename = sprintf(
+                        '%s/%s-%s-%s-%s.png',
+                        rtrim($screenshotDir, '/'),
+                        // $screenshotDir,
+                        $className,
+                        $methodName,
+                        date('YmdHis'),
+                        uniqid()
+                    );
+
+                    $this->client->takeScreenshot($filename);
+                } catch (\Exception $e) {
+                    error_log("Failed to take screenshot: " . $e->getMessage());
+                }
+            } else {
+                error_log("Panther client is null, cannot take screenshot for test: " . $this->toString());
+            }
+        }
+
+        parent::tearDown();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+
+        // tmpディレクトリ内のファイルを削除
+        // TODO: test の場合は tmp ディレクトリを別ディレクトリにしたい
+        $tmpDir = __DIR__ . '/../../tmp/tests';
+        if (is_dir($tmpDir)) {
+            $files = glob($tmpDir . '/file_*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
             }
         }
     }
 
-    /**
-     * テスト失敗時にスクリーンショット画像を保存する
-     */
-    public function onNotSuccessfulTest($e): void
+    // TODO: ここを修正する
+    protected function filter($selector): ?object
     {
-        if ($e instanceof AssertionFailedError) {
-            $listener = new ScreenshotListener('tmp/screenshot');
-            $listener->addFailure($this, $e, null);
-        }
+        return $this->crawler->filter($selector);
+    }
 
-        parent::onNotSuccessfulTest($e);
+    protected function filterAndGetValue($selector): ?string
+    {
+        return $this->client->findElement(WebDriverBy::cssSelector($selector))->getAttribute('value');
+    }
+
+    protected function filterAndSetValue($selector, $value): void
+    {
+        $this->client->findElement(WebDriverBy::cssSelector($selector))->sendKeys($value);
+    }
+
+    protected function filterAndClear($selector): void
+    {
+        $this->client->findElement(WebDriverBy::cssSelector($selector))->clear();
+    }
+
+    protected function filterAndGetAttr($selector, $attr): ?string
+    {
+        return $this->client->findElement(WebDriverBy::cssSelector($selector))->getAttribute($attr);
+    }
+
+    protected function filterAndGetText($selector): ?string
+    {
+        return $this->client->findElement(WebDriverBy::cssSelector($selector))->getText();
     }
 
     /**
      * 入力必須のフィールドにテキストを入力する
      */
-    public function inputRequiredField()
+    protected function inputRequiredField(): void
     {
-        $element = $this->byCssSelector('input[type="text"][name="入力必須"]');
-        $element->clear();
-        $element->value('入力必須項目の入力テスト');
+        $selector = 'input[type="text"][name="入力必須"]';
+        $this->filterAndClear($selector);
+        $this->filterAndSetValue($selector, '入力必須項目の入力テスト');
 
         // ファイルの入力必須
-        $element = $this->byCssSelector('input[type="file"][name="ファイルの入力必須"]');
-        $element->value($this->file($this->testimage));
+        $this->filterAndSetValue('input[type="file"][name="ファイルの入力必須"]', $this->testimage);
     }
 
     /**
@@ -236,7 +320,7 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
      * @param string[] $errorMessage  エラーメッセージ
      * @param string[] $convertMode   入力値の変換をするか、する場合はどのように変換をするか
      */
-    public function inputTest($inputPatterns, $validValues, $selector, $errorMessage, $convertMode = null)
+    protected function inputTest($inputPatterns, $validValues, $selector, $errorMessage, $convertMode = null): void
     {
         $invalidValues = array_values(array_diff($inputPatterns, $validValues));
         $this->inputErrorTest($invalidValues, $selector, $errorMessage, $convertMode);
@@ -251,20 +335,19 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
      * @param string[] $errorMessage エラーメッセージ
      * @param string[] $convertMode  入力値の変換をするか、する場合はどのように変換をするか
      */
-    public function inputErrorTest($values, $selector, $errorMessage, $convertMode = null)
+    protected function inputErrorTest($values, $selector, $errorMessage, $convertMode = null): void
     {
         $convertedValues = $this->convert($values, $convertMode);
 
         for ($i = 0, $size = count($values); $i < $size; ++$i) {
-            $element = $this->byCssSelector($selector);
-            $element->clear();
-            $element->value($values[$i]);
+            $this->filterAndClear($selector);
+            $this->filterAndSetValue($selector, $values[$i]);
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertStringContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-            $this->assertEquals($errorMessage, $this->byCssSelector('#content ul li')->text());
-            $this->assertEquals($errorMessage, $this->byCssSelector('#content table tr td div.error')->text());
-            $this->assertEquals($convertedValues[$i], $this->byCssSelector($selector)->value());
+            $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
+            $this->assertEquals($errorMessage, $this->filterAndGetText('#content ul li'));
+            $this->assertEquals($errorMessage, $this->filterAndGetText('#content table tr td div.error'));
+            $this->assertEquals($convertedValues[$i], $this->filterAndGetValue($selector));
         }
     }
 
@@ -275,7 +358,7 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
      * @param array[]  $selector    テストする入力フィールドのCSSセレクタ
      * @param string[] $convertMode 入力値の変換をするか、する場合はどのように変換をするか
      */
-    public function inputSuccessTest($values, $selector, $convertMode = null)
+    protected function inputSuccessTest($values, $selector, $convertMode = null): void
     {
         $convertedValues = $this->convert($values, $convertMode);
         $hiddenFieldSelector = '';
@@ -286,35 +369,67 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
         }
 
         for ($i = 0, $size = count($values); $i < $size; ++$i) {
-            $this->url('');
-            $element = $this->byCssSelector($selector);
-            $element->value($values[$i]);
+            $this->filterAndClear($selector);
+            $this->filterAndSetValue($selector, $values[$i]);
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertEquals($this->confirmPageTitle, $this->title());
-            $this->assertStringContainsString($convertedValues[$i], $this->byCssSelector('#content table')->text());
-            $this->assertEquals($convertedValues[$i], $this->byCssSelector($hiddenFieldSelector)->value());
+            $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
+            $this->assertStringContainsString($convertedValues[$i], $this->crawler->filter('#content table')->text());
+            $this->assertEquals($convertedValues[$i], $this->filterAndGetValue($hiddenFieldSelector));
 
             // 入力画面に戻る
             $this->returnInputPage();
-            $this->assertEquals($convertedValues[$i], $this->byCssSelector($selector)->value());
+            $this->assertEquals($convertedValues[$i], $this->filterAndGetValue($selector));
         }
     }
 
     /**
      * 入力フォームを submit する
      */
-    public function submitInputForm()
+    protected function submitInputForm(): void
     {
-        $this->byCssSelector('form')->submit();
+        // 送信する前にウィンドウが存在することを確認
+        if (!$this->isWindowPresent()) {
+            $this->fail("フォーム送信前にブラウザウィンドウが予期せず閉じました。");
+        }
+
+        $this->crawler = $this->client->getCrawler();
+        $form = $this->crawler->filter('form')->form();
+        $this->client->submit($form);
+
+        // 送信直後にウィンドウが存在することを確認
+        if (!$this->isWindowPresent()) {
+            $this->fail("フォーム送信直後にブラウザウィンドウが予期せず閉じました。");
+        }
+
+        $this->crawler = $this->client->getCrawler();
+    }
+
+    /**
+     * ブラウザウィンドウがまだ存在し、応答可能かを確認
+     */
+    protected function isWindowPresent(): bool
+    {
+        try {
+            // ウィンドウハンドルを取得しようとすることで、ウィンドウの存在を確認
+            $this->client->getWindowHandles();
+            return true;
+        } catch (\Facebook\WebDriver\Exception\NoSuchWindowException $e) {
+            return false;
+        } catch (\Exception $e) {
+            error_log("isWindowPresent の確認中に予期せぬ例外が発生しました: " . get_class($e) . " - " . $e->getMessage());
+            return false;
+        }
     }
 
     /**
      * 入力確認画面から入力画面に戻る
      */
-    public function returnInputPage()
+    protected function returnInputPage(): void
     {
-        $this->byCssSelector('input[type="hidden"][name="page_name"][value="input"]')->submit();
+        $form = $this->crawler->filter('form:has(input[type="hidden"][name="page_name"][value="input"])')->first()->form();
+        $this->client->submit($form);
+        $this->crawler = $this->client->getCrawler();
     }
 
     /**
@@ -323,7 +438,8 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
      * @param array[]  $values      入力パターン
      * @param string[] $convertMode 入力値の変換をするか、する場合はどのように変換をするか
      */
-    private function convert($values, $convertMode = null) {
+    private function convert($values, $convertMode = null): array
+    {
         if (is_null($convertMode)) {
             return $values;
         }
@@ -338,7 +454,7 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
             case 'hankaku_eiji':
                 $subscript = 'r';
                 break;
- 
+
             case 'num':
                 $subscript = 'n';
                 break;
@@ -357,5 +473,27 @@ abstract class TransmitMailFunctionalTest extends Selenium2TestCase
         }
 
         return $results;
+    }
+
+    protected static function createPantherClient(array $options = [], array $kernelOptions = [], array $managerOptions = []): \Symfony\Component\Panther\Client
+    {
+        if (null !== self::$pantherClient) {
+            return self::$pantherClient;
+        }
+
+        self::startWebServer($options);
+
+        $arguments = $options['chrome_arguments'] ?? null;
+
+        self::$pantherClients[0] = self::$pantherClient = \Symfony\Component\Panther\Client::createChromeClient(
+            null,
+            $arguments,
+            $managerOptions,
+            self::$baseUri
+        );
+
+        \Symfony\Component\Panther\ServerExtension::registerClient(self::$pantherClient);
+
+        return self::$pantherClient;
     }
 }
