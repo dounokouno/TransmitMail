@@ -3,23 +3,25 @@
  * CSRF test
  *
  * @package    TransmitMail
- * @subpackage PHPUnit with Selenium 2
+ * @subpackage PHPUnit with Symfony panther
  * @license    MIT License
  * @copyright  TransmitMail development team
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
-class CsrfTest extends TransmitMailFunctionalTest
+namespace TransmitMail\Tests;
+
+class CsrfTest extends TransmitMailPantherTestCase
 {
     private $selector = 'input[type="text"][name="csrf_token"]';
-    private $errorMessage = '';
+    private $errorMessage;
 
     /**
-     * コンストラクタ
+     * セットアップ
      */
-    public function __construct()
+    protected function setUp(): void
     {
-        parent::__construct();
+        parent::setUp();
         $this->errorMessage = $this->tm->config['error_csrf'];
     }
 
@@ -28,15 +30,13 @@ class CsrfTest extends TransmitMailFunctionalTest
      */
     public function testCsrfIsTrue()
     {
-        $this->url('');
-
         // 入力フィールドの確認
         $this->assertNotEquals('', $this->getTargetValue());
-        $this->assertIsObject($this->byCssSelector($this->selector));
+        $this->assertIsObject($this->filter($this->selector));
 
         // エラーメッセージが表示されていないことの確認
-        $this->assertStringNotContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-        $this->assertStringNotContainsString($this->errorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringNotContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
+        $this->assertStringNotContainsString($this->errorMessage, $this->filterAndGetText('#content'));
 
         // テストの実行（失敗する場合）
         $this->inputErrorTestForCsrfTest('');
@@ -53,15 +53,14 @@ class CsrfTest extends TransmitMailFunctionalTest
     public function testCsrfIsFalse()
     {
         $this->tm->config['csrf'] = false;
-        $this->url('');
 
         // エラーメッセージが表示されていないことの確認
-        $this->assertStringNotContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-        $this->assertStringNotContainsString($this->errorMessage, $this->byCssSelector('#content')->text());
+        $this->assertStringNotContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
+        $this->assertStringNotContainsString($this->errorMessage, $this->filterAndGetText('#content'));
 
         // 入力フィールドの確認
         $this->assertNotEquals('', $this->getTargetValue());
-        $this->assertIsObject($this->byCssSelector($this->selector));
+        $this->assertIsObject($this->filter($this->selector));
 
         // テストの実行
         $this->inputSuccessTestForCsrfTest($this->getTargetValue());
@@ -72,14 +71,12 @@ class CsrfTest extends TransmitMailFunctionalTest
      */
     private function inputErrorTestForCsrfTest($value)
     {
-        $this->url('');
-        $element = $this->byCssSelector($this->selector);
-        $element->clear();
-        $element->value($value);
+        $this->filterAndClear($this->selector);
+        $this->filterAndSetValue($this->selector, $value);
         $this->inputRequiredField();
         $this->submitInputForm();
-        $this->assertStringContainsString($this->globalErrorMessage, $this->byCssSelector('#content')->text());
-        $this->assertEquals($this->errorMessage, $this->byCssSelector('#content ul li')->text());
+        $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
+        $this->assertEquals($this->errorMessage, $this->filterAndGetText('#content ul li'));
     }
 
     /**
@@ -88,15 +85,14 @@ class CsrfTest extends TransmitMailFunctionalTest
     private function inputSuccessTestForCsrfTest($value)
     {
         $hiddenFieldSelector = str_replace('[type="text"]', '[type="hidden"]', $this->selector);
-        $this->url('');
         $this->inputRequiredField();
         $this->submitInputForm();
-        $this->assertEquals($this->confirmPageTitle, $this->title());
-        $this->assertEquals($value, $this->byCssSelector($hiddenFieldSelector)->value());
+        $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
+        $this->assertEquals($value, $this->filterAndGetValue($hiddenFieldSelector));
 
         // 入力画面に戻る
         $this->returnInputPage();
-        $this->assertEquals($value, $this->byCssSelector($this->selector)->value());
+        $this->assertEquals($value, $this->filterAndGetValue($this->selector));
     }
 
     /**
@@ -104,6 +100,7 @@ class CsrfTest extends TransmitMailFunctionalTest
      */
     private function getTargetValue()
     {
-        return $this->byCssSelector($this->selector)->value();
+        $this->crawler = $this->client->getCrawler();
+        return $this->filterAndGetValue($this->selector);
     }
 }

@@ -47,13 +47,15 @@
                 </tr>
             </table>
             <div class="center">
-                <form method="post" class="inline">
+                <!-- TODO: action 先を動的にする -->
+                <form method="post" action="index.test.php" class="inline">
                     {$hiddens}
                     <input type="hidden" name="page_name" value="input">
                     <input type="submit" value="入力画面に戻る">
                 </form>
                 &nbsp;
-                <form method="post" class="inline">
+                <!-- TODO: action 先を動的にする -->
+                <form method="post" action="index.test.php" class="inline">
                     {$hiddens}
                     <input type="hidden" name="page_name" value="finish">
                     <input type="submit" value="送信する">

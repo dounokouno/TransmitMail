@@ -1,0 +1,11 @@
+config:
+    email: info@example.com
+    subject: ［株式会社テスト］お問い合わせ
+    auto_reply_subject: ［株式会社テスト］お問い合わせありがとうございます
+    auto_reply_name: 株式会社テスト
+    file: true
+    file_allow_extension: jpg,jpeg,gif,png
+    mailform_program: index.test.php
+    log_dir: log/tests/
+    tmp_dir: tmp/tests/
+    # display_errors: true

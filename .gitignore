@@ -8,3 +8,5 @@
 /tmp/screenshot/*
 !/tmp/screenshot/.gitkeep
 /vendor/
+/php*/vendor/
+/.vscode/

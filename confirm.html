@@ -16,19 +16,22 @@
                 <tr>
                     <th>{$files[].key}&nbsp;</th>
                     <td>{$files[].name}<br>
-                        <img src="index.php?file={$files[].tmp_name}" width="300"><br>
-                        <a href="index.php?file={$files[].tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></td>
+                        <!-- TODO: php ファイル名を動的にする -->
+                        <img src="index.test.php?file={$files[].tmp_name}" width="300"><br>
+                        <a href="index.test.php?file={$files[].tmp_name}" target="_blank" class="external">画像を別ウィンドウで開く</a></td>
                 </tr>
                 {/loop:$files}
             </table>
             <div class="center">
-                <form method="post" class="inline">
+                <!-- TODO: action 先を動的にする -->
+                <form method="post" action="index.test.php" class="inline">
                     {$hiddens}
                     <input type="hidden" name="page_name" value="input">
                     <input type="submit" value="入力画面に戻る">
                 </form>
                 &nbsp;
-                <form method="post" class="inline">
+                <!-- TODO: action 先を動的にする -->
+                <form method="post" action="index.test.php" class="inline">
                     {$hiddens}
                     <input type="hidden" name="page_name" value="finish">
                     <input type="submit" value="送信する">

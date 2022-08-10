@@ -1,0 +1,105 @@
+# TODO: circleci config を設定する
+# TODO: コードを整理してコミットする
+# TODO: test 時の添付ファイルのアップロード先を変更する。もしくは tmp ディレクトリ以下は docker コンテナ内にする
+# TODO: ビルトインサーバーに接続できるポートを開ける
+# TODO: スクショが出力されていない気がする。要調査
+
+x-php-base: &php-base
+  volumes:
+    - .:/app
+  working_dir: /app
+  networks:
+    - transmitmail_network
+  command: ["tail", "-f", "/dev/null"]
+
+x-php-build-base: &php-build-base
+  context: .
+  dockerfile: Dockerfile.php
+
+services:
+  php72:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 7.2-cli
+    environment:
+      COMPOSER: php72/composer.json
+      COMPOSER_VENDOR_DIR: php72/vendor
+      # phpunit がタイムアウトする場合に設定する
+      # COMPOSER_PROCESS_TIMEOUT: 1200
+  php73:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 7.3-cli
+    environment:
+      COMPOSER: php73/composer.json
+      COMPOSER_VENDOR_DIR: php73/vendor
+  php74:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 7.4-cli
+    environment:
+      COMPOSER: php74/composer.json
+      COMPOSER_VENDOR_DIR: php74/vendor
+  php80:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 8.0-cli
+    environment:
+      COMPOSER: php80/composer.json
+      COMPOSER_VENDOR_DIR: php80/vendor
+  php81:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 8.1-cli
+    environment:
+      COMPOSER: php81/composer.json
+      COMPOSER_VENDOR_DIR: php81/vendor
+  php82:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 8.2-cli
+    environment:
+      COMPOSER: php82/composer.json
+      COMPOSER_VENDOR_DIR: php82/vendor
+  php83:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 8.3-cli
+    environment:
+      COMPOSER: php83/composer.json
+      COMPOSER_VENDOR_DIR: php83/vendor
+  php84:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 8.4-cli
+    environment:
+      COMPOSER: php84/composer.json
+      COMPOSER_VENDOR_DIR: php84/vendor
+  php85:
+    <<: *php-base
+    build:
+      <<: *php-build-base
+      args:
+        PHP_VERSION: 8.5-cli
+    environment:
+      COMPOSER: php85/composer.json
+      COMPOSER_VENDOR_DIR: php85/vendor
+
+networks:
+  transmitmail_network:

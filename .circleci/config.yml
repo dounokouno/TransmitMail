@@ -1,6 +1,6 @@
 version: 2.1
 orbs:
-  browser-tools: circleci/browser-tools@1.2.3
+  browser-tools: circleci/browser-tools@1.4.8
 executors:
   php56:
     docker:
@@ -100,7 +100,8 @@ jobs:
             tests/wait-for-it.sh localhost:4444 -t 0
             php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
             tests/wait-for-it.sh localhost:8000 -t 0
-            vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >>
+            #vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >>
+            vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >> --stderr -v --debug
 workflows:
   workflow:
     jobs:

@@ -3,13 +3,15 @@
  * Get parameter test
  *
  * @package    TransmitMail
- * @subpackage PHPUnit with Selenium 2
+ * @subpackage PHPUnit with Symfony panther
  * @license    MIT License
  * @copyright  TransmitMail development team
  * @link       https://github.com/dounokouno/TransmitMail
  */
 
-class GetParameterTest extends TransmitMailFunctionalTest
+namespace TransmitMail\Tests;
+
+class GetParameterTest extends TransmitMailPantherTestCase
 {
     private $getParameter = 'GETパラメータサンプル';
 
@@ -18,15 +20,15 @@ class GetParameterTest extends TransmitMailFunctionalTest
      */
     public function testGetParameter()
     {
-        $values = array_merge(array($this->getParameter), $this->templateSyntaxInputPatterns);
+        $values = array_merge([$this->getParameter], $this->templateSyntaxInputPatterns);
 
         foreach ($values as $value) {
-            $this->url('?example=' . urlencode($value));
-            $this->assertEquals($value, $this->byCssSelector('input[type="hidden"][name="GET値取得サンプル"]')->value());
+            $this->crawler = $this->client->request('GET', '/' . $this->tm->config['mailform_program'] . '?example=' . urlencode($value));
+            $this->assertEquals($value, $this->filterAndGetValue('input[type="hidden"][name="GET値取得サンプル"]'));
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertEquals($this->confirmPageTitle, $this->title());
-            $this->assertStringContainsString($value, $this->byCssSelector('#content table')->text());
+            $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
+            $this->assertStringContainsString($value, $this->filterAndGetText('#content table'));
         }
     }
 
@@ -35,22 +37,28 @@ class GetParameterTest extends TransmitMailFunctionalTest
      */
     public function testGetFileParameter()
     {
-        $this->url('');
         $this->inputRequiredField();
         $this->submitInputForm();
-        $imgUrl = $this->byCssSelector('#content table a')->attribute('href');
+        $imgUrl = $this->filterAndGetAttr('#content table a', 'href');
+
         $imgFileName = explode('?file=', $imgUrl)[1];
-        $values = array_merge(array($this->getParameter), $this->templateSyntaxInputPatterns);
+        $values = array_merge([$this->getParameter], $this->templateSyntaxInputPatterns);
 
         // 送信した画像ファイルの場合
-        $this->url('?file=' . urlencode($imgFileName));
-        $this->assertRegExp('/' . preg_quote($imgFileName, '/') . '$/', $this->byCssSelector('img')->attribute('src'));
+        $this->crawler = $this->client->request('GET', '/' . $this->tm->config['mailform_program'] . '?file=' . urlencode($imgFileName));
+        $regexp = '/' . preg_quote($imgFileName, '/') . '$/';
+        $attr = $this->filterAndGetAttr('img', 'src');
+        if (method_exists($this, 'assertMatchesRegularExpression')) {
+            $this->assertMatchesRegularExpression($regexp, $attr);
+        } else {
+            $this->assertRegExp($regexp, $attr);
+        }
 
         // 送信した画像ファイルではない場合
         foreach ($values as $value) {
-            $this->url('?file=' . urlencode($value));
-            $this->assertEquals($this->errorPageTitle, $this->title());
-            $this->assertStringContainsString($this->byCssSelector('#content ul > li')->text(), $value . $this->tm->config['error_file_not_exist']);
+            $this->crawler = $this->client->request('GET', '/' . $this->tm->config['mailform_program'] . '?file=' . urlencode($value));
+            $this->assertEquals($this->errorPageTitle, $this->client->getTitle());
+            $this->assertStringContainsString($this->filterAndGetText('#content ul > li'), $value . $this->tm->config['error_file_not_exist']);
         }
     }
 }

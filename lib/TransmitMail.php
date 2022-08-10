@@ -267,9 +267,12 @@ class TransmitMail
             $this->mode = 'file';
         } elseif ($this->config['checkmode'] && isset($this->get['checkmode'])) {
             $this->mode = 'check';
-        } else {
-            $this->startSession();
         }
+        // TODO: あとで修正する
+        // TODO: あとで動作確認する
+        //  else {
+        //     $this->startSession();
+        // }
     }
 
     /**
@@ -290,6 +293,8 @@ class TransmitMail
         if (method_exists($this, 'afterCheckDenyHost')) {
             $this->afterCheckDenyHost();
         }
+
+        $this->startSession();
 
         // 入力内容をチェック
         $this->checkInput();
@@ -382,6 +387,16 @@ class TransmitMail
      */
     public function startSession()
     {
+        // debug
+        // ★★★ デバッグコードを追加 ★★★
+        // if (headers_sent($file, $line)) {
+        //     // ログファイルにファイル名と行番号を出力 (bootstrap.php で設定したファイルに出力)
+        //     error_log("HEADERS ALREADY SENT: Output started at {$file} line {$line}");
+        //     // 必要であれば、ここで処理を停止して確認することも可能
+        //     exit("HEADERS ALREADY SENT: Output started at {$file} line {$line}");
+        // }
+        // // ★★★ デバッグコードここまで ★★★
+
         if ($this->config['session']) {
             if (!isset($_SESSION)) {
                 session_start();
