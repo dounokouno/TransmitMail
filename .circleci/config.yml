@@ -72,6 +72,8 @@ jobs:
       - checkout
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
+      # FIXME:
+      - run: pwd
       - run:
           name: Check parameters
           command: |
