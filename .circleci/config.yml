@@ -95,6 +95,8 @@ jobs:
           condition: << parameters.cache >>
           steps:
             - save_caches
+      # FIXME:
+      - run: pwd
       - run:
           name: Run servers and test
           command: |
@@ -103,6 +105,8 @@ jobs:
             php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
             tests/wait-for-it.sh localhost:8000 -t 0
             #vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >>
+            # FIXME:
+            vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >> --stderr -v --list-tests
             vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >> --stderr -v --debug
 workflows:
   workflow:
