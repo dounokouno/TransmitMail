@@ -1,16 +1,7 @@
 version: 2.1
 orbs:
-  browser-tools: circleci/browser-tools@1.4.8
+  browser-tools: circleci/browser-tools@1
 executors:
-  php56:
-    docker:
-      - image: cimg/php:5.6-browsers
-  php70:
-    docker:
-      - image: cimg/php:7.0-browsers
-  php71:
-    docker:
-      - image: cimg/php:7.1-browsers
   php72:
     docker:
       - image: cimg/php:7.2-browsers
@@ -26,14 +17,29 @@ executors:
   php81:
     docker:
       - image: cimg/php:8.1-browsers
+  php82:
+    docker:
+      - image: cimg/php:8.2-browsers
+  php83:
+    docker:
+      - image: cimg/php:8.3-browsers
+  php84:
+    docker:
+      - image: cimg/php:8.4-browsers
+  php85:
+    docker:
+      - image: cimg/php:8.5-browsers
 commands:
   restore_caches:
+    parameters:
+      composer_json:
+        type: string
+        default: composer.json
     steps:
       - restore_cache:
           keys:
-            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}-{{ checksum "composer-php8.lock" }}
+            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
             # NOTE: Fallback to using the latest cache if no exact match is found
-            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}
             - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-
             - composer-{{ .Environment.CIRCLE_STAGE }}-
             - composer-
@@ -46,27 +52,37 @@ commands:
             echo $CIRCLECI_COMPORSER_CACHE_KEY > _composer_cache_key
             cat _composer_cache_key
   save_caches:
-    steps:
-      - save_cache:
-          paths:
-            - vendor
-          key: composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "composer.lock" }}-{{ checksum "composer-php8.lock" }}
-jobs:
-  test:
-    environment:
-      CIRCLECI_COMPORSER_CACHE_KEY: '2020122301'
     parameters:
-      e:
-        type: executor
-      cache:
-        type: boolean
-        default: true
       composer_json:
         type: string
         default: composer.json
-      phpunit_xml:
+      composer_vendor_dir:
         type: string
-        default: phpunit.xml
+        default: vendor
+    steps:
+      - save_cache:
+          paths:
+            - << parameters.composer_vendor_dir >>
+          key: composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
+jobs:
+  test:
+    environment:
+      CIRCLECI_COMPORSER_CACHE_KEY: '2025123101'
+    parameters:
+      e:
+        type: executor
+      php_version:
+        type: string
+      # TODO: あとで修正する
+      cache:
+        type: boolean
+        default: false
+      composer_json:
+        type: string
+        default: composer.json
+      composer_vendor_dir:
+        type: string
+        default: vendor
     executor: << parameters.e >>
     steps:
       - checkout
@@ -77,61 +93,34 @@ jobs:
           command: |
             echo "parameters.cache: << parameters.cache >>"
             echo "parameters.composer_json: << parameters.composer_json >>"
-            echo "parameters.phpunit_xml: << parameters.phpunit_xml >>"
       - when:
           condition: << parameters.cache >>
           steps:
             - create_cache_key_files
-            - restore_caches
+            - restore_caches:
+                composer_json: << parameters.composer_json >>
       - run: php -v
       - run: composer -V
       - run: google-chrome --version
       - run: chromedriver --version
-      - run: java -jar /usr/local/bin/selenium.jar --version
-      - run: COMPOSER=<< parameters.composer_json >> composer install --prefer-dist
+      - run: COMPOSER=<< parameters.composer_json >> COMPOSER_VENDOR_DIR=<< parameters.composer_vendor_dir >> composer install --prefer-dist
       - when:
           condition: << parameters.cache >>
           steps:
-            - save_caches
+            - save_caches:
+                composer_json: << parameters.composer_json >>
+                composer_vendor_dir: << parameters.composer_vendor_dir >>
       - run:
           name: Run servers and test
-          command: |
-            java -jar /usr/local/bin/selenium.jar > /tmp/selenium.log 2> /tmp/selenium.error &
-            tests/wait-for-it.sh localhost:4444 -t 0
-            php -S 0.0.0.0:8000 > /tmp/server.log 2>&1 &
-            tests/wait-for-it.sh localhost:8000 -t 0
-            #vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >>
-            vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >> --stderr -v --debug
+          command: COMPOSER=<< parameters.composer_json >> COMPOSER_VENDOR_DIR=<< parameters.composer_vendor_dir >> composer exec phpunit -- -c tests/phpunit.xml.dist
 workflows:
   workflow:
     jobs:
       - test:
-          name: php56
-          e: php56
-          # NOTE: When there enable the cache, it doesn't work for some reason, so there disable it.
-          cache: false
-      - test:
-          name: php70
-          e: php70
-      - test:
-          name: php71
-          e: php71
-      - test:
-          name: php72
-          e: php72
-      - test:
-          name: php73
-          e: php73
-      - test:
-          name: php74
-          e: php74
-      - test:
-          name: php80
-          e: php80
-          composer_json: composer-php8.json
-          phpunit_xml: phpunit-php8.xml
-      - test:
-          name: php81
-          e: php81
-          composer_json: composer-php8.json
-          phpunit_xml: phpunit-php8.xml
+          name: php-<< matrix.php_version >>
+          e: php<< matrix.php_version >>
+          composer_json: php<< matrix.php_version >>/composer.json
+          composer_vendor_dir: php<< matrix.php_version >>/vendor
+          matrix:
+            parameters:
+              php_version: ["72", "73", "74", "80", "81", "82", "83", "84", "85"]
