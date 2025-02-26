@@ -23,6 +23,15 @@ executors:
   php81:
     docker:
       - image: cimg/php:8.1-browsers
+  php82:
+    docker:
+      - image: cimg/php:8.2-browsers
+  php83:
+    docker:
+      - image: cimg/php:8.3-browsers
+  php84:
+    docker:
+      - image: cimg/php:8.4-browsers
 commands:
   restore_caches:
     steps:
@@ -131,5 +140,20 @@ workflows:
       - test:
           name: php81
           e: php81
+          composer_json: composer-php8.json
+          phpunit_xml: phpunit-php8.xml
+      - test:
+          name: php82
+          e: php82
+          composer_json: composer-php8.json
+          phpunit_xml: phpunit-php8.xml
+      - test:
+          name: php83
+          e: php83
+          composer_json: composer-php8.json
+          phpunit_xml: phpunit-php8.xml
+      - test:
+          name: php84
+          e: php84
           composer_json: composer-php8.json
           phpunit_xml: phpunit-php8.xml
