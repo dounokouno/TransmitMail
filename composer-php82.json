@@ -1,0 +1,6 @@
+{
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "phpunit/phpunit-selenium": "^9.0"
+    }
+}

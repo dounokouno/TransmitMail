@@ -145,12 +145,12 @@ workflows:
       - test:
           name: php82
           e: php82
-          composer_json: composer-php8.json
+          composer_json: composer-php82.json
           phpunit_xml: phpunit-php8.xml
       - test:
           name: php83
           e: php83
-          composer_json: composer-php8.json
+          composer_json: composer-php82.json
           phpunit_xml: phpunit-php8.xml
       - test:
           name: php84
