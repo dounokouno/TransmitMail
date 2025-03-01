@@ -114,6 +114,8 @@ jobs:
             # FIXME:
             # vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --filter '^test' --stderr -v
             # vendor/bin/phpunit --filter '^test' -c tests/<< parameters.phpunit_xml >>
+            vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --stderr -v
+            vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --filter '^test' --stderr -v
             vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >> --stderr -v
 workflows:
   workflow:
