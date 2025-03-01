@@ -156,4 +156,4 @@ workflows:
           name: php84
           e: php84
           composer_json: composer-php82.json
-          phpunit_xml: phpunit-php82.xml
+          phpunit_xml: phpunit-php8.xml
