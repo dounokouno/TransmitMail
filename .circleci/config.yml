@@ -104,6 +104,12 @@ jobs:
       # FIXME:
       - run: pwd
       - run:
+          name: List files in vendor/bin
+          command: ls -la vendor/bin
+      - run:
+          name: Check if phpunit.xml exists
+          command: ls -la tests
+      - run:
           name: Run servers and test
           command: |
             java -jar /usr/local/bin/selenium.jar > /tmp/selenium.log 2> /tmp/selenium.error &
@@ -114,8 +120,8 @@ jobs:
             # FIXME:
             # vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --filter '^test' --stderr -v
             # vendor/bin/phpunit --filter '^test' -c tests/<< parameters.phpunit_xml >>
-            vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --stderr -v
-            # vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --filter '^test' --stderr -v
+            # vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --stderr -v
+            vendor/bin/phpunit --list-tests -c tests/<< parameters.phpunit_xml >> --filter '^test' --stderr -v
             # vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >> --stderr -v
             vendor/bin/phpunit -c tests/<< parameters.phpunit_xml >> --debug --verbose --log-junit tmp/phpunit-result.xml
           environment:
