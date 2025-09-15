@@ -624,7 +624,7 @@ class TransmitMail
             $this->post[$this->config['auto_reply_email_input_name']] = $this->deleteCrlf($this->post[$this->config['auto_reply_email_input_name']]);
 
             if (!$this->isEmail($this->post[$this->config['auto_reply_email_input_name']])) {
-                $this->tpl->set("email.$this->config['auto_reply_email_input_name']", $this->h($this->config['auto_reply_email_input_name'] . $this->config['error_email']));
+                $this->tpl->set("email.{$this->config['auto_reply_email_input_name']}", $this->h($this->config['auto_reply_email_input_name'] . $this->config['error_email']));
 
                 if (!in_array($this->h($this->config['auto_reply_email_input_name'] . $this->config['error_email']), $this->global_errors, true)) {
                     $this->global_errors[] = $this->h($this->config['auto_reply_email_input_name'] . $this->config['error_email']);
