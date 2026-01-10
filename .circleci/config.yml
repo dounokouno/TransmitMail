@@ -119,8 +119,8 @@ workflows:
       - test:
           name: php-<< matrix.php_version >>
           e: php<< matrix.php_version >>
-          composer_json: php<< matrix.php_version >>/composer.json
-          composer_vendor_dir: php<< matrix.php_version >>/vendor
+          composer_json: environments/php<< matrix.php_version >>/composer.json
+          composer_vendor_dir: environments/php<< matrix.php_version >>/vendor
           matrix:
             parameters:
               php_version: ["72", "73", "74", "80", "81", "82", "83", "84", "85"]
