@@ -112,7 +112,7 @@ jobs:
                 composer_vendor_dir: << parameters.composer_vendor_dir >>
       - run:
           name: Run servers and test
-          command: COMPOSER=<< parameters.composer_json >> COMPOSER_VENDOR_DIR=<< parameters.composer_vendor_dir >> composer exec phpunit -- -c tests/phpunit.xml.dist
+          command: COMPOSER=<< parameters.composer_json >> COMPOSER_VENDOR_DIR=<< parameters.composer_vendor_dir >> composer exec phpunit
 workflows:
   workflow:
     jobs:
