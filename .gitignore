@@ -10,3 +10,8 @@
 /vendor/
 /php*/vendor/
 /.vscode/
+
+# PHP-CS-Fixer cache
+.php-cs-fixer.cache
+# PHPUnit cache
+.phpunit.result.cache
