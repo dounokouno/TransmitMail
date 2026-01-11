@@ -1,4 +1,5 @@
 <?php
+
 /**
  * TransmitMail クラス
  *
@@ -11,8 +12,8 @@
 class TransmitMail
 {
     // システム情報
-    const SYSTEM_NAME = 'TransmitMail';
-    const VERSION = '2.6.3';
+    public const SYSTEM_NAME = 'TransmitMail';
+    public const VERSION = '2.6.3';
 
     // 表示モード
     public $mode = null;
@@ -813,8 +814,7 @@ class TransmitMail
                         if (!empty($value['tmp_name'])) {
                             // 拡張子のチェック
                             if (!empty($this->config['file_allow_extension']) &&
-                                !$this->isAllowFileExtension($value['name']))
-                            {
+                                !$this->isAllowFileExtension($value['name'])) {
                                 $file_error[] = $this->h($key . $this->config['error_file_extension']);
                                 $this->global_errors[] = $this->h($key . $this->config['error_file_extension']);
                             }
@@ -830,11 +830,13 @@ class TransmitMail
                                 $file_error[] = $this->h($key . str_replace(
                                     '{ファイルサイズ}',
                                     $this->getFormatedBytes($this->config['file_max_size']),
-                                    $this->config['error_file_max_size']));
+                                    $this->config['error_file_max_size']
+                                ));
                                 $this->global_errors[] = $this->h($key . str_replace(
                                     '{ファイルサイズ}',
                                     $this->getFormatedBytes($this->config['file_max_size']),
-                                    $this->config['error_file_max_size']));
+                                    $this->config['error_file_max_size']
+                                ));
                             }
 
                             // エラーを判別
@@ -905,14 +907,12 @@ class TransmitMail
                 $this->page_name = '';
             } elseif (isset($this->post['page_name']) &&
                 ($this->post['page_name'] === 'input') &&
-                !$this->global_errors)
-            {
+                !$this->global_errors) {
                 // 再入力画面
                 $this->page_name = '';
             } elseif (isset($this->post['page_name']) &&
                 ($this->post['page_name'] === 'finish') &&
-                !$this->global_errors)
-            {
+                !$this->global_errors) {
                 // 完了画面
                 $this->page_name = 'finish';
             } elseif (!$this->global_errors) {
@@ -1279,9 +1279,10 @@ class TransmitMail
             // 添付ファイルがある場合
             if ($this->config['file']) {
                 foreach ($this->files as $key => $file) {
-                    if (copy($this->config['tmp_dir'] . $file['tmp_name'],
-                        $this->config['log_dir'] . $file['tmp_name']))
-                    {
+                    if (copy(
+                        $this->config['tmp_dir'] . $file['tmp_name'],
+                        $this->config['log_dir'] . $file['tmp_name']
+                    )) {
                         $data .= "\n\n" .
                             "【" . $key . "】\n" .
                             "ファイル名: " . $file['name'] . "\n" .
@@ -1302,9 +1303,10 @@ class TransmitMail
     /**
      * 除外項目が含まれているかを判別
      */
-    public function isExcludedExclusionItem($string) {
+    public function isExcludedExclusionItem($string)
+    {
         $array = json_decode($this->exclusion_item);
-        $array = array_map(function($value) {
+        $array = array_map(function ($value) {
             return '\A' . $value . '\z';
         }, $array);
         $regex = '/' . implode('|', $array) . '/' . $this->config['reg_option'];
@@ -1761,12 +1763,16 @@ class TransmitMail
 
                 // エンコード変換
                 if ($this->config['csv_encode'] !== $this->config['charset']) {
-                    $csv_key = mb_convert_encoding($key,
+                    $csv_key = mb_convert_encoding(
+                        $key,
                         $this->config['csv_encode'],
-                        $this->config['charset']);
-                    $csv_value = mb_convert_encoding($value,
+                        $this->config['charset']
+                    );
+                    $csv_value = mb_convert_encoding(
+                        $value,
                         $this->config['csv_encode'],
-                        $this->config['charset']);
+                        $this->config['charset']
+                    );
                     $csv_lines[$csv_key] = $csv_value;
                 } else {
                     $csv_lines[$key] = $value;
