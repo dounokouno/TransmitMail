@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Input options test
  *

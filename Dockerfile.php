@@ -188,6 +188,7 @@ RUN echo '#!/bin/bash' > /usr/local/bin/chromedriver_wrapper.sh && \
     chmod +x /usr/local/bin/chromedriver_wrapper.sh
 
 # Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
 WORKDIR /app

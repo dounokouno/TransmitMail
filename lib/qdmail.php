@@ -15,10 +15,10 @@
  * @version			1.2.6b
  * @lastmodified	2008-10-23
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
- * 
+ *
  * Qdmail is sending e-mail library for multibyte language ,
  * easy , quickly , usefull , and you can specify deeply the details.
- * Copyright (C) 2008   spok 
+ * Copyright (C) 2008   spok
 */
 //-------------------------------------------
 // For CakePHP , extended 'Object' Class ,
@@ -85,7 +85,7 @@ class QdmailBase extends QdmailBranch{
 
 	//----------------------------
 	// Default Language
-	// If you do not Japanese 
+	// If you do not Japanese
 	// Please change this propaty for your Language and Encoding
 	//----------------------------
 	var	$lang_def			= "ja";
@@ -110,7 +110,7 @@ class QdmailBase extends QdmailBranch{
 	var $language			= 'ja';
 	var $kana				=  false; // kana header
 	//----------
-	// sysytem 
+	// sysytem
 	//----------
 	var $kana_content_relation =  false;
 	var	$name			= 'Qdmail';
@@ -139,7 +139,7 @@ class QdmailBase extends QdmailBranch{
 			'SYSTEM'=>'qdmail_system_charset',
 		) ;
 	//--------------------------
-	// for address 
+	// for address
 	//--------------------------
 	var $varidate_address_regex	= '/[^@]+@[^@]+/';
 	var $allow_blank_header		= false;
@@ -193,7 +193,7 @@ class QdmailBase extends QdmailBranch{
 	var $wordwrap_length= 45 ;
 	// inteligent wordwrap
 	// false is that the word exist in the line ,
-	// true is that the word must be the beginning of a line 
+	// true is that the word must be the beginning of a line
 	var	$wrap_except	= array(
 		'http://'=>false,
 		'code'=>true,
@@ -513,7 +513,7 @@ class QdmailBase extends QdmailBranch{
 	var $render_mode		= false;
 	var $size			= array();
 	//------------------------
-	// Priority 
+	// Priority
 	//------------------------
 	var $priority			= null;
 	var $priority_def   =array(
@@ -574,14 +574,14 @@ class QdmailBase extends QdmailBranch{
 	var $error			= array();
 	var $error_stack	= array();
 	var $error_display	= true;
-	var	$errorlog_level	= 0 ; 
+	var	$errorlog_level	= 0 ;
 	var	$errorlog_level_max = 3 ;
 	var	$errorlog_path  = './';
 	var	$errorlog_filename= 'qbmail_error.log';
 	var	$errorlog_append= 'a' ;
 	var	$ignore_error	= false ;
 	//----------------
-	// debug 
+	// debug
 	// 0 is no debug mode & really sending ,
 	// 1 is showing header&body & really sending ,
 	// 2 is no sending & showing header&body and some vars
@@ -595,7 +595,7 @@ class QdmailBase extends QdmailBranch{
 //  Methods
 //****************************************************
 	//--------------------------------
-	// constructor   set error display 
+	// constructor   set error display
 	// $charset_def = null,
 	// $error_display = true
 	// $mail -> (&) new Qdmail( Charset , Encoding , DetectOrder , error_display );
@@ -699,7 +699,7 @@ class QdmailBase extends QdmailBranch{
 			$ct = '00'.$count++;
 			$start  = (strlen($ct)-$col_num) < 0 ? 0:strlen($ct)-$col_num;
 			$end = strlen($ct)-$start;
-			$new_cid =  $prefix 
+			$new_cid =  $prefix
 				. substr($ct,$start,$end)
 				. $aft;
 			$content=preg_replace('/<\s*IMG\s+SRC\s*=\s*"cid:'.$attach[$key]['CONTENT-ID'].'"/is','<IMG SRC="cid:'.$new_cid.'"',$content);
@@ -718,9 +718,9 @@ class QdmailBase extends QdmailBranch{
 		foreach($this->deco_def[$this->deco_kind]['TOP'] as $line){
 			$header .= $line .$this->LFC;
 		}
-		$header .= 'MIME-Version: 1.0' . $this->LFC 
+		$header .= 'MIME-Version: 1.0' . $this->LFC
 			. 'Content-type: ' . key($this->structure[$this->deco_def[$this->deco_kind]['STRUCTURE']])
-			. '; boundary="'.$this->deco_def[$this->deco_kind]['BOUNDARY'] . '"' 
+			. '; boundary="'.$this->deco_def[$this->deco_kind]['BOUNDARY'] . '"'
 			. $this->LFC;
 		return $header . $this->LFC . $this -> smtpDataBody() . $this->LFC ;
 	}
@@ -874,7 +874,7 @@ class QdmailBase extends QdmailBranch{
 	//---------------------------------------
 	// something change mode
 	//---------------------------------------
-	// Keys must lowercase , because of PHP4's 
+	// Keys must lowercase , because of PHP4's
 	var	$property_type = array(
 		'auto_both'			=> 'bool' ,
 		'to_separate'		=> 'bool' ,
@@ -1210,7 +1210,7 @@ class QdmailBase extends QdmailBranch{
 		return false!==strpos(PHP_OS,'WIN');
 	}
 	//---------------------------------------
-	// something change mode 
+	// something change mode
 	//---------------------------------------
 	function whichTextHtml( $which ){
 		$which = strtoupper( $which );
@@ -1225,7 +1225,7 @@ class QdmailBase extends QdmailBranch{
 
 	function allwaysBcc( $option = null ){
 		if( is_null( $option ) ){
-			return $this->allways_bcc ; 
+			return $this->allways_bcc ;
 		}
 		if( $this->option( array( __FUNCTION__ => $option ) ,__LINE__) ){
 			$fg = $this->extractAddr( $this->allways_bcc ) ;
@@ -1234,7 +1234,7 @@ class QdmailBase extends QdmailBranch{
 			return true ;
 		}else{
 			$this->allways_bcc = array();
-			return false ; 
+			return false ;
 		}
 	}
 	function priority( $option = null ){
@@ -1338,7 +1338,7 @@ class QdmailBase extends QdmailBranch{
 			return $this->united_charset;
 		}else{
 			return mb_detect_encoding( $word , mb_detect_order() , true );
-		} 
+		}
 	}
 	function qd_convert_encoding( $word , $target_chrset , $org_charset = null ){
 
@@ -1388,7 +1388,7 @@ class QdmailBase extends QdmailBranch{
 	}
 	//-----------------------------------------------------------
 	// Wordwrap Opiton
-	// array( 'except word' => beginning flag ) 
+	// array( 'except word' => beginning flag )
 	// if beginning flag is true , beginning of a line is target
 	// if beginning flag is true , the word in line is target
 	//-----------------------------------------------------------
@@ -1569,7 +1569,7 @@ class QdmailBase extends QdmailBranch{
 		}
 	}
 	//--------------------------------
-	// Decorationable HTML Mail Opiton 
+	// Decorationable HTML Mail Opiton
 	// ( Inline HTML , MHTML )
 	// See $this->deco_def Property
 	//--------------------------------
@@ -1657,9 +1657,9 @@ class QdmailBase extends QdmailBranch{
 			}
 		}
 		if( $add ){
-			$this->replace = array_merge( $this->replace , $array ); 
+			$this->replace = array_merge( $this->replace , $array );
 		}else{
-			$this->replace = $array ; 
+			$this->replace = $array ;
 		}
 		return $this->errorGather() ;
 	}
@@ -1746,7 +1746,7 @@ class QdmailBase extends QdmailBranch{
 
 		$this->__construct( $stack );
 		if( !$debugErase ){
-			$this->debug = $stack_debug ; 
+			$this->debug = $stack_debug ;
 		}
 	}
 	function resetHeader(){
@@ -1788,7 +1788,7 @@ class QdmailBase extends QdmailBranch{
 		if( is_null($subj) ){
 			return $this->subject;
 		}
-		
+
 		if( is_string( $subj ) || is_numeric( $subj ) ){
 			$this->subject['CONTENT'] = (string) $subj;
 			return $this->errorGather() ;
@@ -2000,13 +2000,13 @@ class QdmailBase extends QdmailBranch{
 	//           Both mode ? text only or html only or both ? or auto both
 	//           Addition Attachment will do
 	//           Select Body Structure by Decoration Pattern or else
-	//         Build Body ( Recursive ) 
+	//         Build Body ( Recursive )
 	//         Render Body with 'Content-type' Header and Boundary etc..
 	//           +  finalize( Recursive )
 	//              Pass to the Header,first Content-type etc. that needs by Header Render Routine
 	//         Set Default Header, MIME 1.0 etc
 	//         Render Header and Render for SMTP Sender Text(Future)
-	//   Debug Echo & log & error log will do if you want 
+	//   Debug Echo & log & error log will do if you want
 	//If error exsist , no sender(except ignore_error Property)
 	//-------------------------------------------
 	function headerDefault(){
@@ -2033,12 +2033,12 @@ class QdmailBase extends QdmailBranch{
 		}else{
 			$right = $this->message_id_right;
 		}
-		$id = 'Qdmail.' . $this->version 
+		$id = 'Qdmail.' . $this->version
 				. '_' . sha1( microtime() . $this->salt . mt_rand() . $req_uri )
 				. '@' . $right ;
 		return '<'.$id.'>';
 	}
-	
+
 	function send( $option = null ){
 		if( is_null( $this->start_time )){
 			$this->start_time = microtime();
@@ -2161,7 +2161,7 @@ $this->debugEchoLf($this->to);
 			}elseif( $this->sendmail &&  !ini_get('safe_mode') ){
 				$fg = $this->sendBySendmail();
 			}elseif( ini_get('safe_mode') ){
-				$fg = mail( 
+				$fg = mail(
 					  trim( $this->header_for_mailfunction_to )
 					, trim( $this->header_for_mailfunction_subject )
 					, $this->content_for_mailfunction
@@ -2169,7 +2169,7 @@ $this->debugEchoLf($this->to);
 				);
 			}else{
 
-				$fg = mail( 
+				$fg = mail(
 					  trim( $this->header_for_mailfunction_to )
 					, trim( $this->header_for_mailfunction_subject )
 					, $this->content_for_mailfunction
@@ -2241,7 +2241,7 @@ $this->debugEchoLf($this->to);
 
 		$this->_charsetDefFix();
 		//
-		// content(body) force convert to utf-8 , 
+		// content(body) force convert to utf-8 ,
 		// because some system function can't do collectlly whitout utf-8,ex preg_replace,striptags
 		//
 		$this->content = $this->convertCharsetRecursive( $this->content , $this->qdmail_system_charset );
@@ -2280,7 +2280,7 @@ $this->debugEchoLf($this->to);
 		}elseif(
 			($this->body_build_once && !$this->body_already_build)
 			||
-			( !$this->body_build_once && ( !$this->attach_build_once || ( $this->attach_build_once && !$this->attach_already_build ) ) ) 
+			( !$this->body_build_once && ( !$this->attach_build_once || ( $this->attach_build_once && !$this->attach_already_build ) ) )
 				){
 			$this->body_structure = $this->buildBody( $this->structure[$structure_no] ,$boundary, false , $boundary_fix );
 		}
@@ -2610,7 +2610,7 @@ $this->debugEchoLf($this->to);
 				$this->finalize( $ar['CONTENT'] );
 			}else{
 				if( !empty( $header ) ){
-					$header .= $this->LFC . $this->LFC ; 
+					$header .= $this->LFC . $this->LFC ;
 				}
 				$add = $bd . $header .  $ar['CONTENT']  ;
 				$this->body =  $this->body . $add . $this->LFC . $this->LFC ;
@@ -2643,9 +2643,9 @@ $this->debugEchoLf($this->to);
 			$content = array_change_key_case( $content , CASE_UPPER );
 			$_content = $content['CONTENT'];
 			$org_char = $this->qdmail_system_charset ; //already converted to system charaset
-			$target_char = isset($content['_CHARSET']) 
+			$target_char = isset($content['_CHARSET'])
 				? $content['_CHARSET'] : $this->charset_content;
-			$length = isset($content['LENGTH']) 
+			$length = isset($content['LENGTH'])
 				? $content['LENGTH'] : $this->wordwrap_length;
 			$content_transfer_enc = !empty($content['ENC'])
 				? $content['ENC'] : $enc;
@@ -2697,7 +2697,7 @@ $this->debugEchoLf($this->to);
 	}
 	//--------------
 	// html => text
-	// must utf-8 because of preg_replace & strip_tags function 
+	// must utf-8 because of preg_replace & strip_tags function
 	//--------------
 	function htmlToText( $html ){
 		$_content = str_replace( array( "\r" , "\n" ) , '' , $html );
@@ -2842,7 +2842,7 @@ $this->debugEchoLf($this->to);
 		$ret = array();
 		foreach( $hd as $hdn ){
 			foreach($this->{$hdn} as $addr ){
-				$ret[] = $addr[$this->tokey['_ADDR']] ; 
+				$ret[] = $addr[$this->tokey['_ADDR']] ;
 			}
 		}
 		if( 0 === count( $ret ) ){
@@ -2855,7 +2855,7 @@ $this->debugEchoLf($this->to);
 	//------------------------------------------------------------------------
 	// Attachment Routine
 	//     attach - set to $this->attach array
-	//        attach OneArray(1 array pattern array('path','attacheName'))  
+	//        attach OneArray(1 array pattern array('path','attacheName'))
 	//        attach Singe (2 string pattern  ('path','attacheName') )
 	//           attachFull - Base Routine  allattch routine call him
 	// buildAttach - called buildBody method
@@ -2975,7 +2975,7 @@ $this->debugEchoLf($this->to);
 		if( isset( $one['CONTENT-TYPE'] )){
 			$type = $one['CONTENT-TYPE'];
 		}elseif( 0 != preg_match( '/\.([^\.]+)$/' , $one['NAME'] , $matches )){
-			$type = isset( $this->attach_ctype[strtolower($matches[1])] ) 
+			$type = isset( $this->attach_ctype[strtolower($matches[1])] )
 				? $this->attach_ctype[strtolower($matches[1])] : 'unkown';
 		}elseif(0 != preg_match( '/\.([^\.]+)$/' , $one['PATH'] , $matches )){
 			$type = isset( $this->attach_ctype[strtolower($matches[1])])
@@ -3020,7 +3020,7 @@ $this->debugEchoLf($this->to);
 				.' filename="'.$filename.'"'
 			;
 		}
-			$ret_boundary = '--'.$boundary ; 
+			$ret_boundary = '--'.$boundary ;
 			$ret_header['Content-Type'] = $type.'; name="'.$filename.'"'
 			;
 			$ret_header['Content-Transfer-Encoding'] = 'base64' ;
@@ -3272,7 +3272,7 @@ $this->debugEchoLf($this->to);
 			$one_line = null ;
 			for ($i = 0; $i <= strlen($line) - 1; $i++){
 				$char = substr ( $line, $i, 1 );
-				$ascii = ord ( $char ); 
+				$ascii = ord ( $char );
 				if ( (32 > $ascii) || (61 == $ascii) || (126 < $ascii) ){
 					$char = '=' . strtoupper ( dechex( $ascii ) );
 				}
@@ -3384,7 +3384,7 @@ $this->debugEchoLf($this->to);
 			return false;
 		}
 		$spacer = $tp ? ' ' : $this->log_LFC ;
-		fwrite( $fp , 
+		fwrite( $fp ,
 			date( $this->log_dateformat )
 			. $spacer
 			. trim( $message )
@@ -3892,10 +3892,10 @@ class sfQdmail extends QdmailUserFunc{
 		$this->reset();
 	}
 	function setCharset($charset){
-    	$this->charset($charset);
+	$this->charset($charset);
 	}
 	function getCharset(){
- 	   $ret = $this->charset();
+	   $ret = $this->charset();
 		return $ret['TEXT'];
 	}
 	function setContentType($content_type){
@@ -3965,11 +3965,11 @@ class sfQdmail extends QdmailUserFunc{
 			$this->mailer = 'sendmail';
         break;
       default:
-    		$this->smtp = false;
-    		$this->sendmail = false;
+		$this->smtp = false;
+		$this->sendmail = false;
 			$this->mailer = 'mail';
         break;
-	  	}
+		}
 	}
 	function getMailer(){
 		return $this->mailer;

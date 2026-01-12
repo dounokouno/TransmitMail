@@ -15,9 +15,9 @@
  * @version			0.2.0a
  * @lastmodified	2008-10-25
  * @license			http://www.opensource.org/licenses/mit-license.php The MIT License
- * 
+ *
  * Qdsmtp is SMTP Taler library ,easy , quickly , usefull .
- * Copyright (C) 2008  spok 
+ * Copyright (C) 2008  spok
 */
 if ( defined('CAKE_CORE_INCLUDE_PATH') || defined('CAKE')) {
 	class QdsmtpBranch extends Object{}
@@ -98,7 +98,7 @@ class QdsmtpError extends QdsmtpBranch{
 			return false;
 		}
 		$spacer = $tp ? $this->log_LFC : $this->log_LFC ;
-		fwrite( $fp , 
+		fwrite( $fp ,
 			date( $this->log_dateformat )
 			. $spacer
 			. trim( $message )
@@ -190,7 +190,7 @@ class QdsmtpBase extends QdsmtpError{
 	}
 
 	//-----------------------------------------
-	// User Interface except POP3 
+	// User Interface except POP3
 	//-----------------------------------------
 	function server( $param = null ){
 		if( is_null( $param ) ){
@@ -437,7 +437,7 @@ class QdsmtpBase extends QdsmtpError{
 
 
 	//----------------------------------------------
-	// Comunication 
+	// Comunication
 	//----------------------------------------------
 	//-------------------------------------------------------------------------
 	// see RFC821
@@ -776,14 +776,14 @@ class QdsmtpBase extends QdsmtpError{
 		fclose($fp_time);
 	}
 	//--------------------------------
-	// Result Colleciton 
+	// Result Colleciton
 	//--------------------------------
 var $smtp_status= array(
 
-	'USER' => array( 
+	'USER' => array(
 		'+OK' => 'S', // for pop3
 	),
-	'PASS' => array( 
+	'PASS' => array(
 		'+OK' => 'S', // for pop3
 	),
 
