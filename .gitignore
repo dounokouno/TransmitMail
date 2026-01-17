@@ -2,11 +2,16 @@
 /config/config.json
 /config/config.yaml
 /config/config.yml
+/environments/php*/vendor/
 /log/error.log
+/log/tests/error.log
 /tests/.phpunit.result.cache
 /tmp/file_*
 /tmp/screenshot/*
 !/tmp/screenshot/.gitkeep
+/tmp/tests/screenshot/*
+!/tmp/tests/screenshot/.gitkeep
 /vendor/
 /php*/vendor/
+/.phpunit.result.cache
 /.vscode/
