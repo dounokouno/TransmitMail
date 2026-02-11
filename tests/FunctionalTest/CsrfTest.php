@@ -35,8 +35,8 @@ class CsrfTest extends TransmitMailPantherTestCase
         $this->assertIsObject($this->filter($this->selector));
 
         // エラーメッセージが表示されていないことの確認
-        $this->assertStringNotContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
-        $this->assertStringNotContainsString($this->errorMessage, $this->filterAndGetText('#content'));
+        $this->assertStringNotContainsString($this->globalErrorMessage, $this->findElementAndGetText('#content'));
+        $this->assertStringNotContainsString($this->errorMessage, $this->findElementAndGetText('#content'));
 
         // テストの実行（失敗する場合）
         $this->inputErrorTestForCsrfTest('');
@@ -55,8 +55,8 @@ class CsrfTest extends TransmitMailPantherTestCase
         $this->tm->config['csrf'] = false;
 
         // エラーメッセージが表示されていないことの確認
-        $this->assertStringNotContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
-        $this->assertStringNotContainsString($this->errorMessage, $this->filterAndGetText('#content'));
+        $this->assertStringNotContainsString($this->globalErrorMessage, $this->findElementAndGetText('#content'));
+        $this->assertStringNotContainsString($this->errorMessage, $this->findElementAndGetText('#content'));
 
         // 入力フィールドの確認
         $this->assertNotEquals('', $this->getTargetValue());
@@ -71,12 +71,12 @@ class CsrfTest extends TransmitMailPantherTestCase
      */
     private function inputErrorTestForCsrfTest($value)
     {
-        $this->filterAndClear($this->selector);
-        $this->filterAndSetValue($this->selector, $value);
+        $this->findElementAndClear($this->selector);
+        $this->findElementAndSetValue($this->selector, $value);
         $this->inputRequiredField();
         $this->submitInputForm();
-        $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
-        $this->assertEquals($this->errorMessage, $this->filterAndGetText('#content ul li'));
+        $this->assertStringContainsString($this->globalErrorMessage, $this->findElementAndGetText('#content'));
+        $this->assertEquals($this->errorMessage, $this->findElementAndGetText('#content ul li'));
     }
 
     /**
@@ -88,11 +88,11 @@ class CsrfTest extends TransmitMailPantherTestCase
         $this->inputRequiredField();
         $this->submitInputForm();
         $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
-        $this->assertEquals($value, $this->filterAndGetValue($hiddenFieldSelector));
+        $this->assertEquals($value, $this->findElementAndGetValue($hiddenFieldSelector));
 
         // 入力画面に戻る
         $this->returnInputPage();
-        $this->assertEquals($value, $this->filterAndGetValue($this->selector));
+        $this->assertEquals($value, $this->findElementAndGetValue($this->selector));
     }
 
     /**
@@ -101,6 +101,6 @@ class CsrfTest extends TransmitMailPantherTestCase
     private function getTargetValue()
     {
         $this->crawler = $this->client->getCrawler();
-        return $this->filterAndGetValue($this->selector);
+        return $this->findElementAndGetValue($this->selector);
     }
 }

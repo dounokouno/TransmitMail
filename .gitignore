@@ -4,7 +4,7 @@
 /config/config.yml
 /environments/php*/vendor/
 /log/error.log
-/log/tests/error.log
+/log/tests/*.log
 /tests/.phpunit.result.cache
 /tmp/file_*
 /tmp/screenshot/*

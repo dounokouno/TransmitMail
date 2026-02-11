@@ -76,7 +76,6 @@ RUN if grep -q "buster" /etc/os-release; then \
         apt-get update -y && apt-get install -y --no-install-recommends libu2f-udev:amd64 && rm -rf /var/lib/apt/lists/*; \
     fi
 
-# TODO: このパラメーターが必要か検討する
 ARG CHROME_VERSION=""
 # Chrome for Testing と ChromeDriver の特定のバージョンをインストール
 # Install specific versions of Chrome for Testing and ChromeDriver.
@@ -160,34 +159,7 @@ RUN docker-php-ext-install -j$(nproc) zip
 RUN docker-php-ext-install -j$(nproc) exif
 RUN docker-php-ext-install -j$(nproc) pdo_mysql
 
-# Create directories for Panther logs and screenshots
-# Pantherのログやスクリーンショット保存用のディレクトリを作成
-RUN mkdir -p /app/tmp /var/log/panther_logs && \
-    chmod -R 777 /app/tmp /var/log/panther_logs
-
-# ChromeDriverのラッパースクリプトを作成
-RUN echo '#!/bin/bash' > /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'WRAPPER_LOG_FILE="/tmp/chromedriver_wrapper_execution.log"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "Wrapper script started immediately at $(date) with args: $@" >> /app/tmp/wrapper_debug.log' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo '# Redirect subsequent output of this script (stdout and stderr) to the log file' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'exec > /app/tmp/wrapper_debug.log 2>&1' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'set -x  # Print each command before it is executed' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "--- Chromedriver Wrapper Script Continued (Launching real chromedriver) ---"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "Date: $(date)"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "Arguments received: $@" ' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "Current user: $(whoami)"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "Script path: $0"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "PWD: $(pwd)"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'ls -l /usr/local/bin/chromedriver_wrapper.sh # Check its own permissions' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'ls -l /usr/local/bin/chromedriver          # Check chromedriver permissions' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "Environment:"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    # The 'env' command should be part of the script to log runtime environment variables.
-    echo 'env' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'echo "--- Executing /usr/local/bin/chromedriver ---"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    echo 'exec /usr/local/bin/chromedriver "$@"' >> /usr/local/bin/chromedriver_wrapper.sh && \
-    chmod +x /usr/local/bin/chromedriver_wrapper.sh
-
 # Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 
 WORKDIR /app
