@@ -1,9 +1,3 @@
-# TODO: circleci config を設定する
-# TODO: コードを整理してコミットする
-# TODO: test 時の添付ファイルのアップロード先を変更する。もしくは tmp ディレクトリ以下は docker コンテナ内にする
-# TODO: ビルトインサーバーに接続できるポートを開ける
-# TODO: スクショが出力されていない気がする。要調査
-
 x-php-base: &php-base
   volumes:
     - .:/app
@@ -14,7 +8,7 @@ x-php-base: &php-base
 
 x-php-build-base: &php-build-base
   context: .
-  dockerfile: Dockerfile.php
+  dockerfile: docker/Dockerfile.php
 
 services:
   php72:

@@ -23,11 +23,11 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
     protected $confirmPageTitle = '入力内容の確認 | TransmitMail サンプル';
     protected $errorPageTitle = 'エラー | TransmitMail サンプル';
     protected $globalErrorMessage = '入力内容に誤りがあります';
-    // TODO: テスト画像を変更する
-    protected $testimage = __DIR__ . '/testimage01.jpg';
+    protected $testimage = __DIR__ . '/testimage01.png';
     protected $configFile = __DIR__ . '/../../config/config.test.yml';
-    // TODO: confog.test.yml に tmpdir と logdir の設定を書く
     protected $tmpDir = __DIR__ . '/../../tmp/tests';
+    protected $logDir = __DIR__ . '/../../log/tests';
+    protected $routerFile = 'index.test.php';
     protected $inputPatterns = [];
     protected $lenFieldInputPatterns = [];
     protected $urlInputPatterns = [];
@@ -38,6 +38,14 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
+        // ログと一時ディレクトリの作成
+        if (!file_exists($this->tmpDir)) {
+            mkdir($this->tmpDir, 0777, true);
+        }
+        if (!file_exists($this->logDir)) {
+            mkdir($this->logDir, 0777, true);
+        }
 
         $this->inputPatterns['kanji'] = '漢字';
         $this->inputPatterns['hiragana'] = 'ひらがな';
@@ -169,7 +177,7 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
 
         $clientOptions = [
             'webServerDir' => __DIR__ . '/../../',
-            'router' => 'index.test.php',
+            'router' => $this->routerFile,
             'chrome_arguments' => [
                 '--headless',
                 '--no-sandbox',
@@ -187,18 +195,21 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
             ]
         ];
 
-        $this->client = static::createPantherClient($clientOptions);
+        $managerOptions = [
+            'chromedriver_arguments' => [
+                '--log-path=' . $this->logDir . '/chromedriver.log',
+                '--verbose',
+            ],
+        ];
+
+        $this->client = static::createPantherClient($clientOptions, [], $managerOptions);
 
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
 
         $this->tm = new \TransmitMail();
-        // TODO: tmpDir と logDir の設定を追加する
-        // $screenshotDir = __DIR__ . '/../../tmp/screenshot';
-        // $this->tm->init();
         $this->tm->init($this->configFile);
 
-        $this->crawler = $this->client->request('GET', '/index.test.php');
-        // $this->crawler = $this->client->request('GET', '');
+        $this->crawler = $this->client->request('GET', '/');
     }
 
     protected function tearDown(): void
@@ -267,35 +278,39 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
         }
     }
 
-    // TODO: ここを修正する
     protected function filter($selector): ?object
     {
         return $this->crawler->filter($selector);
     }
 
-    protected function filterAndGetValue($selector): ?string
+    protected function findElement($selector): ?object
     {
-        return $this->client->findElement(WebDriverBy::cssSelector($selector))->getAttribute('value');
+        return $this->client->findElement(WebDriverBy::cssSelector($selector));
     }
 
-    protected function filterAndSetValue($selector, $value): void
+    protected function findElementAndGetValue($selector): ?string
     {
-        $this->client->findElement(WebDriverBy::cssSelector($selector))->sendKeys($value);
+        return $this->findElement($selector)->getAttribute('value');
     }
 
-    protected function filterAndClear($selector): void
+    protected function findElementAndSetValue($selector, $value): void
     {
-        $this->client->findElement(WebDriverBy::cssSelector($selector))->clear();
+        $this->findElement($selector)->sendKeys($value);
     }
 
-    protected function filterAndGetAttr($selector, $attr): ?string
+    protected function findElementAndClear($selector): void
     {
-        return $this->client->findElement(WebDriverBy::cssSelector($selector))->getAttribute($attr);
+        $this->findElement($selector)->clear();
     }
 
-    protected function filterAndGetText($selector): ?string
+    protected function findElementAndGetAttr($selector, $attr): ?string
     {
-        return $this->client->findElement(WebDriverBy::cssSelector($selector))->getText();
+        return $this->findElement($selector)->getAttribute($attr);
+    }
+
+    protected function findElementAndGetText($selector): ?string
+    {
+        return $this->findElement($selector)->getText();
     }
 
     /**
@@ -304,11 +319,11 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
     protected function inputRequiredField(): void
     {
         $selector = 'input[type="text"][name="入力必須"]';
-        $this->filterAndClear($selector);
-        $this->filterAndSetValue($selector, '入力必須項目の入力テスト');
+        $this->findElementAndClear($selector);
+        $this->findElementAndSetValue($selector, '入力必須項目の入力テスト');
 
         // ファイルの入力必須
-        $this->filterAndSetValue('input[type="file"][name="ファイルの入力必須"]', $this->testimage);
+        $this->findElementAndSetValue('input[type="file"][name="ファイルの入力必須"]', $this->testimage);
     }
 
     /**
@@ -340,14 +355,14 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
         $convertedValues = $this->convert($values, $convertMode);
 
         for ($i = 0, $size = count($values); $i < $size; ++$i) {
-            $this->filterAndClear($selector);
-            $this->filterAndSetValue($selector, $values[$i]);
+            $this->findElementAndClear($selector);
+            $this->findElementAndSetValue($selector, $values[$i]);
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
-            $this->assertEquals($errorMessage, $this->filterAndGetText('#content ul li'));
-            $this->assertEquals($errorMessage, $this->filterAndGetText('#content table tr td div.error'));
-            $this->assertEquals($convertedValues[$i], $this->filterAndGetValue($selector));
+            $this->assertStringContainsString($this->globalErrorMessage, $this->findElementAndGetText('#content'));
+            $this->assertEquals($errorMessage, $this->findElementAndGetText('#content ul li'));
+            $this->assertEquals($errorMessage, $this->findElementAndGetText('#content table tr td div.error'));
+            $this->assertEquals($convertedValues[$i], $this->findElementAndGetValue($selector));
         }
     }
 
@@ -369,17 +384,17 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
         }
 
         for ($i = 0, $size = count($values); $i < $size; ++$i) {
-            $this->filterAndClear($selector);
-            $this->filterAndSetValue($selector, $values[$i]);
+            $this->findElementAndClear($selector);
+            $this->findElementAndSetValue($selector, $values[$i]);
             $this->inputRequiredField();
             $this->submitInputForm();
             $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
-            $this->assertStringContainsString($convertedValues[$i], $this->crawler->filter('#content table')->text());
-            $this->assertEquals($convertedValues[$i], $this->filterAndGetValue($hiddenFieldSelector));
+            $this->assertStringContainsString($convertedValues[$i], $this->filter('#content table')->text());
+            $this->assertEquals($convertedValues[$i], $this->findElementAndGetValue($hiddenFieldSelector));
 
             // 入力画面に戻る
             $this->returnInputPage();
-            $this->assertEquals($convertedValues[$i], $this->filterAndGetValue($selector));
+            $this->assertEquals($convertedValues[$i], $this->findElementAndGetValue($selector));
         }
     }
 
@@ -394,7 +409,7 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
         }
 
         $this->crawler = $this->client->getCrawler();
-        $form = $this->crawler->filter('form')->form();
+        $form = $this->filter('form')->form();
         $this->client->submit($form);
 
         // 送信直後にウィンドウが存在することを確認
@@ -427,7 +442,7 @@ abstract class TransmitMailPantherTestCase extends PantherTestCase
      */
     protected function returnInputPage(): void
     {
-        $form = $this->crawler->filter('form:has(input[type="hidden"][name="page_name"][value="input"])')->first()->form();
+        $form = $this->filter('form:has(input[type="hidden"][name="page_name"][value="input"])')->first()->form();
         $this->client->submit($form);
         $this->crawler = $this->client->getCrawler();
     }

@@ -29,8 +29,8 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             ]
         ];
         $targetNameValues = [
-            'text' => $this->filterAndGetAttr($selectors['text']['target'], 'name'),
-            'file' => $this->filterAndGetAttr($selectors['file']['target'], 'name')
+            'text' => $this->findElementAndGetAttr($selectors['text']['target'], 'name'),
+            'file' => $this->findElementAndGetAttr($selectors['file']['target'], 'name')
         ];
         $errorMessages = [
             'text' => $targetNameValues['text'] . $this->tm->config['error_required'],
@@ -42,26 +42,26 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // 入力必須とするフィールドを確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['text']['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['text']['target']));
         $this->assertIsObject($this->filter($selectors['text']['option']));
-        $this->assertEquals('', $this->filterAndGetValue($selectors['file']['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['file']['target']));
         $this->assertIsObject($this->filter($selectors['file']['option']));
 
         // エラーの場合
         $this->submitInputForm();
-        $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
-        $this->assertEquals($errorMessages['text'], $this->filterAndGetText('#content ul li:first-child'));
-        $this->assertEquals($errorMessages['file'], $this->filterAndGetText('#content ul li:last-child'));
-        $this->assertEquals($errorMessages['text'], $this->filterAndGetText('#content table tr td div.error'));
-        $this->assertEquals($errorMessages['file'], $this->filterAndGetText('#content form .section:nth-child(3) table tr:last-child td div.error'));
+        $this->assertStringContainsString($this->globalErrorMessage, $this->findElementAndGetText('#content'));
+        $this->assertEquals($errorMessages['text'], $this->findElementAndGetText('#content ul li:first-child'));
+        $this->assertEquals($errorMessages['file'], $this->findElementAndGetText('#content ul li:last-child'));
+        $this->assertEquals($errorMessages['text'], $this->findElementAndGetText('#content table tr td div.error'));
+        $this->assertEquals($errorMessages['file'], $this->findElementAndGetText('#content form .section:nth-child(3) table tr:last-child td div.error'));
 
         // 成功の場合
-        $this->filterAndSetValue($selectors['text']['target'], $validValues['text']);
-        $this->filterAndSetValue($selectors['file']['target'], $validValues['file']);
+        $this->findElementAndSetValue($selectors['text']['target'], $validValues['text']);
+        $this->findElementAndSetValue($selectors['file']['target'], $validValues['file']);
         $this->submitInputForm();
         $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
-        $this->assertStringContainsString($validValues['text'], $this->filterAndGetText('#content table'));
-        $this->assertStringContainsString(basename($validValues['file']), $this->filterAndGetText('#content table'));
+        $this->assertStringContainsString($validValues['text'], $this->findElementAndGetText('#content table'));
+        $this->assertStringContainsString(basename($validValues['file']), $this->findElementAndGetText('#content table'));
     }
 
     /**
@@ -73,7 +73,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="メールアドレス"]',
             'option' => 'input[type="hidden"][name="email[]"][value="メールアドレス"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_email'];
         $invalidValues = [
             'user@foo,com',
@@ -93,7 +93,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // 入力フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -110,7 +110,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="半角文字"]',
             'option' => 'input[type="hidden"][name="hankaku[]"][value="半角文字"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_hankaku'];
 
         // 入力エラーにならない入力パターン
@@ -132,7 +132,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -148,7 +148,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="半角英数字"]',
             'option' => 'input[type="hidden"][name="hankaku_eisu[]"][value="半角英数字"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_hankaku_eisu'];
 
         // 入力エラーにならない入力パターン
@@ -162,7 +162,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -178,7 +178,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="半角英字"]',
             'option' => 'input[type="hidden"][name="hankaku_eiji[]"][value="半角英字"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_hankaku_eiji'];
 
         // 入力エラーにならない入力パターン
@@ -188,7 +188,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -204,7 +204,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="数字"]',
             'option' => 'input[type="hidden"][name="num[]"][value="数字"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num'];
 
         // 入力エラーにならない入力パターン
@@ -214,7 +214,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -230,7 +230,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="数字＋ハイフン"]',
             'option' => 'input[type="hidden"][name="num_hyphen[]"][value="数字＋ハイフン"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_hyphen'];
 
         // 入力エラーにならない入力パターン
@@ -242,7 +242,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -258,7 +258,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="ひらがな"]',
             'option' => 'input[type="hidden"][name="hiragana[]"][value="ひらがな"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_hiragana'];
 
         // 入力エラーにならない入力パターン
@@ -269,7 +269,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -285,7 +285,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="全角カタカナ"]',
             'option' => 'input[type="hidden"][name="zenkaku_katakana[]"][value="全角カタカナ"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku_katakana'];
 
         // 入力エラーにならない入力パターン
@@ -296,7 +296,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -312,7 +312,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="全角文字を含むか"]',
             'option' => 'input[type="hidden"][name="zenkaku[]"][value="全角文字を含むか"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku'];
 
         // 入力エラーにならない入力パターン
@@ -334,7 +334,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -350,7 +350,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="全て全角文字"]',
             'option' => 'input[type="hidden"][name="zenkaku_all[]"][value="全て全角文字"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku_all'];
 
         // 入力エラーにならない入力パターン
@@ -368,7 +368,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -384,7 +384,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="3文字以上"]',
             'option' => 'input[type="hidden"][name="len[]"][value="3文字以上 3-"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '3文字以上', $errorMessage);
 
@@ -407,7 +407,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -423,7 +423,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="3文字以下"]',
             'option' => 'input[type="hidden"][name="len[]"][value="3文字以下 -3"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '3文字以下', $errorMessage);
 
@@ -438,7 +438,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -454,7 +454,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="3文字固定"]',
             'option' => 'input[type="hidden"][name="len[]"][value="3文字固定 3-3"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '3文字', $errorMessage);
 
@@ -465,7 +465,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -481,7 +481,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="6文字以上8文字以下"]',
             'option' => 'input[type="hidden"][name="len[]"][value="6文字以上8文字以下 6-8"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_len'];
         $errorMessage = str_replace('{文字数}', '6〜8文字', $errorMessage);
 
@@ -496,7 +496,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -513,7 +513,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target2' => 'input[type="text"][name="一致2"]',
             'option' => 'input[type="hidden"][name="match[]"]'
         ];
-        $target1NameValue = $this->filterAndGetAttr($selectors['target1'], 'name');
+        $target1NameValue = $this->findElementAndGetAttr($selectors['target1'], 'name');
         $errorMessage = $target1NameValue . $this->tm->config['error_match'];
 
         // 入力パターン
@@ -537,40 +537,40 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target1']));
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target2']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target1']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target2']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // 入力エラーの場合のテスト
         foreach ($invalidValues as $values) {
-            $this->filterAndClear($selectors['target1']);
-            $this->filterAndClear($selectors['target2']);
-            $this->filterAndSetValue($selectors['target1'], $values[0]);
-            $this->filterAndSetValue($selectors['target2'], $values[1]);
+            $this->findElementAndClear($selectors['target1']);
+            $this->findElementAndClear($selectors['target2']);
+            $this->findElementAndSetValue($selectors['target1'], $values[0]);
+            $this->findElementAndSetValue($selectors['target2'], $values[1]);
             $this->inputRequiredField();
             $this->submitInputForm();
-            $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
-            $this->assertEquals($errorMessage, $this->filterAndGetText('#content ul li'));
-            $this->assertEquals($errorMessage, $this->filterAndGetText('#content table tr td div.error'));
-            $this->assertEquals($values[0], $this->filterAndGetValue($selectors['target1']));
-            $this->assertEquals($values[1], $this->filterAndGetValue($selectors['target2']));
+            $this->assertStringContainsString($this->globalErrorMessage, $this->findElementAndGetText('#content'));
+            $this->assertEquals($errorMessage, $this->findElementAndGetText('#content ul li'));
+            $this->assertEquals($errorMessage, $this->findElementAndGetText('#content table tr td div.error'));
+            $this->assertEquals($values[0], $this->findElementAndGetValue($selectors['target1']));
+            $this->assertEquals($values[1], $this->findElementAndGetValue($selectors['target2']));
         }
 
         // 入力エラーにならない場合のテスト
         foreach ($validValues as $values) {
             $this->crawler = $this->client->request('GET', '');
-            $this->filterAndSetValue($selectors['target1'], $values[0]);
-            $this->filterAndSetValue($selectors['target2'], $values[1]);
+            $this->findElementAndSetValue($selectors['target1'], $values[0]);
+            $this->findElementAndSetValue($selectors['target2'], $values[1]);
             $this->inputRequiredField();
             $this->submitInputForm();
             $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
-            $this->assertStringContainsString($values[0], $this->filterAndGetText('#content table'));
-            $this->assertStringContainsString($values[1], $this->filterAndGetText('#content table'));
+            $this->assertStringContainsString($values[0], $this->findElementAndGetText('#content table'));
+            $this->assertStringContainsString($values[1], $this->findElementAndGetText('#content table'));
 
             // 入力画面に戻る
             $this->returnInputPage();
-            $this->assertEquals($values[0], $this->filterAndGetValue($selectors['target1']));
-            $this->assertEquals($values[1], $this->filterAndGetValue($selectors['target2']));
+            $this->assertEquals($values[0], $this->findElementAndGetValue($selectors['target1']));
+            $this->assertEquals($values[1], $this->findElementAndGetValue($selectors['target2']));
         }
     }
 
@@ -585,7 +585,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="URL"]',
             'option' => 'input[type="hidden"][name="url[]"][value="URL"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_url'];
 
         // 入力エラーにならない入力パターン
@@ -609,7 +609,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -625,7 +625,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="3以下の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以下の数字 -3"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', '0以上、3以下', $errorMessage);
 
@@ -638,7 +638,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -654,12 +654,12 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="3以下の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以下の数字 -3"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -675,7 +675,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="3以上の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以上の数字 3-"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', '3以上', $errorMessage);
 
@@ -699,7 +699,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -715,12 +715,12 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="3以上の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="3以上の数字 3-"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -736,7 +736,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="ちょうど3の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="ちょうど3の数字 3-3"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', 'ちょうど3', $errorMessage);
 
@@ -746,7 +746,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -762,12 +762,12 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="ちょうど3の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="ちょうど3の数字 3-3"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -783,7 +783,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="1〜12の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}', '1以上、12以下', $errorMessage);
 
@@ -804,7 +804,7 @@ class InputOptionsTest extends TransmitMailPantherTestCase
         ];
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行
@@ -820,12 +820,12 @@ class InputOptionsTest extends TransmitMailPantherTestCase
             'target' => 'input[type="text"][name="1〜12の数字"]',
             'option' => 'input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]'
         ];
-        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $targetNameValue = $this->findElementAndGetAttr($selectors['target'], 'name');
         $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
         $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
 
         // フィールドの確認
-        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertEquals('', $this->findElementAndGetValue($selectors['target']));
         $this->assertIsObject($this->filter($selectors['option']));
 
         // テストの実行

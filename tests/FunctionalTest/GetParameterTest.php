@@ -24,11 +24,11 @@ class GetParameterTest extends TransmitMailPantherTestCase
 
         foreach ($values as $value) {
             $this->crawler = $this->client->request('GET', '/' . $this->tm->config['mailform_program'] . '?example=' . urlencode($value));
-            $this->assertEquals($value, $this->filterAndGetValue('input[type="hidden"][name="GET値取得サンプル"]'));
+            $this->assertEquals($value, $this->findElementAndGetValue('input[type="hidden"][name="GET値取得サンプル"]'));
             $this->inputRequiredField();
             $this->submitInputForm();
             $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
-            $this->assertStringContainsString($value, $this->filterAndGetText('#content table'));
+            $this->assertStringContainsString($value, $this->findElementAndGetText('#content table'));
         }
     }
 
@@ -39,7 +39,7 @@ class GetParameterTest extends TransmitMailPantherTestCase
     {
         $this->inputRequiredField();
         $this->submitInputForm();
-        $imgUrl = $this->filterAndGetAttr('#content table a', 'href');
+        $imgUrl = $this->findElementAndGetAttr('#content table a', 'href');
 
         $imgFileName = explode('?file=', $imgUrl)[1];
         $values = array_merge([$this->getParameter], $this->templateSyntaxInputPatterns);
@@ -47,7 +47,7 @@ class GetParameterTest extends TransmitMailPantherTestCase
         // 送信した画像ファイルの場合
         $this->crawler = $this->client->request('GET', '/' . $this->tm->config['mailform_program'] . '?file=' . urlencode($imgFileName));
         $regexp = '/' . preg_quote($imgFileName, '/') . '$/';
-        $attr = $this->filterAndGetAttr('img', 'src');
+        $attr = $this->findElementAndGetAttr('img', 'src');
         if (method_exists($this, 'assertMatchesRegularExpression')) {
             $this->assertMatchesRegularExpression($regexp, $attr);
         } else {
@@ -58,7 +58,7 @@ class GetParameterTest extends TransmitMailPantherTestCase
         foreach ($values as $value) {
             $this->crawler = $this->client->request('GET', '/' . $this->tm->config['mailform_program'] . '?file=' . urlencode($value));
             $this->assertEquals($this->errorPageTitle, $this->client->getTitle());
-            $this->assertStringContainsString($this->filterAndGetText('#content ul > li'), $value . $this->tm->config['error_file_not_exist']);
+            $this->assertStringContainsString($this->findElementAndGetText('#content ul > li'), $value . $this->tm->config['error_file_not_exist']);
         }
     }
 }
