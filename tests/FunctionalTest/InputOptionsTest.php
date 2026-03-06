@@ -1,0 +1,834 @@
+<?php
+/**
+ * Input options test
+ *
+ * @package    TransmitMail
+ * @subpackage PHPUnit with Symfony panther
+ * @license    MIT License
+ * @copyright  TransmitMail development team
+ * @link       https://github.com/dounokouno/TransmitMail
+ */
+
+namespace TransmitMail\Tests;
+
+class InputOptionsTest extends TransmitMailPantherTestCase
+{
+    /**
+     * 入力必須のテスト
+     */
+    public function testRequiredField()
+    {
+        $selectors = [
+            'text' => [
+                'target' => 'input[type="text"][name="入力必須"]',
+                'option' => 'input[type="hidden"][name="required[]"][value="入力必須"]'
+            ],
+            'file' => [
+                'target' => 'input[type="file"][name="ファイルの入力必須"]',
+                'option' => 'input[type="hidden"][name="file_required[]"][value="ファイルの入力必須"]'
+            ]
+        ];
+        $targetNameValues = [
+            'text' => $this->filterAndGetAttr($selectors['text']['target'], 'name'),
+            'file' => $this->filterAndGetAttr($selectors['file']['target'], 'name')
+        ];
+        $errorMessages = [
+            'text' => $targetNameValues['text'] . $this->tm->config['error_required'],
+            'file' => $targetNameValues['file'] . $this->tm->config['error_file_required']
+        ];
+        $validValues = [
+            'text' => '入力必須項目の入力テスト',
+            'file' => $this->testimage
+        ];
+
+        // 入力必須とするフィールドを確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['text']['target']));
+        $this->assertIsObject($this->filter($selectors['text']['option']));
+        $this->assertEquals('', $this->filterAndGetValue($selectors['file']['target']));
+        $this->assertIsObject($this->filter($selectors['file']['option']));
+
+        // エラーの場合
+        $this->submitInputForm();
+        $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
+        $this->assertEquals($errorMessages['text'], $this->filterAndGetText('#content ul li:first-child'));
+        $this->assertEquals($errorMessages['file'], $this->filterAndGetText('#content ul li:last-child'));
+        $this->assertEquals($errorMessages['text'], $this->filterAndGetText('#content table tr td div.error'));
+        $this->assertEquals($errorMessages['file'], $this->filterAndGetText('#content form .section:nth-child(3) table tr:last-child td div.error'));
+
+        // 成功の場合
+        $this->filterAndSetValue($selectors['text']['target'], $validValues['text']);
+        $this->filterAndSetValue($selectors['file']['target'], $validValues['file']);
+        $this->submitInputForm();
+        $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
+        $this->assertStringContainsString($validValues['text'], $this->filterAndGetText('#content table'));
+        $this->assertStringContainsString(basename($validValues['file']), $this->filterAndGetText('#content table'));
+    }
+
+    /**
+     * メールアドレスの書式チェックのテスト
+     */
+    public function testMailAddressField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="メールアドレス"]',
+            'option' => 'input[type="hidden"][name="email[]"][value="メールアドレス"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_email'];
+        $invalidValues = [
+            'user@foo,com',
+            'user_at_foo.org',
+            'foo@bar_baz_com',
+            'foo@bar+baz.com'
+        ];
+        $validValues = [
+            'info@example',
+            'info@example.com',
+            'info..@example.com',
+            'info@example.co.jp',
+            'info@example.museum',
+            'lastname.firstname@example.com',
+            'lastname+firstname@example.com',
+            'lastname+firstname@example.unknowndomain'
+        ];
+
+        // 入力フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputErrorTest($invalidValues, $selectors['target'], $errorMessage);
+        $this->inputSuccessTest($validValues, $selectors['target']);
+    }
+
+    /**
+     * 半角文字の入力チェックのテスト
+     */
+    public function testHankakuField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="半角文字"]',
+            'option' => 'input[type="hidden"][name="hankaku[]"][value="半角文字"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_hankaku'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['num'],
+            $this->inputPatterns['zenkakuNum'],
+            $this->inputPatterns['eiji'],
+            $this->inputPatterns['zenkakuEiji'],
+            $this->inputPatterns['numHyphen'],
+            $this->inputPatterns['zenkakuNumHyphen'],
+            $this->inputPatterns['eijiHyphen'],
+            $this->inputPatterns['zenkakuEijiHyphen'],
+            $this->inputPatterns['eisu'],
+            $this->inputPatterns['zenkakuEisu'],
+            $this->inputPatterns['eisuHyphen'],
+            $this->inputPatterns['zenkakuEisuHyphen'],
+            $this->inputPatterns['eisuKigo'],
+            $this->inputPatterns['zenkakuEisuKigo']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hankaku');
+    }
+
+    /**
+     * 半角英数字の入力チェックのテスト
+     */
+    public function testHankakuEisuField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="半角英数字"]',
+            'option' => 'input[type="hidden"][name="hankaku_eisu[]"][value="半角英数字"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_hankaku_eisu'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['num'],
+            $this->inputPatterns['zenkakuNum'],
+            $this->inputPatterns['eiji'],
+            $this->inputPatterns['zenkakuEiji'],
+            $this->inputPatterns['eisu'],
+            $this->inputPatterns['zenkakuEisu']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hankaku_eisu');
+    }
+
+    /**
+     * 半角英字の入力チェックのテスト
+     */
+    public function testHankakuEijiField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="半角英字"]',
+            'option' => 'input[type="hidden"][name="hankaku_eiji[]"][value="半角英字"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_hankaku_eiji'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['eiji'],
+            $this->inputPatterns['zenkakuEiji']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hankaku_eiji');
+    }
+
+    /**
+     * 数字の入力チェックのテスト
+     */
+    public function testNumField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="数字"]',
+            'option' => 'input[type="hidden"][name="num[]"][value="数字"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['num'],
+            $this->inputPatterns['zenkakuNum']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'num');
+    }
+
+    /**
+     * 数字＋ハイフンの入力チェックのテスト
+     */
+    public function testNumHyphenField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="数字＋ハイフン"]',
+            'option' => 'input[type="hidden"][name="num_hyphen[]"][value="数字＋ハイフン"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_hyphen'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['num'],
+            $this->inputPatterns['zenkakuNum'],
+            $this->inputPatterns['numHyphen'],
+            $this->inputPatterns['zenkakuNumHyphen']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'num_hyphen');
+    }
+
+    /**
+     * ひらがなの入力チェックのテスト
+     */
+    public function testHiraganaField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="ひらがな"]',
+            'option' => 'input[type="hidden"][name="hiragana[]"][value="ひらがな"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_hiragana'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['hiragana'],
+            $this->inputPatterns['katakana'],
+            $this->inputPatterns['hankakuKatakana']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'hiragana');
+    }
+
+    /**
+     * 全角カタカナの入力チェックのテスト
+     */
+    public function testZenkakuKatakanaField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="全角カタカナ"]',
+            'option' => 'input[type="hidden"][name="zenkaku_katakana[]"][value="全角カタカナ"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku_katakana'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['hiragana'],
+            $this->inputPatterns['katakana'],
+            $this->inputPatterns['hankakuKatakana']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage, 'zenkaku_katakana');
+    }
+
+    /**
+     * 全角文字を含むかの入力チェックのテスト
+     */
+    public function testZenkakuField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="全角文字を含むか"]',
+            'option' => 'input[type="hidden"][name="zenkaku[]"][value="全角文字を含むか"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['kanji'],
+            $this->inputPatterns['hiragana'],
+            $this->inputPatterns['katakana'],
+            $this->inputPatterns['kanjiNum'],
+            $this->inputPatterns['kanjiNumHyphen'],
+            $this->inputPatterns['kanjiEiji'],
+            $this->inputPatterns['kanjiEijiHyphen'],
+            $this->inputPatterns['zenkakuNum'],
+            $this->inputPatterns['zenkakuEiji'],
+            $this->inputPatterns['zenkakuNumHyphen'],
+            $this->inputPatterns['zenkakuEijiHyphen'],
+            $this->inputPatterns['zenkakuEisu'],
+            $this->inputPatterns['zenkakuEisuHyphen'],
+            $this->inputPatterns['zenkakuEisuKigo']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 全て全角文字の入力チェックのテスト
+     */
+    public function testZenkakuAllField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="全て全角文字"]',
+            'option' => 'input[type="hidden"][name="zenkaku_all[]"][value="全て全角文字"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_zenkaku_all'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->inputPatterns['kanji'],
+            $this->inputPatterns['hiragana'],
+            $this->inputPatterns['katakana'],
+            $this->inputPatterns['hankakuKatakana'],
+            $this->inputPatterns['zenkakuNum'],
+            $this->inputPatterns['zenkakuEiji'],
+            $this->inputPatterns['zenkakuNumHyphen'],
+            $this->inputPatterns['zenkakuEijiHyphen'],
+            $this->inputPatterns['zenkakuEisu'],
+            $this->inputPatterns['zenkakuEisuHyphen']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->inputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 3文字以上の文字数チェックのテスト
+     */
+    public function testLenFieldThreeOrMoreCharacters()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="3文字以上"]',
+            'option' => 'input[type="hidden"][name="len[]"][value="3文字以上 3-"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
+        $errorMessage = str_replace('{文字数}', '3文字以上', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->lenFieldInputPatterns['eiji3'],
+            $this->lenFieldInputPatterns['eiji4'],
+            $this->lenFieldInputPatterns['eiji5'],
+            $this->lenFieldInputPatterns['eiji6'],
+            $this->lenFieldInputPatterns['eiji7'],
+            $this->lenFieldInputPatterns['eiji8'],
+            $this->lenFieldInputPatterns['eiji9'],
+            $this->lenFieldInputPatterns['hiragana3'],
+            $this->lenFieldInputPatterns['hiragana4'],
+            $this->lenFieldInputPatterns['hiragana5'],
+            $this->lenFieldInputPatterns['hiragana6'],
+            $this->lenFieldInputPatterns['hiragana7'],
+            $this->lenFieldInputPatterns['hiragana8'],
+            $this->lenFieldInputPatterns['hiragana9']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 3文字以下の文字数チェックのテスト
+     */
+    public function testLenFieldThreeOrLessCharacters()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="3文字以下"]',
+            'option' => 'input[type="hidden"][name="len[]"][value="3文字以下 -3"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
+        $errorMessage = str_replace('{文字数}', '3文字以下', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->lenFieldInputPatterns['eiji1'],
+            $this->lenFieldInputPatterns['eiji2'],
+            $this->lenFieldInputPatterns['eiji3'],
+            $this->lenFieldInputPatterns['hiragana1'],
+            $this->lenFieldInputPatterns['hiragana2'],
+            $this->lenFieldInputPatterns['hiragana3']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 3文字固定の文字数チェックのテスト
+     */
+    public function testLenFieldThreeCharacterFixed()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="3文字固定"]',
+            'option' => 'input[type="hidden"][name="len[]"][value="3文字固定 3-3"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
+        $errorMessage = str_replace('{文字数}', '3文字', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->lenFieldInputPatterns['eiji3'],
+            $this->lenFieldInputPatterns['hiragana3']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 6文字以上8文字以下の文字数チェックのテスト
+     */
+    public function testLenFieldSixOrMoreAndEightOrLessCharacters()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="6文字以上8文字以下"]',
+            'option' => 'input[type="hidden"][name="len[]"][value="6文字以上8文字以下 6-8"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_len'];
+        $errorMessage = str_replace('{文字数}', '6〜8文字', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->lenFieldInputPatterns['eiji6'],
+            $this->lenFieldInputPatterns['eiji7'],
+            $this->lenFieldInputPatterns['eiji8'],
+            $this->lenFieldInputPatterns['hiragana6'],
+            $this->lenFieldInputPatterns['hiragana7'],
+            $this->lenFieldInputPatterns['hiragana8']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->lenFieldInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 一致する文字列の入力チェックのテスト
+     */
+    public function testMatchField()
+    {
+        $selectors = [
+            'target1' => 'input[type="text"][name="一致1"]',
+            'target2' => 'input[type="text"][name="一致2"]',
+            'option' => 'input[type="hidden"][name="match[]"]'
+        ];
+        $target1NameValue = $this->filterAndGetAttr($selectors['target1'], 'name');
+        $errorMessage = $target1NameValue . $this->tm->config['error_match'];
+
+        // 入力パターン
+        $inputPatterns = [
+            'eisuKigoAndEisuKigo' => [$this->inputPatterns['eisuKigo'], $this->inputPatterns['eisuKigo']],
+            'kanjiAndKanji' => [$this->inputPatterns['kanji'], $this->inputPatterns['kanji']],
+            'eisuKigoAndKanji' => [$this->inputPatterns['eisuKigo'], $this->inputPatterns['kanji']],
+            'kanjiAndEisuKigo' => [$this->inputPatterns['kanji'], $this->inputPatterns['eisuKigo']]
+        ];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $inputPatterns['eisuKigoAndEisuKigo'],
+            $inputPatterns['kanjiAndKanji']
+        ];
+
+        // 入力エラーになる入力パターン
+        $invalidValues = [
+            $inputPatterns['eisuKigoAndKanji'],
+            $inputPatterns['kanjiAndEisuKigo']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target1']));
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target2']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // 入力エラーの場合のテスト
+        foreach ($invalidValues as $values) {
+            $this->filterAndClear($selectors['target1']);
+            $this->filterAndClear($selectors['target2']);
+            $this->filterAndSetValue($selectors['target1'], $values[0]);
+            $this->filterAndSetValue($selectors['target2'], $values[1]);
+            $this->inputRequiredField();
+            $this->submitInputForm();
+            $this->assertStringContainsString($this->globalErrorMessage, $this->filterAndGetText('#content'));
+            $this->assertEquals($errorMessage, $this->filterAndGetText('#content ul li'));
+            $this->assertEquals($errorMessage, $this->filterAndGetText('#content table tr td div.error'));
+            $this->assertEquals($values[0], $this->filterAndGetValue($selectors['target1']));
+            $this->assertEquals($values[1], $this->filterAndGetValue($selectors['target2']));
+        }
+
+        // 入力エラーにならない場合のテスト
+        foreach ($validValues as $values) {
+            $this->crawler = $this->client->request('GET', '');
+            $this->filterAndSetValue($selectors['target1'], $values[0]);
+            $this->filterAndSetValue($selectors['target2'], $values[1]);
+            $this->inputRequiredField();
+            $this->submitInputForm();
+            $this->assertEquals($this->confirmPageTitle, $this->client->getTitle());
+            $this->assertStringContainsString($values[0], $this->filterAndGetText('#content table'));
+            $this->assertStringContainsString($values[1], $this->filterAndGetText('#content table'));
+
+            // 入力画面に戻る
+            $this->returnInputPage();
+            $this->assertEquals($values[0], $this->filterAndGetValue($selectors['target1']));
+            $this->assertEquals($values[1], $this->filterAndGetValue($selectors['target2']));
+        }
+    }
+
+    /**
+     * URLの入力チェックのテスト
+     *
+     * NOTE: ドメインとサブドメインに使用できない文字（例えばアンダースコア）が入力エラーにならないが、判別ロジックが複雑になるため、半角スペースと全角スペース以外の文字は許可するロジックにしている
+     */
+    public function testUrlField()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="URL"]',
+            'option' => 'input[type="hidden"][name="url[]"][value="URL"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_url'];
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->urlInputPatterns['exampleCom'],
+            $this->urlInputPatterns['exampleComLastCharacterSlash'],
+            $this->urlInputPatterns['exampleComSsl'],
+            $this->urlInputPatterns['exampleComWwwSubdomain'],
+            $this->urlInputPatterns['exampleComPage'],
+            $this->urlInputPatterns['exampleComParam'],
+            $this->urlInputPatterns['exampleComHash'],
+            $this->urlInputPatterns['exampleMuseum'],
+            $this->urlInputPatterns['japaneseDomain'],
+            $this->urlInputPatterns['japaneseDomainSubdomain'],
+            $this->urlInputPatterns['japaneseDomainJapaneseSubdomain'],
+            $this->urlInputPatterns['punycodeJapaneseDomain'],
+            $this->urlInputPatterns['exampleComHyphenSubdomain'],
+            $this->urlInputPatterns['exampleComUnserscoreSubdomain'],
+            $this->urlInputPatterns['exampleA'],
+            $this->urlInputPatterns['example']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->urlInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 3以下の数字の入力チェックのテスト
+     */
+    public function testNumRangeFieldThreeOrLessNumbers()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="3以下の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="3以下の数字 -3"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}', '0以上、3以下', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->numRangeInputPatterns['0'],
+            $this->numRangeInputPatterns['1'],
+            $this->numRangeInputPatterns['2'],
+            $this->numRangeInputPatterns['3']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 3以下の数字の入力チェックのテスト（数字以外を入力した場合）
+     */
+    public function testNumRangeFieldThreeOrLessNumbersNotNumber()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="3以下の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="3以下の数字 -3"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeNotNumberInputPatterns, [], $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 3以上の数字の入力チェックのテスト
+     */
+    public function testNumRangeFieldThreeOrMoreNumbers()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="3以上の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="3以上の数字 3-"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}', '3以上', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->numRangeInputPatterns['3'],
+            $this->numRangeInputPatterns['4'],
+            $this->numRangeInputPatterns['5'],
+            $this->numRangeInputPatterns['6'],
+            $this->numRangeInputPatterns['7'],
+            $this->numRangeInputPatterns['8'],
+            $this->numRangeInputPatterns['9'],
+            $this->numRangeInputPatterns['10'],
+            $this->numRangeInputPatterns['11'],
+            $this->numRangeInputPatterns['12'],
+            $this->numRangeInputPatterns['13'],
+            $this->numRangeInputPatterns['32768'],
+            $this->numRangeInputPatterns['65536'],
+            $this->numRangeInputPatterns['2147483648'],
+            $this->numRangeInputPatterns['4294967296']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 3以上の数字の入力チェックのテスト（数字以外を入力した場合）
+     */
+    public function testNumRangeFieldThreeOrMoreNumbersNotNumber()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="3以上の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="3以上の数字 3-"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeNotNumberInputPatterns, [], $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * ちょうど3の数字の入力チェックのテスト
+     */
+    public function testNumRangeFieldThreeNumberFixed()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="ちょうど3の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="ちょうど3の数字 3-3"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}', 'ちょうど3', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->numRangeInputPatterns['3']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * ちょうど3の数字の入力チェックのテスト（数字以外を入力した場合）
+     */
+    public function testNumRangeFieldThreeNumberFixedNotNumber()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="ちょうど3の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="ちょうど3の数字 3-3"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeNotNumberInputPatterns, [], $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 1〜12の数字の入力チェックのテスト
+     */
+    public function testNumRangeFieldOneOrMoreAndTwelveOrLessNumbers()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="1〜12の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}', '1以上、12以下', $errorMessage);
+
+        // 入力エラーにならない入力パターン
+        $validValues = [
+            $this->numRangeInputPatterns['1'],
+            $this->numRangeInputPatterns['2'],
+            $this->numRangeInputPatterns['3'],
+            $this->numRangeInputPatterns['4'],
+            $this->numRangeInputPatterns['5'],
+            $this->numRangeInputPatterns['6'],
+            $this->numRangeInputPatterns['7'],
+            $this->numRangeInputPatterns['8'],
+            $this->numRangeInputPatterns['9'],
+            $this->numRangeInputPatterns['10'],
+            $this->numRangeInputPatterns['11'],
+            $this->numRangeInputPatterns['12']
+        ];
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeInputPatterns, $validValues, $selectors['target'], $errorMessage);
+    }
+
+    /**
+     * 1〜12の数字の入力チェックのテスト（数字以外を入力した場合）
+     */
+    public function testNumRangeFieldOneOrMoreAndTwelveOrLessNumbersNotNumber()
+    {
+        $selectors = [
+            'target' => 'input[type="text"][name="1〜12の数字"]',
+            'option' => 'input[type="hidden"][name="num_range[]"][value="1〜12の数字 1-12"]'
+        ];
+        $targetNameValue = $this->filterAndGetAttr($selectors['target'], 'name');
+        $errorMessage = $targetNameValue . $this->tm->config['error_num_range'];
+        $errorMessage = str_replace('{範囲}の数字', '数字', $errorMessage);
+
+        // フィールドの確認
+        $this->assertEquals('', $this->filterAndGetValue($selectors['target']));
+        $this->assertIsObject($this->filter($selectors['option']));
+
+        // テストの実行
+        $this->inputTest($this->numRangeNotNumberInputPatterns, [], $selectors['target'], $errorMessage);
+    }
+}

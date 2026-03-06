@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - &composer-common
+    package-ecosystem: "composer"
+    directory: "/environments/php72"
+    schedule:
+      interval: "daily"
+
+  - <<: *composer-common
+    directory: "/environments/php73"
+
+  - <<: *composer-common
+    directory: "/environments/php74"
+
+  - <<: *composer-common
+    directory: "/environments/php80"
+
+  - <<: *composer-common
+    directory: "/environments/php81"
+
+  - <<: *composer-common
+    directory: "/environments/php82"
+
+  - <<: *composer-common
+    directory: "/environments/php83"
+
+  - <<: *composer-common
+    directory: "/environments/php84"
+
+  - <<: *composer-common
+    directory: "/environments/php85"
