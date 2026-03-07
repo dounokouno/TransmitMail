@@ -8,7 +8,7 @@ x-php-base: &php-base
 
 x-php-build-base: &php-build-base
   context: .
-  dockerfile: Dockerfile.php
+  dockerfile: docker/Dockerfile.php
 
 services:
   php72:
