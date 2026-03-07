@@ -7,6 +7,7 @@
 /log/tests/*.log
 /tests/.phpunit.result.cache
 /tmp/file_*
+/tmp/tests/file_*
 /tmp/screenshot/*
 !/tmp/screenshot/.gitkeep
 /tmp/tests/screenshot/*
@@ -15,3 +16,5 @@
 /php*/vendor/
 /.phpunit.result.cache
 /.vscode/
+/php_server.log
+/.php-cs-fixer.cache
