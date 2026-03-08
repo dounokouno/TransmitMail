@@ -4,7 +4,7 @@ x-php-base: &php-base
   working_dir: /app
   networks:
     - transmitmail_network
-  command: ["tail", "-f", "/dev/null"]
+  command: ["php", "-S", "0.0.0.0:8000"]
 
 x-php-build-base: &php-build-base
   context: .
@@ -13,6 +13,8 @@ x-php-build-base: &php-build-base
 services:
   php72:
     <<: *php-base
+    ports:
+      - "8072:8000"
     build:
       <<: *php-build-base
       args:
@@ -24,6 +26,8 @@ services:
       # COMPOSER_PROCESS_TIMEOUT: 1200
   php73:
     <<: *php-base
+    ports:
+      - "8073:8000"
     build:
       <<: *php-build-base
       args:
@@ -33,6 +37,8 @@ services:
       COMPOSER_VENDOR_DIR: environments/php73/vendor
   php74:
     <<: *php-base
+    ports:
+      - "8074:8000"
     build:
       <<: *php-build-base
       args:
@@ -42,6 +48,8 @@ services:
       COMPOSER_VENDOR_DIR: environments/php74/vendor
   php80:
     <<: *php-base
+    ports:
+      - "8080:8000"
     build:
       <<: *php-build-base
       args:
@@ -51,6 +59,8 @@ services:
       COMPOSER_VENDOR_DIR: environments/php80/vendor
   php81:
     <<: *php-base
+    ports:
+      - "8081:8000"
     build:
       <<: *php-build-base
       args:
@@ -60,6 +70,8 @@ services:
       COMPOSER_VENDOR_DIR: environments/php81/vendor
   php82:
     <<: *php-base
+    ports:
+      - "8082:8000"
     build:
       <<: *php-build-base
       args:
@@ -69,6 +81,8 @@ services:
       COMPOSER_VENDOR_DIR: environments/php82/vendor
   php83:
     <<: *php-base
+    ports:
+      - "8083:8000"
     build:
       <<: *php-build-base
       args:
@@ -78,6 +92,8 @@ services:
       COMPOSER_VENDOR_DIR: environments/php83/vendor
   php84:
     <<: *php-base
+    ports:
+      - "8084:8000"
     build:
       <<: *php-build-base
       args:
@@ -87,6 +103,8 @@ services:
       COMPOSER_VENDOR_DIR: environments/php84/vendor
   php85:
     <<: *php-base
+    ports:
+      - "8085:8000"
     build:
       <<: *php-build-base
       args:
