@@ -20,9 +20,5 @@
         "symfony/process": "5.4.51",
         "symfony/service-contracts": "2.5.4",
         "symfony/var-dumper": "5.4.48"
-    },
-    "config": {
-        "platform": {
-        }
     }
 }

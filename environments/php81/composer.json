@@ -20,9 +20,5 @@
         "symfony/service-contracts": "3.6.1",
         "symfony/var-dumper": "6.4.32",
         "symfony/var-exporter": "6.4.26"
-    },
-    "config": {
-        "platform": {
-        }
     }
 }
