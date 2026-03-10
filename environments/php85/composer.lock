@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "240c0b523b15c5ae418ff5d6267537c3",
+    "content-hash": "15ac8c0435e351fd1b2251bf7ea581b8",
     "packages": [],
     "packages-dev": [
         {
@@ -2803,7 +2803,7 @@
             ],
             "authors": [
                 {
-                    "name": "Kévin Dunglas",
+                    "name": "K\u00e9vin Dunglas",
                     "email": "kevin@dunglas.dev",
                     "homepage": "https://dunglas.dev"
                 },
