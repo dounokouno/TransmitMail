@@ -103,6 +103,7 @@ jobs:
       - run: composer -V
       - run: google-chrome --version
       - run: chromedriver --version
+      - run: COMPOSER=<< parameters.composer_json >> composer validate --no-check-publish
       - run: COMPOSER=<< parameters.composer_json >> COMPOSER_VENDOR_DIR=<< parameters.composer_vendor_dir >> composer install --prefer-dist
       - when:
           condition: << parameters.cache >>
