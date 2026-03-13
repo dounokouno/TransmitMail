@@ -40,10 +40,10 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - composer-<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
+            - composer-php<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
             # NOTE: Fallback to using the latest cache if no exact match is found
-            - composer-<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-
-            - composer-<< parameters.php_version >>-
+            - composer-php<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-
+            - composer-php<< parameters.php_version >>-
   create_cache_key_files:
     steps:
       - run: echo $CIRCLECI_COMPORSER_CACHE_KEY
@@ -66,7 +66,7 @@ commands:
       - save_cache:
           paths:
             - << parameters.composer_vendor_dir >>
-          key: composer-<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
+          key: composer-php<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
 jobs:
   test:
     environment:
