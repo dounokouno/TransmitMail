@@ -44,7 +44,6 @@ commands:
             # NOTE: Fallback to using the latest cache if no exact match is found
             - composer-<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-
             - composer-<< parameters.php_version >>-
-            - composer-
   create_cache_key_files:
     steps:
       - run: echo $CIRCLECI_COMPORSER_CACHE_KEY
