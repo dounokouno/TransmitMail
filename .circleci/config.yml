@@ -35,14 +35,15 @@ commands:
       composer_json:
         type: string
         default: composer.json
+      php_version:
+        type: string
     steps:
       - restore_cache:
           keys:
-            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
+            - composer-php<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
             # NOTE: Fallback to using the latest cache if no exact match is found
-            - composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-
-            - composer-{{ .Environment.CIRCLE_STAGE }}-
-            - composer-
+            - composer-php<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-
+            - composer-php<< parameters.php_version >>-
   create_cache_key_files:
     steps:
       - run: echo $CIRCLECI_COMPORSER_CACHE_KEY
@@ -59,11 +60,13 @@ commands:
       composer_vendor_dir:
         type: string
         default: vendor
+      php_version:
+        type: string
     steps:
       - save_cache:
           paths:
             - << parameters.composer_vendor_dir >>
-          key: composer-{{ .Environment.CIRCLE_STAGE }}-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
+          key: composer-php<< parameters.php_version >>-{{ checksum "_composer_cache_key" }}-{{ checksum "<< parameters.composer_json >>" }}
 jobs:
   test:
     environment:
@@ -73,10 +76,6 @@ jobs:
         type: executor
       php_version:
         type: string
-      # TODO: あとで修正する
-      cache:
-        type: boolean
-        default: false
       composer_json:
         type: string
         default: composer.json
@@ -91,26 +90,21 @@ jobs:
       - run:
           name: Check parameters
           command: |
-            echo "parameters.cache: << parameters.cache >>"
             echo "parameters.composer_json: << parameters.composer_json >>"
-      - when:
-          condition: << parameters.cache >>
-          steps:
-            - create_cache_key_files
-            - restore_caches:
-                composer_json: << parameters.composer_json >>
+      - create_cache_key_files
+      - restore_caches:
+          composer_json: << parameters.composer_json >>
+          php_version: << parameters.php_version >>
       - run: php -v
       - run: composer -V
       - run: google-chrome --version
       - run: chromedriver --version
       - run: COMPOSER=<< parameters.composer_json >> composer validate --no-check-publish
       - run: COMPOSER=<< parameters.composer_json >> COMPOSER_VENDOR_DIR=<< parameters.composer_vendor_dir >> composer install --prefer-dist
-      - when:
-          condition: << parameters.cache >>
-          steps:
-            - save_caches:
-                composer_json: << parameters.composer_json >>
-                composer_vendor_dir: << parameters.composer_vendor_dir >>
+      - save_caches:
+          composer_json: << parameters.composer_json >>
+          composer_vendor_dir: << parameters.composer_vendor_dir >>
+          php_version: << parameters.php_version >>
       - run:
           name: Run test
           command: COMPOSER=<< parameters.composer_json >> COMPOSER_VENDOR_DIR=<< parameters.composer_vendor_dir >> composer exec phpunit
