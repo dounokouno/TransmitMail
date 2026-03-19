@@ -48,13 +48,7 @@ docker compose exec php85 composer install
 
 ## 3. Run tests
 
-Execute the tests using PHPUnit from within the container. Since the vendor directory is environment-specific, use the following command:
-
-```bash
-docker compose exec php85 environments/php85/vendor/bin/phpunit
-```
-
-Alternatively, you can use `composer exec`:
+Execute the tests using PHPUnit from within the container. You can use `composer exec` to automatically locate the PHPUnit binary:
 
 ```bash
 docker compose exec php85 composer exec phpunit
@@ -65,9 +59,21 @@ docker compose exec php85 composer exec phpunit
 To run a specific test file or filter by test name:
 
 ```bash
-docker compose exec php85 environments/php85/vendor/bin/phpunit tests/FunctionalTest/BasicTest.php
-docker compose exec php85 environments/php85/vendor/bin/phpunit --filter testTitle
+docker compose exec php85 composer exec phpunit tests/FunctionalTest/BasicTest.php
+docker compose exec php85 composer exec phpunit -- --filter testTitle
 ```
+
+---
+
+### Supplementary: Running in a single command
+
+If you prefer to run the installation and tests in a single command without keeping the container running, use `docker compose run --rm`:
+
+```bash
+docker compose run --rm php85 bash -c "composer install && composer exec phpunit"
+```
+
+This approach ensures a clean environment for every test run.
 
 ## What is being tested?
 
@@ -125,7 +131,7 @@ rm -rf tmp/tests/*
 
 - Use the `--debug` flag for verbose output:
   ```bash
-  vendor/bin/phpunit --debug
+  composer exec phpunit -- --debug
   ```
 - **Screenshots on Failure**: When a Panther test fails, a screenshot is automatically saved to `tmp/tests/screenshot/` to help diagnose UI issues.
 
