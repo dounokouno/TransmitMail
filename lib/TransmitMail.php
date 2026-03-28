@@ -1108,7 +1108,7 @@ class TransmitMail
         // Qdsmpt の設定
         $this->smtp = new QdSmtp();
         $this->smtp->pop3TimeFilename($this->config['tmp_dir'] . 'qdsmtp.time');
-        $this->mail->setSmtpObject($smtp);
+        $this->mail->setSmtpObject($this->smtp);
 
         if ($is_auto_reply) {
             // 自動返信メールの場合
