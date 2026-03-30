@@ -564,7 +564,7 @@ class TransmitMail
                             "zenkaku_katakana.$value",
                             $this->h($value . $this->config['error_zenkaku_katakana'])
                         );
-                        $this->global_errors[] = ($value . $this->config['error_zenkaku_katakana']);
+                        $this->global_errors[] = $this->h($value . $this->config['error_zenkaku_katakana']);
                     }
                 }
             }
