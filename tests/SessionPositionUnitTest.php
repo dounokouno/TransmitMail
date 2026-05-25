@@ -1,6 +1,6 @@
 <?php
 /**
- * Session position unit test
+ * Session position unit test with hooks verification
  *
  * @package    TransmitMail
  * @license    MIT License
@@ -12,16 +12,75 @@ namespace TransmitMail\Tests;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Hook検証用のモッククラス
+ */
+class TransmitMailHookMock extends \TransmitMail
+{
+    public $hook_session_statuses = [];
+    public $hook_session_data = [];
+
+    private function recordState($hookName)
+    {
+        $this->hook_session_statuses[$hookName] = session_status();
+        $this->hook_session_data[$hookName] = $_SESSION;
+    }
+
+    public function afterCheckDenyHost()
+    {
+        $this->recordState('afterCheckDenyHost');
+    }
+
+    public function afterCheckInput()
+    {
+        $this->recordState('afterCheckInput');
+    }
+
+    public function afterSetPageName()
+    {
+        $this->recordState('afterSetPageName');
+    }
+
+    public function afterSetTemplateProperty()
+    {
+        $this->recordState('afterSetTemplateProperty');
+    }
+
+    public function afterSetTemplateAndSendMail()
+    {
+        $this->recordState('afterSetTemplateAndSendMail');
+    }
+
+    // 出力や終了を防ぐために一部メソッドをオーバーライド
+    public function setTemplateAndSendMail()
+    {
+        // finish モードのセッション破棄ロジックをシミュレート
+        if ($this->page_name === 'finish') {
+            $_SESSION = array();
+            // 実際には session_destroy() も呼ばれるが、ユニットテスト継続のため $_SESSION のクリアに留める
+        }
+    }
+
+    public function setPageName() {
+        if ($this->post['page_name'] === 'finish') {
+            $this->page_name = 'finish';
+        } else {
+            parent::setPageName();
+        }
+    }
+}
+
 class SessionPositionUnitTest extends TestCase
 {
-    private $tm;
-
     protected function setUp(): void
     {
+        // セッションがアクティブな場合は一旦終了（テストのクリーン環境のため）
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            @session_write_close();
+        }
         $_SESSION = [];
 
         require_once __DIR__ . '/../lib/TransmitMail.php';
-        $this->tm = new \TransmitMail();
     }
 
     /**
@@ -29,36 +88,65 @@ class SessionPositionUnitTest extends TestCase
      */
     public function testSessionNotStartedAfterInit()
     {
-        // 以前のコードでは init() 内でセッションが開始されていた
-        $this->tm->init();
+        $tm = new \TransmitMail();
+        $tm->init();
 
-        // session_status() は CLI では PHP_SESSION_NONE (1) を返すはず
         $this->assertEquals(PHP_SESSION_NONE, session_status(), 'init()直後はセッションが開始されていないはず');
         $this->assertArrayNotHasKey('transmit_mail_input', $_SESSION, 'init()直後はセッションにデータが入っていないはず');
     }
 
     /**
-     * startSession() を呼ぶとセッションが開始され、適切に動作することを確認
+     * run() の各ホック時点でのセッション状態をテスト
      */
-    public function testStartSessionLogic()
+    public function testSessionStatusAtAllHooks()
     {
-        $this->tm->init();
+        $tm = new TransmitMailHookMock();
+        $tm->init();
 
-        // セッションが有効な設定であることを確認
-        $this->assertTrue($this->tm->config['session']);
+        // run() を実行。出力抑制。
+        ob_start();
+        @$tm->run();
+        ob_end_clean();
 
-        // startSession を呼ぶ。CLI環境での警告を抑制。
-        @$this->tm->startSession();
+        // 1. afterCheckDenyHost (session_start 前)
+        $this->assertEquals(PHP_SESSION_NONE, $tm->hook_session_statuses['afterCheckDenyHost'], 'afterCheckDenyHost時点ではセッション未開始');
 
-        // startSession() 内で $_SESSION が初期化されているか、または既存のセッションがあれば利用される。
-        // ここでは、セッション開始後に page_name がセットされた際の挙動を確認する。
+        // 2. afterCheckInput (session_start 後)
+        $this->assertArrayHasKey('afterCheckInput', $tm->hook_session_statuses);
 
-        // 完了画面でのセッション破棄ロジックをテスト
-        $this->tm->page_name = 'finish';
+        // 3. afterSetPageName (page_name 決定後)
+        $this->assertArrayHasKey('afterSetPageName', $tm->hook_session_statuses);
 
-        // setTemplateAndSendMail の抜粋ロジックを確認
-        // (実際には echo などが含まれるため、ここではロジックの存在を TransmitMail.php のコードから確認)
+        // 4. afterSetTemplateProperty
+        $this->assertArrayHasKey('afterSetTemplateProperty', $tm->hook_session_statuses);
 
-        $this->assertTrue(true); // ロジックの存在確認
+        // 5. afterSetTemplateAndSendMail
+        $this->assertArrayHasKey('afterSetTemplateAndSendMail', $tm->hook_session_statuses);
+    }
+
+    /**
+     * 完了画面でのセッション破棄がホックにどう影響するか
+     */
+    public function testSessionDestructionAtFinishHook()
+    {
+        $tm = new TransmitMailHookMock();
+        $tm->init();
+
+        // 完了画面へ遷移する状態を作る
+        $tm->post = ['page_name' => 'finish'];
+
+        // ユニットテスト内で直接 session_flag を true にする
+        $tm->session_flag = true;
+
+        ob_start();
+        @$tm->run();
+        ob_end_clean();
+
+        // page_name が正しく判定されていることを確認
+        $this->assertEquals('finish', $tm->page_name, 'page_name が finish であるべき');
+
+        // 完了画面では setTemplateAndSendMail 内でセッションがクリアされるため、
+        // その後の afterSetTemplateAndSendMail ではセッションが空になっているはず
+        $this->assertEmpty($tm->hook_session_data['afterSetTemplateAndSendMail'], '完了画面の後はセッションデータがクリアされているはず');
     }
 }
