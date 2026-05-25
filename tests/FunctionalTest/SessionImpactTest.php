@@ -33,7 +33,7 @@ class SessionImpactTest extends TransmitMailPantherTestCase
         // 3. 完了画面へ
         $this->submitConfirmForm();
         $this->assertEquals('お問い合わせいただきありがとうございます | TransmitMail サンプル', $this->client->getTitle());
-        $this->assertStringContainsString('お問い合わせありがとうございました。', $this->findElementAndGetText('#content'));
+        $this->assertStringContainsString('お問い合わせいただき、ありがとうございます。', $this->findElementAndGetText('#content'));
     }
 
     /**
@@ -71,7 +71,7 @@ class SessionImpactTest extends TransmitMailPantherTestCase
         $this->assertEquals('お問い合わせいただきありがとうございます | TransmitMail サンプル', $this->client->getTitle());
 
         // 2. リロードする
-        $this->client->refresh();
+        $this->client->reload();
 
         // 3. 入力画面に戻っていることを確認（セッションが破棄されているため）
         // TransmitMail は完了画面で session_destroy() するため、
@@ -80,12 +80,13 @@ class SessionImpactTest extends TransmitMailPantherTestCase
     }
 
     /**
-     * 確認画面を直接表示しようとした場合に入力画面に戻るテスト
+     * セッションがない状態で直接アクセスした場合に入力画面に戻るテスト
      */
-    public function testDirectConfirmAccessRedirectsToInput()
+    public function testDirectAccessRedirectsToInput()
     {
-        // セッションがない状態で直接確認画面のパラメータを送ってみる
-        $this->client->request('POST', '/', ['page_name' => 'confirm']);
+        // セッションがない状態で直接確認画面にアクセスしようとしても入力画面に戻るはず
+        // WebDriver は GET のみサポート
+        $this->client->request('GET', '/?page_name=confirm');
 
         // セッション（transmit_mail_input）がないため、入力画面に戻るはず
         $this->assertEquals($this->topPageTitle, $this->client->getTitle());
