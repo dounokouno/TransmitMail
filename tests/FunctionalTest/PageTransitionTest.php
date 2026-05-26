@@ -63,11 +63,39 @@ class PageTransitionTest extends TransmitMailPantherTestCase
         $this->assertNotNull($adminMail, '管理者宛てメールが見つかりません');
         $this->assertNotNull($autoReplyMail, '自動返信メールが見つかりません');
 
+        // --- 管理者宛てメールの詳細検証 ---
         $this->assertStringContainsString('［株式会社テスト］お問い合わせ', $adminMail['Subject']);
-        $this->assertStringContainsString($userName, $this->getMailBody($adminMail['ID']));
+        // 送信先 (To)
+        $this->assertEquals('info@example.com', $adminMail['To'][0]['Address']);
+        // 送信元 (From) - TransmitMail のデフォルトでは入力されたメールアドレスになる
+        $this->assertEquals($userEmail, $adminMail['From']['Address']);
 
+        $adminMailDetails = $this->getMailDetails($adminMail['ID']);
+        // Reply-To の検証 (TransmitMailは標準ではセットしていないため、将来的な拡張を見越して構造を確認)
+        // Qdmail の仕様上、Reply-To ヘッダーが含まれているか確認
+        $this->assertArrayHasKey('ReplyTo', $adminMailDetails);
+
+        // 本文の検証 (MIMEデコード済みの Text を使用)
+        $adminMailBody = $adminMailDetails['Text'] ?? '';
+        $this->assertStringContainsString($userName, $adminMailBody, '管理者宛てメール本文にユーザー名が含まれるべき');
+        $this->assertStringContainsString($userEmail, $adminMailBody, '管理者宛てメール本文にメールアドレスが含まれるべき');
+
+
+        // --- 自動返信メールの詳細検証 ---
         $this->assertStringContainsString('［株式会社テスト］お問い合わせありがとうございます', $autoReplyMail['Subject']);
-        $this->assertStringContainsString($userName, $this->getMailBody($autoReplyMail['ID']));
+        // 送信先 (To) - ユーザーのアドレス
+        $this->assertEquals($userEmail, $autoReplyMail['To'][0]['Address']);
+        // 送信元 (From) - 管理者のアドレス
+        $this->assertEquals('info@example.com', $autoReplyMail['From']['Address']);
+
+        $autoReplyMailDetails = $this->getMailDetails($autoReplyMail['ID']);
+        // Reply-To の検証
+        $this->assertArrayHasKey('ReplyTo', $autoReplyMailDetails);
+
+        // 本文の検証 (MIMEデコード済みの Text を使用)
+        $autoReplyMailBody = $autoReplyMailDetails['Text'] ?? '';
+        $this->assertStringContainsString($userName, $autoReplyMailBody, '自動返信メール本文にユーザー名が含まれるべき');
+        $this->assertStringContainsString($userEmail, $autoReplyMailBody, '自動返信メール本文にメールアドレスが含まれるべき');
     }
 
     /**
@@ -148,16 +176,20 @@ class PageTransitionTest extends TransmitMailPantherTestCase
      */
     private function getMailPitMessages()
     {
-        $content = file_get_contents($this->mailpitApiUrl . '/messages');
+        $content = @file_get_contents($this->mailpitApiUrl . '/messages');
+        if ($content === false) {
+            return [];
+        }
         $data = json_decode($content, true);
         return $data['messages'] ?? [];
     }
 
     /**
-     * 指定したIDのメール本文を取得
+     * 指定したIDのメール詳細を取得
      */
-    private function getMailBody($id)
+    private function getMailDetails($id)
     {
-        return file_get_contents($this->mailpitApiUrl . '/message/' . $id . '/raw');
+        $content = file_get_contents($this->mailpitApiUrl . '/message/' . $id);
+        return json_decode($content, true);
     }
 }
