@@ -11,7 +11,7 @@
 
 namespace TransmitMail\Tests;
 
-class SessionImpactTest extends TransmitMailPantherTestCase
+class PageTransitionTest extends TransmitMailPantherTestCase
 {
     /**
      * 標準的な画面遷移（入力 -> 確認 -> 完了）のテスト
@@ -71,7 +71,7 @@ class SessionImpactTest extends TransmitMailPantherTestCase
         $this->assertEquals('お問い合わせいただきありがとうございます | TransmitMail サンプル', $this->client->getTitle());
 
         // 2. リロードする
-        $this->client->reload();
+        $this->client->getWebDriver()->navigate()->refresh();
 
         // 3. 入力画面に戻っていることを確認（セッションが破棄されているため）
         // TransmitMail は完了画面で session_destroy() するため、

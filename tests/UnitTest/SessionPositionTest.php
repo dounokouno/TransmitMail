@@ -62,7 +62,7 @@ class TransmitMailHookMock extends \TransmitMail
     }
 
     public function setPageName() {
-        if ($this->post['page_name'] === 'finish') {
+        if (isset($this->post['page_name']) && $this->post['page_name'] === 'finish') {
             $this->page_name = 'finish';
         } else {
             parent::setPageName();
@@ -70,7 +70,7 @@ class TransmitMailHookMock extends \TransmitMail
     }
 }
 
-class SessionPositionUnitTest extends TestCase
+class SessionPositionTest extends TestCase
 {
     protected function setUp(): void
     {
@@ -80,7 +80,7 @@ class SessionPositionUnitTest extends TestCase
         }
         $_SESSION = [];
 
-        require_once __DIR__ . '/../lib/TransmitMail.php';
+        require_once __DIR__ . '/../../lib/TransmitMail.php';
     }
 
     /**
