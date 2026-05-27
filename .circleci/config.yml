@@ -5,30 +5,39 @@ executors:
   php72:
     docker:
       - image: cimg/php:7.2-browsers
+      - image: axllent/mailpit
   php73:
     docker:
       - image: cimg/php:7.3-browsers
+      - image: axllent/mailpit
   php74:
     docker:
       - image: cimg/php:7.4-browsers
+      - image: axllent/mailpit
   php80:
     docker:
       - image: cimg/php:8.0-browsers
+      - image: axllent/mailpit
   php81:
     docker:
       - image: cimg/php:8.1-browsers
+      - image: axllent/mailpit
   php82:
     docker:
       - image: cimg/php:8.2-browsers
+      - image: axllent/mailpit
   php83:
     docker:
       - image: cimg/php:8.3-browsers
+      - image: axllent/mailpit
   php84:
     docker:
       - image: cimg/php:8.4-browsers
+      - image: axllent/mailpit
   php85:
     docker:
       - image: cimg/php:8.5-browsers
+      - image: axllent/mailpit
 commands:
   restore_caches:
     parameters:

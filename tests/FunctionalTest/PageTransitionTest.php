@@ -13,7 +13,24 @@ namespace TransmitMail\Tests;
 
 class PageTransitionTest extends TransmitMailPantherTestCase
 {
-    private $mailpitApiUrl = 'http://mailpit:8025/api/v1';
+    private $mailpitApiUrl;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // MailPit のホストを決定
+        // Docker Compose 環境では 'mailpit'、CircleCI 環境では 'localhost' (127.0.0.1)
+        if (gethostbyname('mailpit') !== 'mailpit') {
+            $this->mailpitApiUrl = 'http://mailpit:8025/api/v1';
+        } else {
+            $this->mailpitApiUrl = 'http://127.0.0.1:8025/api/v1';
+
+            // CircleCI 環境では smtp_host も localhost に向ける必要がある
+            // TransmitMail は init() 時にファイルを読み込むため、ここで config を上書き
+            $this->tm->config['smtp_host'] = '127.0.0.1';
+        }
+    }
 
     /**
      * 標準的な画面遷移（入力 -> 確認 -> 完了）とメール送信のテスト
@@ -71,8 +88,7 @@ class PageTransitionTest extends TransmitMailPantherTestCase
         $this->assertEquals($userEmail, $adminMail['From']['Address']);
 
         $adminMailDetails = $this->getMailDetails($adminMail['ID']);
-        // Reply-To の検証 (TransmitMailは標準ではセットしていないため、将来的な拡張を見越して構造を確認)
-        // Qdmail の仕様上、Reply-To ヘッダーが含まれているか確認
+        // Reply-To の検証 (Qdmail の仕様上、ReplyTo ヘッダーが含まれているか確認)
         $this->assertArrayHasKey('ReplyTo', $adminMailDetails);
 
         // 本文の検証 (MIMEデコード済みの Text を使用)
