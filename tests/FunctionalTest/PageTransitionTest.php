@@ -19,16 +19,12 @@ class PageTransitionTest extends TransmitMailPantherTestCase
     {
         parent::setUp();
 
-        // MailPit のホストを決定
-        // Docker Compose 環境では 'mailpit'、CircleCI 環境では 'localhost' (127.0.0.1)
+        // MailPit の API ホストを決定
+        // Docker Compose 環境では 'mailpit'、CircleCI 環境では '127.0.0.1'
         if (gethostbyname('mailpit') !== 'mailpit') {
             $this->mailpitApiUrl = 'http://mailpit:8025/api/v1';
         } else {
             $this->mailpitApiUrl = 'http://127.0.0.1:8025/api/v1';
-
-            // CircleCI 環境では smtp_host も localhost に向ける必要がある
-            // TransmitMail は init() 時にファイルを読み込むため、ここで config を上書き
-            $this->tm->config['smtp_host'] = '127.0.0.1';
         }
     }
 
@@ -61,7 +57,15 @@ class PageTransitionTest extends TransmitMailPantherTestCase
         $this->assertStringContainsString('お問い合わせいただき、ありがとうございます。', $this->findElementAndGetText('#content'));
 
         // 4. メールの検証
-        $messages = $this->getMailPitMessages();
+        // 送信処理の直後なので、少し待つ必要がある場合がある
+        $messages = [];
+        for ($i = 0; $i < 5; $i++) {
+            $messages = $this->getMailPitMessages();
+            if (count($messages) >= 2) {
+                break;
+            }
+            usleep(500000); // 0.5秒待機
+        }
 
         // 通常、管理者宛てと自動返信の2通が飛ぶはず
         $this->assertGreaterThanOrEqual(2, count($messages), '少なくとも2通のメールが送信されるべき');
@@ -88,7 +92,7 @@ class PageTransitionTest extends TransmitMailPantherTestCase
         $this->assertEquals($userEmail, $adminMail['From']['Address']);
 
         $adminMailDetails = $this->getMailDetails($adminMail['ID']);
-        // Reply-To の検証 (Qdmail の仕様上、ReplyTo ヘッダーが含まれているか確認)
+        // Reply-To の検証
         $this->assertArrayHasKey('ReplyTo', $adminMailDetails);
 
         // 本文の検証 (MIMEデコード済みの Text を使用)
@@ -183,6 +187,7 @@ class PageTransitionTest extends TransmitMailPantherTestCase
         $ch = curl_init($this->mailpitApiUrl . '/messages');
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
         curl_exec($ch);
         curl_close($ch);
     }

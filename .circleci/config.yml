@@ -97,6 +97,11 @@ jobs:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
+          name: Set MailPit host for CI
+          command: |
+            sed -i 's/smtp_host: mailpit/smtp_host: 127.0.0.1/g' config/config.test.yml
+            cat config/config.test.yml
+      - run:
           name: Check parameters
           command: |
             echo "parameters.composer_json: << parameters.composer_json >>"
