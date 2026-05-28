@@ -634,7 +634,7 @@ class QdmailBase extends QdmailBranch{
 		$this->sendmail_path = ini_get("sendmail_path");
 	}
 
-	function & getInstance(){
+	static function & getInstance(){
 		static $instance = array();
 
 		if( isset($instance[0]) && is_object($instance[0]) ){
@@ -3720,7 +3720,7 @@ class Qdmail extends QdmailUserFunc{
 
 	var $name ='Qdmail';
 
-	function Qdmail( $param = null ){
+	function __construct( $param = null ){
 		if( !is_null($param)){
 			$param = func_get_args();
 		}
@@ -3740,7 +3740,7 @@ class QdmailComponent extends QdmailUserFunc{
 	var $template	= 'default';
 	var $view		= null;
 
-	function QdmailComponent( $param = null ){
+	function __construct( $param = null ){
 		if( !is_null($param)){
 			$param = func_get_args();
 		}
