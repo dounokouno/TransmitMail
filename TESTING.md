@@ -86,6 +86,16 @@ The E2E tests verify the following:
 - CSRF protection
 - Template syntax processing
 
+## Email Testing with MailPit
+
+When running functional tests, TransmitMail is configured to send emails via **MailPit** in the test environment. This allows you to preview sent emails without actually delivering them.
+
+To view sent emails:
+1. Ensure the `mailpit` service is running (`docker compose up -d mailpit`).
+2. Open your browser and navigate to `http://localhost:8025`.
+
+This is particularly useful for verifying email content, headers, and attachments.
+
 ## Test Directory Structure
 
 ```text

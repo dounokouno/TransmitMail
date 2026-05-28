@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit bootstrap="tests/bootstrap.php" colors="true" displayDetailsOnPhpunitDeprecations="true">
-    <testsuite name="FunctionalTest">
-        <directory>tests/FunctionalTest</directory>
-    </testsuite>
+    <testsuites>
+        <testsuite name="FunctionalTest">
+            <directory>tests/FunctionalTest</directory>
+        </testsuite>
+        <testsuite name="UnitTest">
+            <directory>tests/UnitTest</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>

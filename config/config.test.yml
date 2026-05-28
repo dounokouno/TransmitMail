@@ -9,3 +9,6 @@ config:
     log_dir: log/tests/
     tmp_dir: tmp/tests/
     # display_errors: true
+    smtp: true
+    smtp_host: mailpit
+    smtp_port: 1025
