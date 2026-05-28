@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>TransmitMail サンプル</title>
+<link rel="stylesheet" href="http://etc.dounokouno.com/ttXHTMLTemplate/css/screen.css">
+</head>
+<body class="home">
+<div id="header">
+    <div class="container">
+        <h1>TransmitMail サンプル</h1>
+    </div>
+</div>
+<div id="content">
+    <div class="container">
+        <div class="section">
+            <p>TransmitMailの動作サンプルです。<br>
+                ※dounokouno[at]gmail.com宛にメール送信されるようになっていますので、ご注意ください。</p>
+        </div>
+        <div class="section">
+            <h2>メールフォーム</h2>
+
+            <p><em>入力内容に誤りがあります。</em></p>
+            <div class="section">
+                <ul>
+
+                    <li><em>CSRFトークンが無効です。</em></li>
+                </ul>
+            </div>
+
+            <!-- TODO: action 先を動的にする -->
+            <form method="post" action="index.test.php" enctype="multipart/form-data">
+                <div class="section">
+                    <h3>GET値の取得、表示</h3>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">GETの表示</th>
+                            <td>
+
+                                <input type="hidden" name="GET値取得サンプル" value="">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section">
+                    <h3>フォームパーツサンプル</h3>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">シングルラインインプット</th>
+                            <td>
+                                <input type="text" name="シングルラインインプット" value="testuser" class="middle">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>マルチラインインプット</th>
+                            <td>
+                                <textarea rows="6" cols="30" name="マルチラインインプット" class="wide"></textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ラジオボタン</th>
+                            <td>
+                                <label><input type="radio" name="ラジオボタン" value="項目1"  >
+                                    項目1</label>
+                                &nbsp;
+                                <label><input type="radio" name="ラジオボタン" value="項目2" >
+                                    項目2</label>
+                                &nbsp;
+                                <label><input type="radio" name="ラジオボタン" value="項目3" >
+                                    項目3</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>チェックボックス</th>
+                            <td>
+                                <label><input type="checkbox" name="チェックボックス[]" value="項目1"  >
+                                    項目1</label><br>
+                                <label><input type="checkbox" name="チェックボックス[]" value="項目2" >
+                                    項目2</label><br>
+                                <label><input type="checkbox" name="チェックボックス[]" value="項目3" >
+                                    項目3</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>セレクトメニュー</th>
+                            <td>
+                                <select name="セレクトメニュー">
+                                    <option value="項目1" >項目1</option>
+                                    <option value="項目2" >項目2</option>
+                                    <option value="項目3" >項目3</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>マルチプルセレクトメニュー</th>
+                            <td>
+                                <select name="マルチプルセレクトメニュー[]" multiple="multiple">
+                                    <option value="項目1" >項目1</option>
+                                    <option value="項目2" >項目2</option>
+                                    <option value="項目3" >項目3</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ファイル1（500KB以下のGIF、JPG、PNG）</th>
+                            <td>
+
+                                <input type="file" name="ファイル1">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ファイル2（500KB以下のGIF、JPG、PNG）</th>
+                            <td>
+
+                                <input type="file" name="ファイル2">
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section">
+                    <h3>入力オプション</h3>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">入力必須</th>
+                            <td>
+                                <input type="text" name="入力必須" value="" class="middle">
+                                <input type="hidden" name="required[]" value="入力必須">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>メールアドレス</th>
+                            <td>
+                                <input type="text" name="メールアドレス" value="test@example.com" class="middle">
+                                <input type="hidden" name="email[]" value="メールアドレス">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>半角文字</th>
+                            <td>
+                                <input type="text" name="半角文字" value="" class="middle">
+                                <input type="hidden" name="hankaku[]" value="半角文字">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>半角英数字</th>
+                            <td>
+                                <input type="text" name="半角英数字" value="" class="middle">
+                                <input type="hidden" name="hankaku_eisu[]" value="半角英数字">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>半角英字</th>
+                            <td>
+                                <input type="text" name="半角英字" value="" class="middle">
+                                <input type="hidden" name="hankaku_eiji[]" value="半角英字">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>数字</th>
+                            <td>
+                                <input type="text" name="数字" value="" class="mini">
+                                <input type="hidden" name="num[]" value="数字">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>数字＋ハイフン</th>
+                            <td>
+                                <input type="text" name="数字＋ハイフン" value="" class="narrow">
+                                <input type="hidden" name="num_hyphen[]" value="数字＋ハイフン">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ひらがな</th>
+                            <td>
+                                <input type="text" name="ひらがな" value="" class="middle">
+                                <input type="hidden" name="hiragana[]" value="ひらがな">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>全角カタカナ</th>
+                            <td>
+                                <input type="text" name="全角カタカナ" value="" class="middle">
+                                <input type="hidden" name="zenkaku_katakana[]" value="全角カタカナ">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>全角文字を含むか</th>
+                            <td>
+                                <input type="text" name="全角文字を含むか" value="" class="middle">
+                                <input type="hidden" name="zenkaku[]" value="全角文字を含むか">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>全て全角文字</th>
+                            <td>
+                                <input type="text" name="全て全角文字" value="" class="middle">
+                                <input type="hidden" name="zenkaku_all[]" value="全て全角文字">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>3文字以上</th>
+                            <td>
+                                <input type="text" name="3文字以上" value="" class="middle">
+                                <input type="hidden" name="len[]" value="3文字以上 3-">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>3文字以下</th>
+                            <td>
+                                <input type="text" name="3文字以下" value="" class="middle">
+                                <input type="hidden" name="len[]" value="3文字以下 -3">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>3文字固定</th>
+                            <td>
+                                <input type="text" name="3文字固定" value="" class="middle">
+                                <input type="hidden" name="len[]" value="3文字固定 3-3">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>6文字以上8文字以下</th>
+                            <td>
+                                <input type="text" name="6文字以上8文字以下" value="" class="middle">
+                                <input type="hidden" name="len[]" value="6文字以上8文字以下 6-8">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>一致1</th>
+                            <td>
+                                <input type="text" name="一致1" value="" class="middle">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>一致2</th>
+                            <td>
+                                <input type="text" name="一致2" value="" class="middle">
+                                <input type="hidden" name="match[]" value="一致1 一致2">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>URL</th>
+                            <td>
+                                <input type="text" name="URL" value="" class="middle">
+                                <input type="hidden" name="url[]" value="URL">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>3以下の数字</th>
+                            <td>
+                                <input type="text" name="3以下の数字" value="" class="middle">
+                                <input type="hidden" name="num_range[]" value="3以下の数字 -3">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>3以上の数字</th>
+                            <td>
+                                <input type="text" name="3以上の数字" value="" class="middle">
+                                <input type="hidden" name="num_range[]" value="3以上の数字 3-">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ちょうど3の数字</th>
+                            <td>
+                                <input type="text" name="ちょうど3の数字" value="" class="middle">
+                                <input type="hidden" name="num_range[]" value="ちょうど3の数字 3-3">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>1〜12の数字</th>
+                            <td>
+                                <input type="text" name="1〜12の数字" value="" class="middle">
+                                <input type="hidden" name="num_range[]" value="1〜12の数字 1-12">
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ファイルの入力必須<br>
+                                （500KB以下のGIF、JPG、PNG）</th>
+                            <td>
+
+                                <input type="file" name="ファイルの入力必須">
+                                <input type="hidden" name="file_required[]" value="ファイルの入力必須">
+
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section">
+                    <h3>入力オプションを複数組み合わせるサンプル</h3>
+                    <p>郵便番号として、「数字とハイフンを含む8文字」をチェックする。</p>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">郵便番号</th>
+                            <td>
+                                <input type="text" name="郵便番号" value="" class="narrow">
+                                <input type="hidden" name="num_hyphen[]" value="郵便番号">
+                                <input type="hidden" name="len[]" value="郵便番号 8">
+
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section">
+                    <h3>x、yを含む項目名</h3>
+                    <p>主に PHPUnit + Selenium のテスト用の項目。</p>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">abcdefghijklnmopqrstuvwxyz</th>
+                            <td>
+                                <input type="text" name="abcdefghijklnmopqrstuvwxyz" value="" class="middle">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="section">
+                    <h3>テスト用</h3>
+                    <table width="100%" class="alpha">
+                        <tr>
+                            <th width="300">CSRF トークン</th>
+                            <td>
+                                <input type="text" name="csrf_token" value="5f329e79e8befbc947578ab4769e8a2a">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="center"><input type="submit" value="入力内容を確認する"></div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
