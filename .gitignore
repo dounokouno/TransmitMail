@@ -18,3 +18,5 @@
 /.vscode/
 /php_server.log
 /.php-cs-fixer.cache
+/.windsurf/
+.DS_Store
