@@ -12,3 +12,4 @@ config:
     smtp: true
     smtp_host: mailpit
     smtp_port: 1025
+    smtp_protocol: SMTP
