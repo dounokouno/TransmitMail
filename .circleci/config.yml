@@ -1,43 +1,47 @@
 version: 2.1
 orbs:
   browser-tools: circleci/browser-tools@1
+x-mailpit: &mailpit
+  image: axllent/mailpit
+  environment:
+    MP_SMTP_BIND_ADDR: 0.0.0.0:1025
 executors:
   php72:
     docker:
       - image: cimg/php:7.2-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php73:
     docker:
       - image: cimg/php:7.3-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php74:
     docker:
       - image: cimg/php:7.4-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php80:
     docker:
       - image: cimg/php:8.0-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php81:
     docker:
       - image: cimg/php:8.1-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php82:
     docker:
       - image: cimg/php:8.2-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php83:
     docker:
       - image: cimg/php:8.3-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php84:
     docker:
       - image: cimg/php:8.4-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
   php85:
     docker:
       - image: cimg/php:8.5-browsers
-      - image: axllent/mailpit
+      - <<: *mailpit
 commands:
   restore_caches:
     parameters:
