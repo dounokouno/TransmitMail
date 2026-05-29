@@ -20,8 +20,16 @@ class PageTransitionTest extends TransmitMailPantherTestCase
         parent::setUp();
 
         // MailPit の API ホストを決定
-        // Docker Compose 環境では 'mailpit'、CircleCI 環境では '127.0.0.1'
-        $this->mailpitApiUrl = 'http://mailpit:8025/api/v1';
+        // mailpit ホスト名が引ける場合は 'mailpit'、引けない場合は '127.0.0.1'
+        $mailpitHost = gethostbyname('mailpit');
+        if ($mailpitHost === 'mailpit' || $mailpitHost === false || $mailpitHost === '') {
+            // ホスト名が引けない場合は localhost を使用
+            $host = '127.0.0.1';
+        } else {
+            // ホスト名が引ける場合はサービス名を使用
+            $host = 'mailpit';
+        }
+        $this->mailpitApiUrl = 'http://' . $host . ':8025/api/v1';
     }
 
     /**
