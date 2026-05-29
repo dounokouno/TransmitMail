@@ -5,6 +5,8 @@ x-php-base: &php-base
   networks:
     - transmitmail_network
   command: ["php", "-S", "0.0.0.0:8000"]
+  depends_on:
+    - mailpit
 
 x-php-build-base: &php-build-base
   context: .
@@ -118,6 +120,8 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+    environment:
+      MP_SMTP_BIND_ADDR: 0.0.0.0:1025
     networks:
       - transmitmail_network
 
