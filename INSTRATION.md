@@ -12,28 +12,37 @@
 
 ### 主要なファイル・フォルダの概要
 
-- **input.html**: 入力画面テンプレート。
-- **confirm.html**: 確認画面テンプレート（ループ出力用）。
-- **finish.html**: 完了画面テンプレート。
-- **error.html**: エラー画面テンプレート。
-- **index.php**: TransmitMail実行ファイル。
-- **config/** [705]: メール設定や本文テンプレートを格納するフォルダ。
-  - **.htaccess**: アクセス制御ファイル。
-  - **config.yml.sample**: YAML 形式の設定ファイルのサンプル。
-  - **config.json.sample**: JSON 形式の設定ファイルのサンプル。
-  - **config.php.sample**: PHP 形式の設定ファイルのサンプル。
-  - **mail_body.txt**: 送信メール本文のテンプレート。
-  - **mail_auto_reply_body.txt**: 自動返信メール本文のテンプレート。
-- **lib/** [705]: TransmitMail のコアプログラムが格納されているフォルダ。
-  - **qdmail.php**: メール送信ライブラリ（Qdmail）。
-  - **qdsmtp.php**: メール送信ライブラリ（Qdsmtp）。
-  - **Spyc.php**: YAMLパースライブラリ（Spyc）。
-  - **tinyTemplate.php**: テンプレートエンジン。
-  - **TransmitMail.php**: TransmitMailクラス。
-- **log/** [707]: ログ出力用フォルダ。
-  - **.htaccess**: アクセス制御ファイル。
-- **tmp/** [707]: 一時保存用フォルダ。
-  - **.htaccess**: アクセス制御ファイル。
+ファイル・フォルダ構成図および各ファイルの概要は以下の通りです。
+
+```text
+# テンプレート関連（必要に応じて編集してください）
++ input.html               → 入力画面テンプレート
++ confirm.html             → 確認画面テンプレート（ループ出力用）
++ finish.html              → 完了画面テンプレート
++ error.html               → エラー画面テンプレート
+
+# 設定ファイル関連（必要に応じて編集してください。config/[705] は推奨パーミッションです）
++ config/ [705]
+    + .htaccess            → アクセス制御ファイル
+    + config.yml.sample    → YAML 形式の設定ファイルのサンプル
+    + config.json.sample   → JSON 形式の設定ファイルのサンプル
+    + config.php.sample    → PHP 形式の設定ファイルのサンプル
+    + mail_body.txt        → 管理者宛送信メール本文テンプレート
+    + mail_auto_reply_body.txt → 自動返信メール本文テンプレート
+
+# プログラム関連（lib/[705], log/[707], tmp/[707] は推奨パーミッションです）
++ index.php                → TransmitMail実行ファイル
++ lib/ [705]
+    + qdmail.php           → メール送信ライブラリ（Qdmail）
+    + qdsmtp.php           → メール送信ライブラリ（Qdsmtp）
+    + Spyc.php             → YAMLパースライブラリ（Spyc）
+    + tinyTemplate.php     → テンプレートエンジン
+    + TransmitMail.php     → TransmitMailクラス
++ log/ [707]               → ログ出力ディレクトリ
+    + .htaccess            → アクセス制御ファイル
++ tmp/ [707]               → 一時保存用ディレクトリ
+    + .htaccess            → アクセス制御ファイル
+```
 
 ### 設置方法
 
