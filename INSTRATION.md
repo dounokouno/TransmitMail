@@ -33,9 +33,9 @@
 # プログラム関連（lib/[705], log/[707], tmp/[707] は推奨パーミッションです）
 + index.php                → TransmitMail実行ファイル
 + lib/ [705]
-    + qdmail.php           → メール送信ライブラリ（Qdmail）
-    + qdsmtp.php           → メール送信ライブラリ（Qdsmtp）
-    + Spyc.php             → YAMLパースライブラリ（Spyc）
+    + qdmail.php           → メール送信ライブラリ
+    + qdsmtp.php           → メール送信ライブラリ
+    + Spyc.php             → YAMLパースライブラリ
     + tinyTemplate.php     → テンプレートエンジン
     + TransmitMail.php     → TransmitMailクラス
 + log/ [707]               → ログ出力ディレクトリ
@@ -46,9 +46,8 @@
 
 ### 設置方法
 
-「テンプレート関連（HTMLファイルなど）」と「設定ファイル（`config/` 内）」を適宜修正後、「プログラム関連（`index.php`、`lib/` など）」と合わせてレンタルサーバーなどにアップロードします。
-
-パーミッションは、上記のフォルダ構成にある3桁の数字（`[705]`、`[707]` など）を参考に設定をしてください。
+- 「テンプレート関連（HTMLファイルなど）」と「設定ファイル（`config/` 内）」を適宜修正後、「プログラム関連（`index.php`、`lib/` など）」と合わせてレンタルサーバーなどにアップロードします。
+- パーミッションは、上記のフォルダ構成にある3桁の数字（`[705]`、`[707]` など）を参考に設定をしてください。
 
 ## 2. 実践編：基本設定
 
@@ -64,6 +63,20 @@
 ### ファイル添付の有効化（必要な場合）
 
 デフォルトではファイル添付が無効になっています。利用する場合は `config.yml` に `file: true` を追加してください。
+
+#### 記述例
+
+```yaml
+config:
+    # その他の設定
+    file: true
+```
+
+### その他の設定
+
+プログラム上のほぼ全ての設定は設定ファイルで変更可能です。変更可能な設定は `lib/TransmitMail.php` の該当行、または後述のチェックモードで確認できます。
+
+[https://github.com/dounokouno/TransmitMail/blob/master/lib/TransmitMail.php#L88](https://github.com/dounokouno/TransmitMail/blob/master/lib/TransmitMail.php#L88)
 
 ## 3. テンプレートの編集
 
@@ -114,9 +127,19 @@ TransmitMail では `input.html` 内に `hidden` フィールドを追加する�
 
 ## 6. チェックモード
 
-設定ファイルで `checkmode` を `1` または `2` とし、 `http://{TransmitMail設置ディレクトリ}/index.php?checkmode` にアクセスするとチェックモードが表示されます。
+設定ファイルで `checkmode` を `1` （通常モード）または `2` （詳細モード）とし、 `http://{TransmitMail設置ディレクトリ}/index.php?checkmode` にアクセスするとチェックモードが表示されます。
 
-チェックモードでは、各種設定内容やファイル、パーミッションなどに不備がないか確認できます。
+チェックモードでは、各種設定内容やファイル、パーミッションなどに不備がないか確認できます。詳細モードでは各種設定値が確認できます。
+
+※本番環境ではチェックモードは必ず無効にしてください（ PHP のバージョン情報や各種メールアドレスが表示されるため）。一時的に有効にする場合は、利用が終わったら必ず無効にしてください。
+
+### 設定ファイルの記述例
+
+```yaml
+config:
+    # その他の設定
+    checkmode: 1 # または 2
+```
 
 ## 7. エラーログ出力
 
@@ -128,4 +151,4 @@ TransmitMail では `input.html` 内に `hidden` フィールドを追加する�
 
 - [TransmitMail Wiki](https://github.com/dounokouno/TransmitMail/wiki)
 - [TransmitMail 2 のカスタマイズ例のリンク集 #TransmitMail - Qiita](https://qiita.com/dounokouno/items/c76d6b7053200c476d6d)
-- [TransmitMail 2 のカスタマイズ例のリンク集 #TransmitMail - Qiita](https://qiita.com/dounokouno/items/c76d6b7053200c476d6d)
+- [TransmitMail でよく使いそうなパーツ #TransmitMail - Qiita](https://qiita.com/dounokouno/items/ad8a128a0bd9fd20c3d8)
