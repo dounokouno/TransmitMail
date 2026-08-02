@@ -145,6 +145,75 @@ config:
 
 何らかの理由でメールが送信できなかった場合や各種エラー発生時には、「log/」内に送信内容やエラー内容のログが出力されます。
 
+## 8. Docker によるローカル動作確認
+
+本リポジトリには、複数の PHP バージョンでの動作確認環境と、送信メールを捕捉してブラウザで確認できるメールテスト用ツール「Mailpit」が Docker Compose 環境として用意されています。
+
+### 1) 環境の起動
+
+#### すべてのサービスを起動する場合
+以下のコマンドを実行して、すべての PHP バージョンと Mailpit コンテナをバックグラウンドで起動します。
+
+```bash
+docker compose up -d
+```
+
+#### 特定の PHP バージョンのみを起動する場合
+すべてのバージョンを起動する代わりに、特定の PHP バージョン（例: PHP 8.4）と Mailpit のみを指定して起動することも可能です。
+
+```bash
+# 例：PHP 8.4 と Mailpit のみを起動する場合
+docker compose up -d php84 mailpit
+```
+
+### 2) 各 PHP バージョンでのアクセス
+
+起動後、ブラウザから各 PHP バージョンに対応するポート番号にアクセスして動作確認を行います。
+
+- **PHP 7.2**: [http://localhost:8072](http://localhost:8072)
+- **PHP 7.3**: [http://localhost:8073](http://localhost:8073)
+- **PHP 7.4**: [http://localhost:8074](http://localhost:8074)
+- **PHP 8.0**: [http://localhost:8080](http://localhost:8080)
+- **PHP 8.1**: [http://localhost:8081](http://localhost:8081)
+- **PHP 8.2**: [http://localhost:8082](http://localhost:8082)
+- **PHP 8.3**: [http://localhost:8083](http://localhost:8083)
+- **PHP 8.4**: [http://localhost:8084](http://localhost:8084)
+- **PHP 8.5**: [http://localhost:8085](http://localhost:8085)
+
+### 3) 環境の停止
+
+動作確認が完了したら、以下のコマンドでコンテナを停止または削除します。
+
+#### コンテナを停止する（データや構成は維持）
+```bash
+docker compose stop
+```
+
+#### コンテナを停止・削除する
+```bash
+docker compose down
+```
+
+### 4) Mailpit を使った送信メールの確認
+
+フォームから送信されたメールは実際には送信されず、すべてローカルの Mailpit に送信されます。
+
+#### Mailpit 用の SMTP 設定
+Mailpit へメールを送信するために、設定ファイル（`config/config.yml`）に以下の SMTP 設定を追加します。
+
+```yaml
+config:
+    smtp: true
+    smtp_host: mailpit
+    smtp_port: 1025
+    smtp_protocol: SMTP
+```
+
+#### 送信されたメールの確認
+メール送信後、以下の URL にブラウザでアクセスすると、送信されたメール（ヘッダー、本文、添付ファイルなど）を Web 画面で確認できます。
+
+- **Mailpit Web UI**: [http://localhost:8025](http://localhost:8025)
+
 ---
 
 ## 参考
