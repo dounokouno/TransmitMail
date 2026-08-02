@@ -151,10 +151,19 @@ config:
 
 ### 1) 環境の起動
 
-以下のコマンドを実行して、コンテナをバックグラウンドで起動します。
+#### すべてのサービスを起動する場合
+以下のコマンドを実行して、すべての PHP バージョンと Mailpit コンテナをバックグラウンドで起動します。
 
 ```bash
 docker compose up -d
+```
+
+#### 特定の PHP バージョンのみを起動する場合
+すべてのバージョンを起動する代わりに、特定の PHP バージョン（例: PHP 8.4）と Mailpit のみを指定して起動することも可能です。
+
+```bash
+# 例：PHP 8.4 と Mailpit のみを起動する場合
+docker compose up -d php84 mailpit
 ```
 
 ### 2) 各 PHP バージョンでのアクセス
@@ -171,7 +180,21 @@ docker compose up -d
 - **PHP 8.4**: [http://localhost:8084](http://localhost:8084)
 - **PHP 8.5**: [http://localhost:8085](http://localhost:8085)
 
-### 3) Mailpit を使った送信メールの確認
+### 3) 環境の停止
+
+動作確認が完了したら、以下のコマンドでコンテナを停止または削除します。
+
+#### コンテナを停止する（データや構成は維持）
+```bash
+docker compose stop
+```
+
+#### コンテナを停止・削除する
+```bash
+docker compose down
+```
+
+### 4) Mailpit を使った送信メールの確認
 
 フォームから送信されたメールは実際には送信されず、すべてローカルの Mailpit に送信されます。
 
