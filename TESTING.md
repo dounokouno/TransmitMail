@@ -1,16 +1,25 @@
-# Testing TransmitMail
+# Testing
 
-This document describes how to run tests for TransmitMail.
+This document describes how to run the automated tests for TransmitMail.
 
 ## Overview
 
-TransmitMail includes automated tests to ensure compatibility across multiple PHP versions.
+TransmitMail uses automated tests to verify the following:
 
-The tests are **Functional/End-to-End (E2E) tests** using **Symfony Panther**, which run in a real browser environment to verify the entire form submission flow.
+- Form submission
+- Input validation
+- Confirmation page
+- Email delivery
+- Error handling
+- Compatibility across supported PHP versions
+
+For information about setting up the development environment, see [DEVELOPMENT.md](DEVELOPMENT.md).
+
+---
 
 ## Supported PHP Versions
 
-Tests are executed against the following PHP versions:
+The test suite is regularly executed against the following PHP versions:
 
 - PHP 7.2
 - PHP 7.3
@@ -22,138 +31,114 @@ Tests are executed against the following PHP versions:
 - PHP 8.4
 - PHP 8.5
 
-# Running Tests Locally
+---
 
-TransmitMail uses Docker Compose to manage the multi-version PHP test environment.
+## Running Tests
 
-## 1. Start the test environment
+### Install Dependencies
+
+Choose the directory corresponding to the PHP version you want to test and install its dependencies.
 
 Example for PHP 8.5:
 
 ```bash
-docker compose up -d php85
+cd php85
+composer install
 ```
 
-This starts the PHP container for the specified version.
+Replace `php85` with the directory corresponding to your target PHP version (for example, `php72` or `php84`).
 
-## 2. Install dependencies
+### Start the Test Environment
 
-Dependencies are managed per PHP version within the `environments/` directory.
+Example for PHP 8.5:
 
 ```bash
-docker compose exec php85 composer install
+docker compose up php85
 ```
 
-*Note: You only need to run this once or when `composer.json` changes.*
+Replace `php85` with the service corresponding to your target PHP version.
 
-## 3. Run tests
+### Run PHPUnit
 
-Execute the tests using PHPUnit from within the container. You can use `composer exec` to automatically locate the PHPUnit binary:
+Inside the container:
 
 ```bash
-docker compose exec php85 composer exec phpunit
+vendor/bin/phpunit
 ```
 
-### Running specific tests
-
-To run a specific test file or filter by test name:
+Or from the host:
 
 ```bash
-docker compose exec php85 composer exec phpunit tests/FunctionalTest/BasicTest.php
-docker compose exec php85 composer exec phpunit -- --filter testTitle
+docker compose exec php85 vendor/bin/phpunit
+```
+
+Replace `php85` with the service corresponding to your target PHP version.
+
+### Run End-to-End Tests
+
+TransmitMail uses Symfony Panther for browser-based end-to-end (E2E) testing.
+
+Example:
+
+```bash
+vendor/bin/phpunit tests/E2E
 ```
 
 ---
 
-### Supplementary: Running in a single command
+## Continuous Integration
 
-If you prefer to run the installation and tests in a single command without keeping the container running, use `docker compose run --rm`:
+The automated test suite is executed by CircleCI.
 
-```bash
-docker compose run --rm php85 bash -c "composer install && composer exec phpunit"
-```
+CircleCI verifies:
 
-This approach ensures a clean environment for every test run.
+- Compatibility across supported PHP versions
+- PHPUnit tests
+- Symfony Panther end-to-end tests
 
-## What is being tested?
+GitHub Actions is responsible for packaging and publishing releases.
 
-The E2E tests verify the following:
+---
 
-- Form display and default values
-- Validation rules (required fields, email format, character types, etc.)
-- Confirmation page display and "back" functionality
-- Error handling and error messages
-- CSRF protection
-- Template syntax processing
+## Writing Tests
 
-## Email Testing with MailPit
+When fixing a bug:
 
-When running functional tests, TransmitMail is configured to send emails via **MailPit** in the test environment. This allows you to preview sent emails without actually delivering them.
-
-To view sent emails:
-1. Ensure the `mailpit` service is running (`docker compose up -d mailpit`).
-2. Open your browser and navigate to `http://localhost:8025`.
-
-This is particularly useful for verifying email content, headers, and attachments.
-
-## Test Directory Structure
-
-```text
-tests/
-  FunctionalTest/
-    BasicTest.php
-    CsrfTest.php
-    GetParameterTest.php
-    InputOptionsTest.php
-    TransmitMailPantherTestCase.php (Base class)
-```
-
-# Continuous Integration
-
-Tests are automatically executed on every push using **CircleCI**.
-
-CI verifies:
-- All supported PHP versions (7.2 - 8.5)
-- Successful execution of all E2E tests
-
-If CI fails, the release should not be created.
-
-# Adding New Tests
-
-When adding a feature or fixing a bug:
-
-1. Add a test case in `tests/FunctionalTest/` that reproduces the issue.
-2. Confirm the test fails.
+1. Add a test that reproduces the issue.
+2. Confirm that the test fails.
 3. Fix the implementation.
-4. Confirm the test passes across relevant PHP versions.
+4. Confirm that the test passes.
 
-# Tips & Troubleshooting
+When implementing a new feature:
 
-## Cleanup
+1. Add or update tests for the new functionality.
+2. Ensure that all existing tests continue to pass.
 
-If tests fail due to stale cache or temporary files, clean the test artifacts:
-
-```bash
-rm -rf tmp/tests/*
-```
+---
 
 ## Debugging
 
-- Use the `--debug` flag for verbose output:
-  ```bash
-  composer exec phpunit -- --debug
-  ```
-- **Screenshots on Failure**: When a Panther test fails, a screenshot is automatically saved to `tmp/tests/screenshot/` to help diagnose UI issues.
+Run PHPUnit with additional output:
 
-## Browser Environment
+```bash
+vendor/bin/phpunit --debug
+```
 
-The Docker environment is pre-configured with Google Chrome and ChromeDriver. Tests run in **headless mode** by default.
+Run a specific test:
 
-# Test Philosophy
+```bash
+vendor/bin/phpunit --filter TestName
+```
 
-TransmitMail aims to:
-- Maintain compatibility with a wide range of PHP versions.
-- Prevent regressions.
-- Ensure reliable form processing and email delivery.
+If temporary files cause problems, check the test environment and clean up any unnecessary temporary files before running the tests again.
 
-Contributions that improve test coverage are welcome.
+---
+
+## Testing Goals
+
+The goals of the test suite are to:
+
+- Prevent regressions
+- Maintain compatibility across supported PHP versions
+- Ensure reliable form processing
+- Maintain release quality
