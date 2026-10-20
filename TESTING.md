@@ -73,7 +73,7 @@ If you prefer to run the installation and tests in a single command without keep
 docker compose run --rm php85 bash -c "composer install && composer exec phpunit"
 ```
 
-This approach ensures a clean environment for every test run.
+This command runs the dependency installation and tests in a temporary container. The container is removed after the command finishes, but files written to the mounted project directory, including installed dependencies and test artifacts, remain on the host.
 
 ## What is being tested?
 
